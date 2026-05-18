@@ -124,98 +124,85 @@ def timeline():
 
 
 def taxonomy():
-    fig, ax = plt.subplots(figsize=(9, 7))
+    fig, ax = plt.subplots(figsize=(9, 6))
     fig.patch.set_facecolor("white")
 
-    def box(x, y, w, h, text, fc, ec, fontsize=10, weight="normal",
-            text_color="#1a1a1a"):
-        ax.add_patch(FancyBboxPatch(
-            (x - w / 2, y - h / 2), w, h,
-            boxstyle="round,pad=0.02,rounding_size=0.08",
-            fc=fc, ec=ec, linewidth=1.4, zorder=3))
-        ax.text(x, y, text, ha="center", va="center",
-                fontsize=fontsize, fontweight=weight, color=text_color)
+    ACCENT = "#2c4a82"
+    INK = "#1a1a1a"
+    MUTED = "#888888"
+    RULE = "#dcdcdc"
 
-    def arrow(x1, y1, x2, y2):
-        ax.plot([x1, x2], [y1, y2], color="#9a9a9a",
-                linewidth=1.2, zorder=1, solid_capstyle="round")
-
-    # Root
-    box(7, 9.3, 5.6, 0.85, "World Models for Coding",
-        fc="#2c4a82", ec="#162a52", fontsize=14, weight="bold",
-        text_color="white")
-    ax.text(7, 8.65, "184 papers · this survey",
-            ha="center", fontsize=9, color="#666", style="italic")
-
-    # Three primary lanes (modeling axes)
-    lanes = [
-        ("Modeling Code",   1.8,  "#d8efd6", "#3a8a3a"),
-        ("Modeling Agents", 7.0,  "#f8dcdc", "#a04040"),
-        ("Modeling Tasks", 12.2,  "#fbe9c2", "#a07840"),
+    # Column headers
+    columns = [
+        ("Modeling Code",   1.5),
+        ("Modeling Agents", 5.0),
+        ("Modeling Tasks",  8.5),
     ]
-    for label, x, fc, ec in lanes:
-        box(x, 7.4, 3.6, 0.75, label, fc=fc, ec=ec,
-            fontsize=11, weight="bold")
-        arrow(7, 8.85, x, 7.78)
+    for label, x in columns:
+        ax.text(x, 5.4, label, ha="center", va="center",
+                fontsize=11, fontweight="bold", color=ACCENT)
+        ax.plot([x - 1.4, x + 1.4], [5.15, 5.15],
+                color=ACCENT, linewidth=1.1, solid_capstyle="round")
 
-    # Sub-nodes for each lane
-    sub = {
-        "Modeling Code": [
-            ("§6 Foundations",         0.2),
-            ("§7 Trace pretraining",   1.8),
-            ("§7 CWM lineage",         3.4),
+    # Stack of section labels per column (no boxes, just text)
+    items = {
+        1.5: [
+            ("§6",  "Foundations"),
+            ("§7",  "Trace pretraining"),
+            ("§7",  "CWM lineage"),
         ],
-        "Modeling Agents": [
-            ("§8 Web / OS / SWE",      5.4),
-            ("§9 Execution-grounded RL", 7.0),
-            ("§10 Planning & search",  8.6),
+        5.0: [
+            ("§8",  "Web / OS / SWE agents"),
+            ("§9",  "Execution-grounded RL"),
+            ("§10", "Planning & search"),
         ],
-        "Modeling Tasks": [
-            ("§13 Reasoning + memory", 10.6),
-            ("§14 Verifier + probing", 12.2),
-            ("§14 Safety",             13.8),
+        8.5: [
+            ("§13", "Reasoning + memory"),
+            ("§14", "Verification + probing"),
+            ("§14", "Safety"),
         ],
     }
-    fc_per = {"Modeling Code": "#eefae9", "Modeling Agents": "#fdf2f2",
-              "Modeling Tasks": "#fff5e0"}
-    ec_per = {"Modeling Code": "#3a8a3a", "Modeling Agents": "#a04040",
-              "Modeling Tasks": "#a07840"}
-    base_x = {"Modeling Code": 1.8, "Modeling Agents": 7.0, "Modeling Tasks": 12.2}
+    for x, rows in items.items():
+        y = 4.7
+        for tag, name in rows:
+            ax.text(x - 1.1, y, tag, ha="right", va="center",
+                    fontsize=9, color=MUTED, family="monospace")
+            ax.text(x - 0.95, y, name, ha="left", va="center",
+                    fontsize=10, color=INK)
+            y -= 0.45
 
-    for lane, items in sub.items():
-        for label, x in items:
-            box(x, 5.9, 1.5, 0.55, label,
-                fc=fc_per[lane], ec=ec_per[lane], fontsize=8)
-            arrow(base_x[lane], 7.02, x, 6.17)
+    # Horizontal rule
+    ax.plot([0.2, 9.8], [2.85, 2.85], color=RULE, linewidth=0.8)
 
     # Cross-cutting bridge
-    box(7, 4.6, 10.5, 0.7,
-        "§11   JEPA · Dreamer · latent-action gap   (cross-cutting bridge)",
-        fc="#ece2fc", ec="#5c4296", fontsize=11, weight="bold")
-    for x in [1.8, 7.0, 12.2]:
-        arrow(x, 5.62, x, 4.95)
+    ax.text(5.0, 2.55, "§11   JEPA · Dreamer · latent-action gap",
+            ha="center", va="center", fontsize=10.5,
+            fontweight="bold", color=ACCENT, style="italic")
+    ax.text(5.0, 2.2, "(applies across all three columns above)",
+            ha="center", va="center", fontsize=8.5, color=MUTED)
 
-    # Synthesis cascade
-    box(7, 3.4, 10.5, 0.6,
-        "§12   Specialized domains   (diffusion · decompilation · hardware/RTL · ARC · self-play)",
-        fc="#e1f6fa", ec="#3a8c9a", fontsize=9.5)
-    box(7, 2.3, 10.5, 0.6,
-        "§15 – 16   Benchmarks · Empirical landscape   (protocol-stratified tables)",
-        fc="#f3f3f3", ec="#777", fontsize=9.5)
-    box(7, 1.2, 10.5, 0.6,
-        "§17   Critical perspectives   (seven theses)",
-        fc="#fde8e8", ec="#a04040", fontsize=10, weight="bold")
-    box(7, 0.1, 10.5, 0.6,
-        "§18   Open problems         |        §19   Conclusion",
-        fc="#f3f3f3", ec="#777", fontsize=9.5)
-    for y1, y2 in [(4.25, 3.7), (3.1, 2.6), (2.0, 1.5), (0.9, 0.4)]:
-        arrow(7, y1, 7, y2)
+    # Horizontal rule
+    ax.plot([0.2, 9.8], [1.85, 1.85], color=RULE, linewidth=0.8)
 
-    ax.set_xlim(-1.0, 15.0)
-    ax.set_ylim(-0.5, 10.5)
+    # Synthesis chapters laid out horizontally
+    synth = [
+        ("§12",   "Specialized domains",                 1.5, 1.4),
+        ("§15-16","Benchmarks · Empirical landscape",    5.0, 1.4),
+        ("§17",   "Critical perspectives",               8.5, 1.4),
+    ]
+    for tag, name, x, y in synth:
+        ax.text(x, y, tag, ha="center", va="center",
+                fontsize=9, color=MUTED, family="monospace")
+        ax.text(x, y - 0.35, name, ha="center", va="center",
+                fontsize=10, color=INK)
+
+    # Footer
+    ax.text(5.0, 0.25, "§18   Open problems         §19   Conclusion",
+            ha="center", va="center", fontsize=9.5, color=INK)
+
+    ax.set_xlim(0, 10)
+    ax.set_ylim(-0.2, 6.0)
     ax.axis("off")
-    ax.set_title("Survey Structure: A Taxonomy of World Models for Coding",
-                 fontsize=14, fontweight="bold", pad=10, color="#1a1a1a")
 
     plt.tight_layout()
     for ext in ("pdf", "png"):
