@@ -1,0 +1,54 @@
+% Minimal arXiv-style preamble (no external packages beyond etoolbox/caption).
+% Used via pandoc --include-in-header=preamble.tex.
+
+\usepackage{etoolbox}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{longtable}
+
+% Page geometry tweaked elsewhere via pandoc -V geometry:...
+
+% --- Title block styling (no titling/authblk needed) -----------------------
+\makeatletter
+\renewcommand{\maketitle}{%
+  \begin{center}%
+    {\LARGE\bfseries\sffamily \@title \par}%
+    \vskip 1.0em%
+    {\large\sffamily \@author \par}%
+    \vskip 0.5em%
+    {\itshape\small \@date \par}%
+  \end{center}%
+  \par\vskip 1.4em%
+}
+\makeatother
+
+% --- Section heading styling (sans-serif, slightly larger) -----------------
+\makeatletter
+\renewcommand{\section}{\@startsection{section}{1}{0pt}%
+  {1.8ex \@plus 0.5ex \@minus 0.2ex}%
+  {1.0ex \@plus 0.2ex}%
+  {\normalfont\Large\bfseries\sffamily}}
+\renewcommand{\subsection}{\@startsection{subsection}{2}{0pt}%
+  {1.3ex \@plus 0.4ex \@minus 0.2ex}%
+  {0.8ex \@plus 0.2ex}%
+  {\normalfont\large\bfseries\sffamily}}
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{0pt}%
+  {1.0ex \@plus 0.3ex \@minus 0.2ex}%
+  {0.6ex \@plus 0.2ex}%
+  {\normalfont\normalsize\bfseries\sffamily}}
+\makeatother
+
+% Hyperlink colors (subtle arxiv-style)
+\AtBeginDocument{%
+  \hypersetup{
+    pdftitle={A Comprehensive Survey of World Models for Coding},
+    pdfauthor={Keon Kim},
+    colorlinks=true,
+    linkcolor=blue!50!black,
+    citecolor=blue!50!black,
+    urlcolor=blue!50!black,
+  }%
+}
+
+% No paragraph indent; use vertical spacing instead
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.45em}
