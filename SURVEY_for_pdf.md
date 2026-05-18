@@ -38,11 +38,7 @@ Two adjacent surveys cover non-overlapping ground. **A Survey on LLMs for Code G
 
 ## 2. Methodology
 
-**Corpus.** 184 PDFs in `papers.json`, assembled in four iterative passes between March and May 2026. Seed: CWM [@arxiv2510_02387]. Each pass expanded along a different axis — citation BFS via Semantic Scholar, targeted topic search for thin subdomains (latent-action WMs, safety, symbolic verification, agent memory, REPL-grounded), a 2026-specific sweep, and a final pass on reasoning models, PRMs, decompilation, diffusion code, mech-interp, ARC, and hardware/RTL. Of ~250 candidates considered across passes, 184 were accepted.
-
-**Inclusion.** A paper enters the corpus if it credibly intersects *both* world-model/state-tracking architectures and code generation, debugging, repair, or agentic coding. Date cutoff: arxiv submissions through 2026-05-15. Pure code-LLM papers without a world-model angle and pure vision world models (DreamerV1–V3, V-JEPA, Genie) are excluded except where cited as precedent.
-
-**Limitations.** No inter-rater reliability — one curator did the taxonomy coding. Inline numerical claims in §§6–14 rely on author abstracts and prior reading; §16 numbers were verified against source PDFs. Recency bias: 60% of the corpus is 2025 or later. Anglocentric arxiv-first selection skips Chinese-language preprint servers and industry technical reports. A fifth pass would change the count by ±15 without materially changing conclusions.
+The corpus is 184 arxiv preprints, assembled in four passes (March–May 2026) seeded from CWM [@arxiv2510_02387] via Semantic Scholar citation BFS and targeted topic searches. A paper enters the corpus if it intersects both world-model/state-tracking architectures and code generation, debugging, repair, or agentic coding. Pure vision world models (DreamerV1–V3, V-JEPA, Genie) and pure code-LLM papers without a world-model angle are excluded except as cited precedent. Date cutoff: 2026-05-15. The full list is enumerated in `papers.json`. One curator did the taxonomy coding; numerical claims in §§6–14 derive from abstracts, §16 from source PDFs. 60% of the corpus is 2025 or later.
 
 ---
 
@@ -78,21 +74,9 @@ This survey uses **D throughout the catalog sections (§§6–16)** because that
 
 ### 3.2 What is modeled
 
-Orthogonal to D-vs-N, a fourth question asks *what* is modeled. The corpus splits across:
+Orthogonal to D-vs-N, *what* is modeled varies: variable values and stack frames (CWM, CodeExecutor); execution traces (NExT, SemCoder, TRACED); test outcomes (LEVER, RLEF); OS/web environment state (WebDreamer, Dyna-Think); repository state (RepoGraph); spec or developer intent (ATLAS, Re:Form); adversarial behavior (Double Life of CWMs). A system typically commits strongly to one or two of these.
 
-- variable values and stack frames (CWM, CodeExecutor)
-- linear or branching execution traces (NExT, SemCoder, TRACED)
-- test outcomes and runtime errors (LEVER, RLEF)
-- environment/OS/web state (WebDreamer, Dyna-Think)
-- repository state (RepoGraph, Understanding by Reconstruction)
-- developer task or specification (ATLAS, Re:Form)
-- adversarial behavior (Double Life of CWMs)
-
-A given system typically commits strongly to one or two of these.
-
-### 3.3 Behavioral vs architectural classification
-
-CWM occupies an instructive position. *Behaviorally*, it emits stack frames and variable bindings, which feels like an "explicit symbolic world model." *Architecturally*, it is a 32B Llama-class decoder with no separate dynamics head, RSSM, or inverse model. The two readings are both correct: CWM is **behaviorally explicit but architecturally implicit**. Earlier framings in the literature (and earlier drafts of this survey) collapsed these into a single "explicit WM" label; we recommend separating them. SemCoder, NExT, and TRACED follow the same pattern.
+CWM occupies an instructive position: behaviorally explicit (emits stack frames) but architecturally implicit (a 32B Llama-class decoder with no separate dynamics head). SemCoder, NExT, and TRACED follow the same pattern. The "explicit WM" label flattens this distinction; §17.1 develops the consequence.
 
 ---
 
@@ -104,19 +88,18 @@ The lineage is best understood as a sequence of inheriting questions. Each era's
 
 Diamond markers in the figure tag the moments where "world model" enters the *name* of the contribution.
 
-**Pre-2020 — Can a network execute code?** Zaremba & Sutskever's **Learning to Execute** [@arxiv1410_4615] handed an LSTM character-level Python and asked it to predict output. The model worked on straight-line programs with bounded loops, but only with a curated curriculum, and only because the LSTM's constant memory was just enough to simulate the interpreter when the interpreter ran in constant memory too. Everything that followed in this lineage tried to escape that curse. **Neural Programmer-Interpreters** [@arxiv1511_06279] and the **Differentiable Forth Interpreter** built differentiable program counters and call stacks — the bet that the right architecture would close the gap. **Dynamic Neural Program Embedding** [@arxiv1711_07163] made the inverse move: run the real interpreter, embed the resulting state traces. **Neural Code Fusion** [@arxiv1906_07181] and **IPA-GNN** [@arxiv2010_12621] extended the GNN-over-execution playbook to the point where attention played the role of the program counter. By 2020 the lineage had answered its question — yes, a neural network can play interpreter, but only when the interpreter is encoded into its architecture, and these architectures did not transfer to Python, C, or assembly at corpus scale. Ha & Schmidhuber's **World Models** paper [@arxiv1803_10122] had already named for vision and RL exactly the pattern this lineage was reaching for. The vocabulary existed; the coding community had not yet borrowed it.
+**Pre-2020 — Can a network execute code?** **Learning to Execute** [@arxiv1410_4615] trained an LSTM to predict Python output on bounded-loop programs. **Neural Programmer-Interpreters** [@arxiv1511_06279] and **Differentiable Forth** built differentiable program counters; **Dynamic Neural Program Embedding** [@arxiv1711_07163] embedded real interpreter traces; **Neural Code Fusion** [@arxiv1906_07181] and **IPA-GNN** [@arxiv2010_12621] used GNN attention as a program counter. By 2020 the answer was yes — but only with the interpreter encoded into architecture, which did not scale to real languages. Ha & Schmidhuber [@arxiv1803_10122] had named the pattern for vision-RL; the coding community had not yet borrowed it.
 
-**2020–2022 — Can the network's training include execution?** The era's reframing was simple: instead of *can the network execute*, ask *can we train a normally-shaped Transformer on enough execution evidence that semantics seep into its weights*. **Codex** [@arxiv2107_03374] and **MBPP** [@arxiv2108_07732] made code generation a real engineering target. **Show Your Work / Scratchpads** [@arxiv2112_00114] made the decisive move: a Transformer that could not predict a program's output could predict it perfectly if it was allowed to emit the intermediate computation first. Same trick Dynamic Neural Program Embedding had pulled, now at LLM scale, in token space, without architectural surgery. The neural-as-interpreter program of 2014–2020 did not scale beyond toy languages; the next era's move was to bake execution into training data rather than architecture.
+**2020–2022 — Can the training include execution?** **Codex** [@arxiv2107_03374] and **MBPP** [@arxiv2108_07732] made code generation a target. **Scratchpads** [@arxiv2112_00114] showed a Transformer could predict program output if allowed to emit intermediate computation first — the Dynamic-NPE move at LLM scale, without architectural surgery.
 
-**2023 — Trace pretraining as a named recipe.** **CodeExecutor** [@arxiv2305_05383] made the recipe explicit: mutate competitive-programming submissions, run them in a sandbox, capture per-line state tokens, train a transformer to emit the trace from source. **TRACED** [@arxiv2306_07487] generalized this to a pretraining auxiliary that any code-LLM could absorb. **CRUXEval** [@arxiv2401_03065] provided the canonical input/output-prediction benchmark and suddenly there was a number that captured "does this model understand what code does, as opposed to what code looks like." In parallel, **Reflexion** [@arxiv2303_11366] and **Self-Debug** [@arxiv2304_05128] showed that an LLM's mistakes could be fed back to itself as natural-language critiques, **LEVER** [@arxiv2302_08468] used execution to verify candidate generations during decoding, and **RAP** [@arxiv2305_14992] framed the LLM itself as a world model and ran MCTS over its imagined rollouts. The year's unifying insight: execution traces are an auxiliary objective, not a separate model.
+**2023 — Trace pretraining as a named recipe.** **CodeExecutor** [@arxiv2305_05383] trained a Transformer to emit per-line state traces from source; **TRACED** [@arxiv2306_07487] generalized this to a pretraining auxiliary; **CRUXEval** [@arxiv2401_03065] gave the canonical eval. In parallel, **Reflexion** [@arxiv2303_11366] / **Self-Debug** [@arxiv2304_05128] used execution feedback in-context; **LEVER** [@arxiv2302_08468] used it during decoding; **RAP** [@arxiv2305_14992] ran MCTS over an LLM-as-world-model.
 
-**2024 — From models that simulate to agents that act.** **SWE-bench** [@arxiv2310_06770] replaced "write a function that passes a unit test" with "fix a real GitHub issue in a real repository." **CodeAct** [@arxiv2402_01030] claimed the agent's action space should be Python code itself. **SWE-agent** [@arxiv2405_15793] shipped the harness. **NExT** [@arxiv2404_14662] inlined traces into the agent loop. **RLEF** [@arxiv2410_02089] fed execution outcomes back as RL rewards. **WebDreamer** [@arxiv2411_06559] transplanted Dreamer-style imagination to digital agents. **Generating Code World Models via MCTS** [@arxiv2405_15383] introduced the literal phrase "Code World Models." What unified the year was a structural shift in *where* the world model lives: in 2023 it lived in the weights, surfaced through trace prediction; in 2024 it lived in the loop, in the agent's behavior under environmental feedback.
+**2024 — From models that simulate to agents that act.** **SWE-bench** [@arxiv2310_06770] shifted the task to real GitHub repos. **CodeAct** [@arxiv2402_01030], **SWE-agent** [@arxiv2405_15793], **NExT** [@arxiv2404_14662], **RLEF** [@arxiv2410_02089], **WebDreamer** [@arxiv2411_06559], and **Generating Code World Models via MCTS** ([@arxiv2405_15383], source of the name) define the agentic turn. The WM moved from weights to loop.
 
-**2025 — The CWM moment.** **DeepSeek-R1** [@arxiv2501_12948] opened the year by showing that pure reasoning-RL on verifiable rewards could reach the frontier on math and code. **SWE-RL** [@arxiv2502_18449] applied the same recipe to full SWE traces. **CoLA** [@arxiv2503_21383] made the first concrete attempt at a Dreamer-for-LLMs: inverse-dynamics over latent actions, then RL over a learned codebook. **LLM-JEPA** [@arxiv2509_14252] ported LeCun's joint-embedding predictive objective to language. **General Agents Contain World Models** [@arxiv2506_01622] supplied a theorem: any agent satisfying a regret bound on goal-conditioned tasks must have learned a predictive model of its environment. Then in October, Meta FAIR released **CWM** [@arxiv2510_02387] — a 32B open-weights model mid-trained on 5T tokens of Python execution traces and ForagerAgent trajectories from Dockerized repositories. The thing the 2014 LSTM was trying to be was now a downloadable checkpoint.
+**2025 — The CWM moment.** **DeepSeek-R1** [@arxiv2501_12948] and **SWE-RL** [@arxiv2502_18449] scaled reasoning-RL. **CoLA** [@arxiv2503_21383] and **LLM-JEPA** [@arxiv2509_14252] ported Dreamer- and JEPA-style ideas to LLMs. **General Agents Contain World Models** [@arxiv2506_01622] provided the existence theorem. **CWM** [@arxiv2510_02387] — 32B open-weights, mid-trained on 5T tokens of Python traces plus 3M ForagerAgent trajectories — made the artifact downloadable.
 
-**2026 — Stress-testing and broadening.** With the artifact in hand, the field pivoted to critique and generalization. **Debugging Code World Models** [@arxiv2602_07672] catalogs CWM's failures on long traces and string-state representation. **Demystifying Errors in LLM Reasoning Traces** [@arxiv2512_00215] audits where trace-trained models hallucinate. **Industrial CWM** [@arxiv2604_03144] and **Parallel-Code WMs** [@arxiv2604_20926] generalize the recipe to Verilog/GPU and parallelism semantics. **Executable World Models for ARC-AGI-3** [@arxiv2605_05138] brings the generative-environment flavor to abstract visual reasoning. **Reinforcement World Model Learning for LLM Agents** [@arxiv2602_05842] flips the standard recipe by training the WM rather than the policy.
+**2026 — Stress-testing and broadening.** **Debugging CWMs** [@arxiv2602_07672] and **Demystifying Errors in LLM Reasoning Traces** [@arxiv2512_00215] catalog failures. **Industrial CWM** [@arxiv2604_03144], **Parallel-Code WMs** [@arxiv2604_20926], and **Executable WMs for ARC-AGI-3** [@arxiv2605_05138] generalize the recipe. **Reinforcement World Model Learning** [@arxiv2602_05842] trains the WM rather than the policy.
 
-**The arc.** Across twelve years: *can a network execute code?* → *can a network's training include execution?* → *can an LLM agent simulate its environment?* → *is the world model a named artifact rather than a metaphor?* Each era's answer dissolved the previous bottleneck and exposed the next. Architecture gave way to data; data gave way to agency; agency gave way to artifacts. What was a half-philosophical question in 2014 — *does this network understand what code does* — became, in 2025, an operational one with an open-weights baseline. The field has not finished. The 2026 critique wave shows the artifact is brittle in ways the 2014 LSTM was never asked to be. But the trajectory is now legible.
 
 ---
 
@@ -207,16 +190,7 @@ CWM is a 32B dense decoder-only Transformer with grouped-query attention, slidin
 
 Important caveat (developed further in §17): the 65.8% headline is *not* pure pass@1 but best-of-16 with verifier reranking. Pure pass@1 is approximately 53–55%. The trace-mid-training contribution is not causally isolated from the ForagerAgent-trajectory contribution and from the joint-RL contribution. Without an ablation removing one while holding the others fixed, the "world model" component's causal role is unfalsifiable.
 
-### 7.6 Direct descendants of CWM
 
-- **Debugging Code World Models** [@arxiv2602_07672] — probes where CWM fails on long traces and string state; finds long-horizon failures are dominated by *action hallucination*, not state-propagation error.
-- **Learning Reasoning World Models for Parallel Code** [@arxiv2604_20926] — predicts race conditions and profiling artifacts from parallel source.
-- **Industrial CWM / InCoder-32B-Thinking** [@arxiv2604_03144] — CWM recipe on Verilog and GPU execution traces.
-- **The Double Life of Code World Models** [@arxiv2512_13821] — CWM trace predictions repurposed for malicious-behavior detection.
-- **Towards a Neural Debugger for Python** [@arxiv2603_09951] — neural debugger as forward/inverse world model.
-- **Neural Computers** [@arxiv2604_06425] — video-model-style WMs of CLI/GUI runtime from I/O traces.
-- **Generating Code World Models with LLMs Guided by MCTS** [@arxiv2405_15383] — the WM is *the code itself*, synthesized by an LLM.
-- **General Agents Contain World Models** [@arxiv2506_01622] — proves that sufficiently competent goal-conditioned agents must contain extractable world models, under restrictive conditions discussed critically in §17.
 
 ### 7.7 GIF-MCTS / Generating Code World Models via MCTS [@arxiv2405_15383]
 
@@ -586,15 +560,135 @@ The opportunity is large precisely because the framework is now clear enough to 
 
 ---
 
-## Appendix · Glossary
+## Appendix A · References
 
-- **CWM** — Code World Model ([@arxiv2510_02387] and lineage).
-- **JEPA** — Joint Embedding Predictive Architecture (LeCun et al.).
-- **RSSM** — Recurrent State-Space Model (Dreamer family).
-- **PRM** — Process Reward Model.
-- **SWE agent** — Software-engineering agent operating on real repositories.
-- **Trace pretraining** — Pretraining where execution traces appear in input or target.
-- **Execution-grounded RL** — RL whose reward derives from program execution.
-- **Latent-imagination rollout** — Forward simulation in compressed latent space rather than token space.
-- **TTS** — Test-time scaling (sampling many candidates + verifier reranking at inference).
-- **GRPO** — Group Relative Policy Optimization (R1-family RL algorithm).
+All citations in this survey use arxiv identifiers inline (e.g. `[@arxiv2510_02387]`). Each cited identifier resolves to one entry below. For machine-readable access to the full 184-paper corpus (including non-cited entries considered during the survey passes), see `papers.json`.
+
+- **[@arxiv1410_4615]** — Learning to Execute. https://arxiv.org/abs/[@arxiv1410_4615]
+- **[@arxiv1511_06279]** — Neural Programmer-Interpreters. https://arxiv.org/abs/[@arxiv1511_06279]
+- **[@arxiv1711_07163]** — Dynamic Neural Program Embedding for Program Repair. https://arxiv.org/abs/[@arxiv1711_07163]
+- **[@arxiv1803_10122]** — World Models. https://arxiv.org/abs/[@arxiv1803_10122]
+- **[@arxiv1906_07181]** — Learning Execution through Neural Code Fusion. https://arxiv.org/abs/[@arxiv1906_07181]
+- **[@arxiv1912_01603]** — Dream to Control - Learning Behaviors by Latent Imagination (DreamerV1). https://arxiv.org/abs/[@arxiv1912_01603]
+- **[@arxiv2010_02193]** — Mastering Atari with Discrete World Models (DreamerV2). https://arxiv.org/abs/[@arxiv2010_02193]
+- **[@arxiv2010_12621]** — Learning to Execute Programs with Instruction Pointer Attention Graph Neural Networks. https://arxiv.org/abs/[@arxiv2010_12621]
+- **[@arxiv2107_03374]** — Evaluating Large Language Models Trained on Code. https://arxiv.org/abs/[@arxiv2107_03374]
+- **[@arxiv2108_07732]** — Program Synthesis with Large Language Models. https://arxiv.org/abs/[@arxiv2108_07732]
+- **[@arxiv2112_00114]** — Show Your Work - Scratchpads for Intermediate Computation with Language Models. https://arxiv.org/abs/[@arxiv2112_00114]
+- **[@arxiv2207_01780]** — CodeRL - Mastering Code Generation through Pretrained Models and Deep Reinforcement Learning. https://arxiv.org/abs/[@arxiv2207_01780]
+- **[@arxiv2301_04104]** — Mastering Diverse Domains through World Models (DreamerV3). https://arxiv.org/abs/[@arxiv2301_04104]
+- **[@arxiv2301_08243]** — I-JEPA - Self-Supervised Learning from Images with a Joint-Embedding Predictive Architecture. https://arxiv.org/abs/[@arxiv2301_08243]
+- **[@arxiv2302_08468]** — LEVER - Learning to Verify Language-to-Code Generation with Execution. https://arxiv.org/abs/[@arxiv2302_08468]
+- **[@arxiv2303_11366]** — Reflexion - Language Agents with Verbal Reinforcement Learning. https://arxiv.org/abs/[@arxiv2303_11366]
+- **[@arxiv2304_05128]** — Teaching Large Language Models to Self-Debug. https://arxiv.org/abs/[@arxiv2304_05128]
+- **[@arxiv2305_05383]** — Code Execution with Pre-trained Language Models. https://arxiv.org/abs/[@arxiv2305_05383]
+- **[@arxiv2305_10601]** — Tree of Thoughts - Deliberate Problem Solving with Large Language Models. https://arxiv.org/abs/[@arxiv2305_10601]
+- **[@arxiv2305_14992]** — Reasoning with Language Model is Planning with World Model - RAP. https://arxiv.org/abs/[@arxiv2305_14992]
+- **[@arxiv2306_06070]** — Mind2Web - Towards a Generalist Agent for the Web. https://arxiv.org/abs/[@arxiv2306_06070]
+- **[@arxiv2306_07487]** — TRACED - Execution-aware Pre-training for Source Code. https://arxiv.org/abs/[@arxiv2306_07487]
+- **[@arxiv2306_09896]** — Is Self-Repair a Silver Bullet for Code Generation. https://arxiv.org/abs/[@arxiv2306_09896]
+- **[@arxiv2307_13854]** — WebArena - A Realistic Web Environment for Building Autonomous Agents. https://arxiv.org/abs/[@arxiv2307_13854]
+- **[@arxiv2309_17179]** — AlphaZero-like Tree-Search can Guide Large Language Model Decoding and Training. https://arxiv.org/abs/[@arxiv2309_17179]
+- **[@arxiv2310_06770]** — SWE-bench - Can Language Models Resolve Real-World GitHub Issues. https://arxiv.org/abs/[@arxiv2310_06770]
+- **[@arxiv2401_03065]** — CRUXEval - A Benchmark for Code Reasoning, Understanding and Execution. https://arxiv.org/abs/[@arxiv2401_03065]
+- **[@arxiv2402_01030]** — Executable Code Actions Elicit Better LLM Agents. https://arxiv.org/abs/[@arxiv2402_01030]
+- **[@arxiv2402_15391]** — Genie - Generative Interactive Environments. https://arxiv.org/abs/[@arxiv2402_15391]
+- **[@arxiv2403_07974]** — LiveCodeBench - Holistic and Contamination Free Evaluation of Large Language Models for Code. https://arxiv.org/abs/[@arxiv2403_07974]
+- **[@arxiv2403_16437]** — Evaluating Large Language Models with Runtime Behavior of Program Execution. https://arxiv.org/abs/[@arxiv2403_16437]
+- **[@arxiv2404_05427]** — AutoCodeRover - Autonomous Program Improvement. https://arxiv.org/abs/[@arxiv2404_05427]
+- **[@arxiv2404_14662]** — NExT - Teaching Large Language Models to Reason about Code Execution. https://arxiv.org/abs/[@arxiv2404_14662]
+- **[@arxiv2405_15383]** — Generating Code World Models with Large Language Models Guided by Monte Carlo Tree Search. https://arxiv.org/abs/[@arxiv2405_15383]
+- **[@arxiv2405_15793]** — SWE-agent - Agent-Computer Interfaces Enable Automated Software Engineering. https://arxiv.org/abs/[@arxiv2405_15793]
+- **[@arxiv2406_00515]** — A Survey on Large Language Models for Code Generation. https://arxiv.org/abs/[@arxiv2406_00515]
+- **[@arxiv2406_01006]** — SemCoder - Training Code Language Models with Comprehensive Semantics Reasoning. https://arxiv.org/abs/[@arxiv2406_01006]
+- **[@arxiv2406_06822]** — An LLM-Assisted Easy-to-Trigger Backdoor Attack on Code Completion Models. https://arxiv.org/abs/[@arxiv2406_06822]
+- **[@arxiv2406_10667]** — UniZero - Generalized and Efficient Planning with Scalable Latent World Models. https://arxiv.org/abs/[@arxiv2406_10667]
+- **[@arxiv2407_01476]** — Tree Search for Language Model Agents. https://arxiv.org/abs/[@arxiv2407_01476]
+- **[@arxiv2407_01489]** — Agentless - Demystifying LLM-based Software Engineering Agents. https://arxiv.org/abs/[@arxiv2407_01489]
+- **[@arxiv2407_16732]** — PyBench - Evaluating LLM Agent on Various Real-World Coding Tasks. https://arxiv.org/abs/[@arxiv2407_16732]
+- **[@arxiv2408_13001]** — CRUXEval-X - A Benchmark for Multilingual Code Reasoning Understanding and Execution. https://arxiv.org/abs/[@arxiv2408_13001]
+- **[@arxiv2409_09271]** — Python Symbolic Execution with LLM-powered Code Generation. https://arxiv.org/abs/[@arxiv2409_09271]
+- **[@arxiv2410_02089]** — RLEF - Grounding Code LLMs in Execution Feedback with Reinforcement Learning. https://arxiv.org/abs/[@arxiv2410_02089]
+- **[@arxiv2410_13232]** — Web Agents with World Models - Learning and Leveraging Environment Dynamics in Web Navigation. https://arxiv.org/abs/[@arxiv2410_13232]
+- **[@arxiv2410_14684]** — RepoGraph - Enhancing AI Software Engineering with Repository-level Code Graph. https://arxiv.org/abs/[@arxiv2410_14684]
+- **[@arxiv2411_06559]** — Is Your LLM Secretly a World Model of the Internet - WebDreamer. https://arxiv.org/abs/[@arxiv2411_06559]
+- **[@arxiv2411_13826]** — REPL-Plan - Interactive and Expressive Code-Augmented Planning with Large Language Models. https://arxiv.org/abs/[@arxiv2411_13826]
+- **[@arxiv2411_14499]** — Understanding World or Predicting Future - A Comprehensive Survey of World Models. https://arxiv.org/abs/[@arxiv2411_14499]
+- **[@arxiv2412_00154]** — o1-Coder - an o1 Replication for Coding. https://arxiv.org/abs/[@arxiv2412_00154]
+- **[@arxiv2412_12119]** — Mastering Board Games by External and Internal Planning with Language Models. https://arxiv.org/abs/[@arxiv2412_12119]
+- **[@arxiv2412_21139]** — Training Software Engineering Agents and Verifiers with SWE-Gym. https://arxiv.org/abs/[@arxiv2412_21139]
+- **[@arxiv2501_12948]** — DeepSeek-R1 incentivizes reasoning in LLMs through reinforcement learning. https://arxiv.org/abs/[@arxiv2501_12948]
+- **[@arxiv2502_06975]** — Position - Episodic Memory is the Missing Piece for Long-Term LLM Agents. https://arxiv.org/abs/[@arxiv2502_06975]
+- **[@arxiv2502_12466]** — EquiBench - Benchmarking LLMs' Reasoning about Program Semantics via Equivalence Checking. https://arxiv.org/abs/[@arxiv2502_12466]
+- **[@arxiv2502_18449]** — SWE-RL - Advancing LLM Reasoning via Reinforcement Learning on Open Software Evolution. https://arxiv.org/abs/[@arxiv2502_18449]
+- **[@arxiv2503_05703]** — What I cannot execute, I do not understand - Training and Evaluating LLMs on Program Execution Traces. https://arxiv.org/abs/[@arxiv2503_05703]
+- **[@arxiv2503_12686]** — Understanding Formal Reasoning Failures in LLMs as Abstract Interpreters. https://arxiv.org/abs/[@arxiv2503_12686]
+- **[@arxiv2503_21383]** — CoLA - Controlling Large Language Models with Latent Actions. https://arxiv.org/abs/[@arxiv2503_21383]
+- **[@arxiv2503_23145]** — CodeARC - Benchmarking Reasoning Capabilities of LLM Agents for Inductive Program Synthesis. https://arxiv.org/abs/[@arxiv2503_23145]
+- **[@arxiv2504_07634]** — Agent That Debugs - Dynamic State-Guided Vulnerability Repair. https://arxiv.org/abs/[@arxiv2504_07634]
+- **[@arxiv2504_15228]** — A Self-Improving Coding Agent. https://arxiv.org/abs/[@arxiv2504_15228]
+- **[@arxiv2504_15659]** — VeriCoder - Enhancing LLM-Based RTL Code Generation through Functional Correctness Validation. https://arxiv.org/abs/[@arxiv2504_15659]
+- **[@arxiv2504_16591]** — JEPA for RL - Investigating Joint-Embedding Predictive Architectures for Reinforcement Learning. https://arxiv.org/abs/[@arxiv2504_16591]
+- **[@arxiv2504_16828]** — Process Reward Models That Think. https://arxiv.org/abs/[@arxiv2504_16828]
+- **[@arxiv2505_13452]** — Large Language Model Powered Symbolic Execution. https://arxiv.org/abs/[@arxiv2505_13452]
+- **[@arxiv2505_13938]** — CLEVER - A Curated Benchmark for Formally Verified Code Generation. https://arxiv.org/abs/[@arxiv2505_13938]
+- **[@arxiv2505_21668]** — R1-Code-Interpreter - LLMs Reason with Code via Supervised and Multi-stage Reinforcement Learning. https://arxiv.org/abs/[@arxiv2505_21668]
+- **[@arxiv2505_22954]** — Darwin Godel Machine - Open-Ended Evolution of Self-Improving Agents. https://arxiv.org/abs/[@arxiv2505_22954]
+- **[@arxiv2506_00320]** — Dyna-Think - Synergizing Reasoning, Acting, and World Model Simulation in AI Agents. https://arxiv.org/abs/[@arxiv2506_00320]
+- **[@arxiv2506_01622]** — General Agents Contain World Models. https://arxiv.org/abs/[@arxiv2506_01622]
+- **[@arxiv2506_02918]** — World Modeling Improves Language Model Agents. https://arxiv.org/abs/[@arxiv2506_02918]
+- **[@arxiv2506_09550]** — Integrating Symbolic Execution with LLMs for Automated Generation of Program Specifications. https://arxiv.org/abs/[@arxiv2506_09550]
+- **[@arxiv2506_10343]** — Code Execution as Grounded Supervision for LLM Reasoning. https://arxiv.org/abs/[@arxiv2506_10343]
+- **[@arxiv2506_10948]** — Execution Guided Line-by-Line Code Generation. https://arxiv.org/abs/[@arxiv2506_10948]
+- **[@arxiv2506_11425]** — Agent-RLVR - Training Software Engineering Agents via Guidance and Environment Rewards. https://arxiv.org/abs/[@arxiv2506_11425]
+- **[@arxiv2506_20639]** — DiffuCoder - Understanding and Improving Masked Diffusion Models for Code Generation. https://arxiv.org/abs/[@arxiv2506_20639]
+- **[@arxiv2507_04736]** — ChipSeek - Optimizing Verilog Generation via EDA-Integrated Reinforcement Learning. https://arxiv.org/abs/[@arxiv2507_04736]
+- **[@arxiv2507_14172]** — SOAR - Self-Improving Language Models for Evolutionary Program Synthesis on ARC-AGI. https://arxiv.org/abs/[@arxiv2507_14172]
+- **[@arxiv2507_16331]** — Re-Form - Reducing Human Priors in Scalable Formal Software Verification with RL in LLMs on Dafny. https://arxiv.org/abs/[@arxiv2507_16331]
+- **[@arxiv2508_00419]** — Loop Invariant Generation - A Hybrid Framework of Reasoning Optimised LLMs and SMT Solvers. https://arxiv.org/abs/[@arxiv2508_00419]
+- **[@arxiv2508_03501]** — Training Long-Context, Multi-Turn Software Engineering Agents with Reinforcement Learning. https://arxiv.org/abs/[@arxiv2508_03501]
+- **[@arxiv2508_18462]** — VeriRL - Boosting LLM-based Verilog Code Generation via Reinforcement Learning. https://arxiv.org/abs/[@arxiv2508_18462]
+- **[@arxiv2509_01142]** — Dream-Coder 7B - An Open Diffusion Language Model for Code. https://arxiv.org/abs/[@arxiv2509_01142]
+- **[@arxiv2509_02360]** — Act Like You're Paying for This - Course-Correcting Code Agents with PRMs. https://arxiv.org/abs/[@arxiv2509_02360]
+- **[@arxiv2509_09245]** — Jupiter - Enhancing LLM Data Analysis Capabilities via Notebook and Inference-Time Value-Guided Search. https://arxiv.org/abs/[@arxiv2509_09245]
+- **[@arxiv2509_11686]** — Do Code Semantics Help - A Comprehensive Study on Execution Trace-Based Information for Code LLMs. https://arxiv.org/abs/[@arxiv2509_11686]
+- **[@arxiv2509_14252]** — LLM-JEPA - Large Language Models Meet Joint Embedding Predictive Architectures. https://arxiv.org/abs/[@arxiv2509_14252]
+- **[@arxiv2509_14646]** — SALT4Decompile - Inferring Source-level Abstract Logic Tree for LLM-Based Binary Decompilation. https://arxiv.org/abs/[@arxiv2509_14646]
+- **[@arxiv2509_22114]** — SK2Decompile - LLM-Based Two-Phase Binary Decompilation. https://arxiv.org/abs/[@arxiv2509_22114]
+- **[@arxiv2510_02387]** — CWM - An Open-Weights LLM for Research on Code Generation with World Models. https://arxiv.org/abs/[@arxiv2510_02387]
+- **[@arxiv2510_02917]** — Mechanistic Interpretability of Code Correctness in LLMs via Sparse Autoencoders. https://arxiv.org/abs/[@arxiv2510_02917]
+- **[@arxiv2510_03415]** — PLSemanticsBench - LLMs as Programming Language Interpreters. https://arxiv.org/abs/[@arxiv2510_03415]
+- **[@arxiv2510_12635]** — Memory as Action - Autonomous Context Curation for Long-Horizon Agentic Tasks. https://arxiv.org/abs/[@arxiv2510_12635]
+- **[@arxiv2510_14232]** — Scaling Test-Time Compute to Achieve IOI Gold Medal with Open-Weight Models. https://arxiv.org/abs/[@arxiv2510_14232]
+- **[@arxiv2510_16732]** — A Comprehensive Survey on World Models for Embodied AI. https://arxiv.org/abs/[@arxiv2510_16732]
+- **[@arxiv2510_18327]** — InspectCoder - Dynamic Analysis-Enabled Self Repair through Interactive LLM-Debugger Collaboration. https://arxiv.org/abs/[@arxiv2510_18327]
+- **[@arxiv2510_21614]** — Huxley-Godel Machine - Human-Level Coding Agent Development. https://arxiv.org/abs/[@arxiv2510_21614]
+- **[@arxiv2510_25015]** — VeriStruct - AI-assisted Automated Verification of Data-Structure Modules in Verus. https://arxiv.org/abs/[@arxiv2510_25015]
+- **[@arxiv2511_17330]** — Agentic Program Verification. https://arxiv.org/abs/[@arxiv2511_17330]
+- **[@arxiv2512_00215]** — Demystifying Errors in LLM Reasoning Traces - An Empirical Study of Code Execution Simulation. https://arxiv.org/abs/[@arxiv2512_00215]
+- **[@arxiv2512_07404]** — On LLMs' Internal Representation of Code Correctness. https://arxiv.org/abs/[@arxiv2512_07404]
+- **[@arxiv2512_10173]** — ATLAS - Automated Toolkit for Large-Scale Verified Code Synthesis. https://arxiv.org/abs/[@arxiv2512_10173]
+- **[@arxiv2512_13821]** — The Double Life of Code World Models - Provably Unmasking Malicious Behavior Through Execution Traces. https://arxiv.org/abs/[@arxiv2512_13821]
+- **[@arxiv2512_18552]** — Toward Training Superintelligent Software Agents through Self-Play SWE-RL. https://arxiv.org/abs/[@arxiv2512_18552]
+- **[@arxiv2601_22249]** — FunPRM - Function-as-Step Process Reward Model with Meta Reward Correction for Code Generation. https://arxiv.org/abs/[@arxiv2601_22249]
+- **[@arxiv2602_00785]** — World Models as an Intermediary between Agents and the Real World. https://arxiv.org/abs/[@arxiv2602_00785]
+- **[@arxiv2602_03419]** — Nanbeige SWE-World - Building Software Engineering Agents in Docker-Free Environments. https://arxiv.org/abs/[@arxiv2602_03419]
+- **[@arxiv2602_05842]** — Reinforcement World Model Learning for LLM-based Agents. https://arxiv.org/abs/[@arxiv2602_05842]
+- **[@arxiv2602_07672]** — Debugging Code World Models. https://arxiv.org/abs/[@arxiv2602_07672]
+- **[@arxiv2603_01896]** — Agentic Code Reasoning. https://arxiv.org/abs/[@arxiv2603_01896]
+- **[@arxiv2603_09044]** — Synergistic Directed Execution and LLM-Driven Analysis for Zero-Day AI-Generated Malware Detection. https://arxiv.org/abs/[@arxiv2603_09044]
+- **[@arxiv2603_09951]** — Towards a Neural Debugger for Python. https://arxiv.org/abs/[@arxiv2603_09951]
+- **[@arxiv2603_11103]** — Understanding by Reconstruction - Reversing the Software Development Process for LLM Pretraining. https://arxiv.org/abs/[@arxiv2603_11103]
+- **[@arxiv2603_11226]** — ExecVerify - White-Box RL with Verifiable Stepwise Rewards for Code Execution Reasoning. https://arxiv.org/abs/[@arxiv2603_11226]
+- **[@arxiv2603_17399]** — Bootstrapping Coding Agents - The Specification Is the Program. https://arxiv.org/abs/[@arxiv2603_17399]
+- **[@arxiv2604_03144]** — InCoder-32B-Thinking - Industrial Code World Model for Thinking. https://arxiv.org/abs/[@arxiv2604_03144]
+- **[@arxiv2604_03253]** — Self-Execution Simulation. https://arxiv.org/abs/[@arxiv2604_03253]
+- **[@arxiv2604_06425]** — Neural Computers. https://arxiv.org/abs/[@arxiv2604_06425]
+- **[@arxiv2604_14820]** — SWE-TRACE - Optimizing Long-Horizon SWE Agents Through Rubric Process Reward Models and Heuristic Test-Time Scaling. https://arxiv.org/abs/[@arxiv2604_14820]
+- **[@arxiv2604_17010]** — Improving LLM Code Reasoning via Semantic Equivalence Self-Play with Formal Verification. https://arxiv.org/abs/[@arxiv2604_17010]
+- **[@arxiv2604_20926]** — Learning Reasoning World Models for Parallel Code. https://arxiv.org/abs/[@arxiv2604_20926]
+- **[@arxiv2604_24198]** — DataPRM - Process-Level Reward Modeling for Agentic Data Analysis. https://arxiv.org/abs/[@arxiv2604_24198]
+- **[@arxiv2605_05138]** — Executable World Models for ARC-AGI-3 in the Era of Coding Agents. https://arxiv.org/abs/[@arxiv2605_05138]
+- **[@arxiv2605_11006]** — TraceEval - An Execution-Verified Multi-Language Benchmark for Code Semantic Reasoning. https://arxiv.org/abs/[@arxiv2605_11006]
+
+---

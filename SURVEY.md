@@ -40,11 +40,7 @@ Two adjacent surveys cover non-overlapping ground. **A Survey on LLMs for Code G
 
 ## 2. Methodology
 
-**Corpus.** 184 PDFs in `papers.json`, assembled in four iterative passes between March and May 2026. Seed: CWM (2510.02387). Each pass expanded along a different axis — citation BFS via Semantic Scholar, targeted topic search for thin subdomains (latent-action WMs, safety, symbolic verification, agent memory, REPL-grounded), a 2026-specific sweep, and a final pass on reasoning models, PRMs, decompilation, diffusion code, mech-interp, ARC, and hardware/RTL. Of ~250 candidates considered across passes, 184 were accepted.
-
-**Inclusion.** A paper enters the corpus if it credibly intersects *both* world-model/state-tracking architectures and code generation, debugging, repair, or agentic coding. Date cutoff: arxiv submissions through 2026-05-15. Pure code-LLM papers without a world-model angle and pure vision world models (DreamerV1–V3, V-JEPA, Genie) are excluded except where cited as precedent.
-
-**Limitations.** No inter-rater reliability — one curator did the taxonomy coding. Inline numerical claims in §§6–14 rely on author abstracts and prior reading; §16 numbers were verified against source PDFs. Recency bias: 60% of the corpus is 2025 or later. Anglocentric arxiv-first selection skips Chinese-language preprint servers and industry technical reports. A fifth pass would change the count by ±15 without materially changing conclusions.
+The corpus is 184 arxiv preprints, assembled in four passes (March–May 2026) seeded from CWM (2510.02387) via Semantic Scholar citation BFS and targeted topic searches. A paper enters the corpus if it intersects both world-model/state-tracking architectures and code generation, debugging, repair, or agentic coding. Pure vision world models (DreamerV1–V3, V-JEPA, Genie) and pure code-LLM papers without a world-model angle are excluded except as cited precedent. Date cutoff: 2026-05-15. The full list is enumerated in `papers.json`. One curator did the taxonomy coding; numerical claims in §§6–14 derive from abstracts, §16 from source PDFs. 60% of the corpus is 2025 or later.
 
 ---
 
@@ -80,21 +76,9 @@ This survey uses **D throughout the catalog sections (§§6–16)** because that
 
 ### 3.2 What is modeled
 
-Orthogonal to D-vs-N, a fourth question asks *what* is modeled. The corpus splits across:
+Orthogonal to D-vs-N, *what* is modeled varies: variable values and stack frames (CWM, CodeExecutor); execution traces (NExT, SemCoder, TRACED); test outcomes (LEVER, RLEF); OS/web environment state (WebDreamer, Dyna-Think); repository state (RepoGraph); spec or developer intent (ATLAS, Re:Form); adversarial behavior (Double Life of CWMs). A system typically commits strongly to one or two of these.
 
-- variable values and stack frames (CWM, CodeExecutor)
-- linear or branching execution traces (NExT, SemCoder, TRACED)
-- test outcomes and runtime errors (LEVER, RLEF)
-- environment/OS/web state (WebDreamer, Dyna-Think)
-- repository state (RepoGraph, Understanding by Reconstruction)
-- developer task or specification (ATLAS, Re:Form)
-- adversarial behavior (Double Life of CWMs)
-
-A given system typically commits strongly to one or two of these.
-
-### 3.3 Behavioral vs architectural classification
-
-CWM occupies an instructive position. *Behaviorally*, it emits stack frames and variable bindings, which feels like an "explicit symbolic world model." *Architecturally*, it is a 32B Llama-class decoder with no separate dynamics head, RSSM, or inverse model. The two readings are both correct: CWM is **behaviorally explicit but architecturally implicit**. Earlier framings in the literature (and earlier drafts of this survey) collapsed these into a single "explicit WM" label; we recommend separating them. SemCoder, NExT, and TRACED follow the same pattern.
+CWM occupies an instructive position: behaviorally explicit (emits stack frames) but architecturally implicit (a 32B Llama-class decoder with no separate dynamics head). SemCoder, NExT, and TRACED follow the same pattern. The "explicit WM" label flattens this distinction; §17.1 develops the consequence.
 
 ---
 
@@ -138,19 +122,18 @@ The lineage is best understood as a sequence of inheriting questions. Each era's
 
 Diamond markers in the figure tag the moments where "world model" enters the *name* of the contribution.
 
-**Pre-2020 — Can a network execute code?** Zaremba & Sutskever's **Learning to Execute** (1410.4615) handed an LSTM character-level Python and asked it to predict output. The model worked on straight-line programs with bounded loops, but only with a curated curriculum, and only because the LSTM's constant memory was just enough to simulate the interpreter when the interpreter ran in constant memory too. Everything that followed in this lineage tried to escape that curse. **Neural Programmer-Interpreters** (1511.06279) and the **Differentiable Forth Interpreter** built differentiable program counters and call stacks — the bet that the right architecture would close the gap. **Dynamic Neural Program Embedding** (1711.07163) made the inverse move: run the real interpreter, embed the resulting state traces. **Neural Code Fusion** (1906.07181) and **IPA-GNN** (2010.12621) extended the GNN-over-execution playbook to the point where attention played the role of the program counter. By 2020 the lineage had answered its question — yes, a neural network can play interpreter, but only when the interpreter is encoded into its architecture, and these architectures did not transfer to Python, C, or assembly at corpus scale. Ha & Schmidhuber's **World Models** paper (1803.10122) had already named for vision and RL exactly the pattern this lineage was reaching for. The vocabulary existed; the coding community had not yet borrowed it.
+**Pre-2020 — Can a network execute code?** **Learning to Execute** (1410.4615) trained an LSTM to predict Python output on bounded-loop programs. **Neural Programmer-Interpreters** (1511.06279) and **Differentiable Forth** built differentiable program counters; **Dynamic Neural Program Embedding** (1711.07163) embedded real interpreter traces; **Neural Code Fusion** (1906.07181) and **IPA-GNN** (2010.12621) used GNN attention as a program counter. By 2020 the answer was yes — but only with the interpreter encoded into architecture, which did not scale to real languages. Ha & Schmidhuber (1803.10122) had named the pattern for vision-RL; the coding community had not yet borrowed it.
 
-**2020–2022 — Can the network's training include execution?** The era's reframing was simple: instead of *can the network execute*, ask *can we train a normally-shaped Transformer on enough execution evidence that semantics seep into its weights*. **Codex** (2107.03374) and **MBPP** (2108.07732) made code generation a real engineering target. **Show Your Work / Scratchpads** (2112.00114) made the decisive move: a Transformer that could not predict a program's output could predict it perfectly if it was allowed to emit the intermediate computation first. Same trick Dynamic Neural Program Embedding had pulled, now at LLM scale, in token space, without architectural surgery. The neural-as-interpreter program of 2014–2020 did not scale beyond toy languages; the next era's move was to bake execution into training data rather than architecture.
+**2020–2022 — Can the training include execution?** **Codex** (2107.03374) and **MBPP** (2108.07732) made code generation a target. **Scratchpads** (2112.00114) showed a Transformer could predict program output if allowed to emit intermediate computation first — the Dynamic-NPE move at LLM scale, without architectural surgery.
 
-**2023 — Trace pretraining as a named recipe.** **CodeExecutor** (2305.05383) made the recipe explicit: mutate competitive-programming submissions, run them in a sandbox, capture per-line state tokens, train a transformer to emit the trace from source. **TRACED** (2306.07487) generalized this to a pretraining auxiliary that any code-LLM could absorb. **CRUXEval** (2401.03065) provided the canonical input/output-prediction benchmark and suddenly there was a number that captured "does this model understand what code does, as opposed to what code looks like." In parallel, **Reflexion** (2303.11366) and **Self-Debug** (2304.05128) showed that an LLM's mistakes could be fed back to itself as natural-language critiques, **LEVER** (2302.08468) used execution to verify candidate generations during decoding, and **RAP** (2305.14992) framed the LLM itself as a world model and ran MCTS over its imagined rollouts. The year's unifying insight: execution traces are an auxiliary objective, not a separate model.
+**2023 — Trace pretraining as a named recipe.** **CodeExecutor** (2305.05383) trained a Transformer to emit per-line state traces from source; **TRACED** (2306.07487) generalized this to a pretraining auxiliary; **CRUXEval** (2401.03065) gave the canonical eval. In parallel, **Reflexion** (2303.11366) / **Self-Debug** (2304.05128) used execution feedback in-context; **LEVER** (2302.08468) used it during decoding; **RAP** (2305.14992) ran MCTS over an LLM-as-world-model.
 
-**2024 — From models that simulate to agents that act.** **SWE-bench** (2310.06770) replaced "write a function that passes a unit test" with "fix a real GitHub issue in a real repository." **CodeAct** (2402.01030) claimed the agent's action space should be Python code itself. **SWE-agent** (2405.15793) shipped the harness. **NExT** (2404.14662) inlined traces into the agent loop. **RLEF** (2410.02089) fed execution outcomes back as RL rewards. **WebDreamer** (2411.06559) transplanted Dreamer-style imagination to digital agents. **Generating Code World Models via MCTS** (2405.15383) introduced the literal phrase "Code World Models." What unified the year was a structural shift in *where* the world model lives: in 2023 it lived in the weights, surfaced through trace prediction; in 2024 it lived in the loop, in the agent's behavior under environmental feedback.
+**2024 — From models that simulate to agents that act.** **SWE-bench** (2310.06770) shifted the task to real GitHub repos. **CodeAct** (2402.01030), **SWE-agent** (2405.15793), **NExT** (2404.14662), **RLEF** (2410.02089), **WebDreamer** (2411.06559), and **Generating Code World Models via MCTS** (2405.15383, source of the name) define the agentic turn. The WM moved from weights to loop.
 
-**2025 — The CWM moment.** **DeepSeek-R1** (2501.12948) opened the year by showing that pure reasoning-RL on verifiable rewards could reach the frontier on math and code. **SWE-RL** (2502.18449) applied the same recipe to full SWE traces. **CoLA** (2503.21383) made the first concrete attempt at a Dreamer-for-LLMs: inverse-dynamics over latent actions, then RL over a learned codebook. **LLM-JEPA** (2509.14252) ported LeCun's joint-embedding predictive objective to language. **General Agents Contain World Models** (2506.01622) supplied a theorem: any agent satisfying a regret bound on goal-conditioned tasks must have learned a predictive model of its environment. Then in October, Meta FAIR released **CWM** (2510.02387) — a 32B open-weights model mid-trained on 5T tokens of Python execution traces and ForagerAgent trajectories from Dockerized repositories. The thing the 2014 LSTM was trying to be was now a downloadable checkpoint.
+**2025 — The CWM moment.** **DeepSeek-R1** (2501.12948) and **SWE-RL** (2502.18449) scaled reasoning-RL. **CoLA** (2503.21383) and **LLM-JEPA** (2509.14252) ported Dreamer- and JEPA-style ideas to LLMs. **General Agents Contain World Models** (2506.01622) provided the existence theorem. **CWM** (2510.02387) — 32B open-weights, mid-trained on 5T tokens of Python traces plus 3M ForagerAgent trajectories — made the artifact downloadable.
 
-**2026 — Stress-testing and broadening.** With the artifact in hand, the field pivoted to critique and generalization. **Debugging Code World Models** (2602.07672) catalogs CWM's failures on long traces and string-state representation. **Demystifying Errors in LLM Reasoning Traces** (2512.00215) audits where trace-trained models hallucinate. **Industrial CWM** (2604.03144) and **Parallel-Code WMs** (2604.20926) generalize the recipe to Verilog/GPU and parallelism semantics. **Executable World Models for ARC-AGI-3** (2605.05138) brings the generative-environment flavor to abstract visual reasoning. **Reinforcement World Model Learning for LLM Agents** (2602.05842) flips the standard recipe by training the WM rather than the policy.
+**2026 — Stress-testing and broadening.** **Debugging CWMs** (2602.07672) and **Demystifying Errors in LLM Reasoning Traces** (2512.00215) catalog failures. **Industrial CWM** (2604.03144), **Parallel-Code WMs** (2604.20926), and **Executable WMs for ARC-AGI-3** (2605.05138) generalize the recipe. **Reinforcement World Model Learning** (2602.05842) trains the WM rather than the policy.
 
-**The arc.** Across twelve years: *can a network execute code?* → *can a network's training include execution?* → *can an LLM agent simulate its environment?* → *is the world model a named artifact rather than a metaphor?* Each era's answer dissolved the previous bottleneck and exposed the next. Architecture gave way to data; data gave way to agency; agency gave way to artifacts. What was a half-philosophical question in 2014 — *does this network understand what code does* — became, in 2025, an operational one with an open-weights baseline. The field has not finished. The 2026 critique wave shows the artifact is brittle in ways the 2014 LSTM was never asked to be. But the trajectory is now legible.
 
 ---
 
@@ -265,16 +248,7 @@ CWM is a 32B dense decoder-only Transformer with grouped-query attention, slidin
 
 Important caveat (developed further in §17): the 65.8% headline is *not* pure pass@1 but best-of-16 with verifier reranking. Pure pass@1 is approximately 53–55%. The trace-mid-training contribution is not causally isolated from the ForagerAgent-trajectory contribution and from the joint-RL contribution. Without an ablation removing one while holding the others fixed, the "world model" component's causal role is unfalsifiable.
 
-### 7.6 Direct descendants of CWM
 
-- **Debugging Code World Models** (2602.07672) — probes where CWM fails on long traces and string state; finds long-horizon failures are dominated by *action hallucination*, not state-propagation error.
-- **Learning Reasoning World Models for Parallel Code** (2604.20926) — predicts race conditions and profiling artifacts from parallel source.
-- **Industrial CWM / InCoder-32B-Thinking** (2604.03144) — CWM recipe on Verilog and GPU execution traces.
-- **The Double Life of Code World Models** (2512.13821) — CWM trace predictions repurposed for malicious-behavior detection.
-- **Towards a Neural Debugger for Python** (2603.09951) — neural debugger as forward/inverse world model.
-- **Neural Computers** (2604.06425) — video-model-style WMs of CLI/GUI runtime from I/O traces.
-- **Generating Code World Models with LLMs Guided by MCTS** (2405.15383) — the WM is *the code itself*, synthesized by an LLM.
-- **General Agents Contain World Models** (2506.01622) — proves that sufficiently competent goal-conditioned agents must contain extractable world models, under restrictive conditions discussed critically in §17.
 
 ### 7.7 GIF-MCTS / Generating Code World Models via MCTS (2405.15383)
 
@@ -776,16 +750,3 @@ All citations in this survey use arxiv identifiers inline (e.g. `2510.02387`). E
 - **arxiv:2605.11006** — TraceEval - An Execution-Verified Multi-Language Benchmark for Code Semantic Reasoning. https://arxiv.org/abs/2605.11006
 
 ---
-
-## Appendix B · Glossary
-
-- **CWM** — Code World Model (2510.02387 and lineage).
-- **JEPA** — Joint Embedding Predictive Architecture (LeCun et al.).
-- **RSSM** — Recurrent State-Space Model (Dreamer family).
-- **PRM** — Process Reward Model.
-- **SWE agent** — Software-engineering agent operating on real repositories.
-- **Trace pretraining** — Pretraining where execution traces appear in input or target.
-- **Execution-grounded RL** — RL whose reward derives from program execution.
-- **Latent-imagination rollout** — Forward simulation in compressed latent space rather than token space.
-- **TTS** — Test-time scaling (sampling many candidates + verifier reranking at inference).
-- **GRPO** — Group Relative Policy Optimization (R1-family RL algorithm).
