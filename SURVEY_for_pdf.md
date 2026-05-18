@@ -1,5 +1,3 @@
-# A Comprehensive Survey of World Models for Coding
-
 ---
 
 ## Abstract
