@@ -138,7 +138,7 @@ CWM occupies an instructive position. *Behaviorally*, it emits stack frames and 
 
 The lineage is best understood as a sequence of inheriting questions. Each era's answer dissolved the previous era's bottleneck and exposed the next.
 
-![Twelve-year arc of code world models (2014–2026). Three parallel lineages — neural execution, world models / RL, and code LLMs — converge in 2025–2026 around the named artifact CWM. ◆ marks the first paper to use "world model" / "Dreamer" in a contribution name; ◆◆ marks CWM as the named open-weights artifact.](fig_timeline.pdf)
+(See Figure 1 at the start of the paper for the timeline diagram.)
 
 Diamonds (◆) mark moments where "world model" enters the *name* of the contribution.
 
