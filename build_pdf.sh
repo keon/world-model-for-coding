@@ -35,10 +35,12 @@ def repl(m):
     if ctr["n"] == 1:
         return "(See Figure 1 at the start of the paper for the timeline diagram.)"
     elif ctr["n"] == 2:
-        return ("![Taxonomy of world models for coding. Three modeling axes "
-                "(code, agents, tasks) bridged by JEPA / Dreamer / latent-action "
-                "discussion in §11. Specialized domains and synthesis chapters "
-                "sit below.](fig_taxonomy.pdf)")
+        return ("![Representation taxonomy of code world models. Each row is "
+                "one representation class (left), its vision precedent (centre), "
+                "and the code-WM systems that instantiate it (right). Three "
+                "classes — Global Latent Vector (Dreamer-style), Spatial/Structural "
+                "Grid, and Decomposed Object/Slot — have no code exemplar in the "
+                "corpus and are the survey's white-space gaps.](fig_taxonomy.pdf)")
     return m.group(0)
 text = re.sub(r"```\n(.*?)```", repl, text, flags=re.DOTALL)
 

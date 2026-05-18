@@ -124,84 +124,84 @@ def timeline():
 
 
 def taxonomy():
-    fig, ax = plt.subplots(figsize=(9, 6))
+    """Visualize the representation taxonomy and its three white spaces.
+
+    Six rows, one per representation class. For each row: representation
+    name, vision analog, and code-WM exemplars. Three classes (GLV, SLG,
+    DOR) have no code exemplar and are visually muted.
+    """
+    fig, ax = plt.subplots(figsize=(11, 5.5))
     fig.patch.set_facecolor("white")
 
-    ACCENT = "#2c4a82"
     INK = "#1a1a1a"
-    MUTED = "#888888"
+    MUTED = "#9a9a9a"
+    GAP = "#c14a4a"
+    ACCENT = "#2c4a82"
     RULE = "#dcdcdc"
 
-    # Column headers
-    columns = [
-        ("Modeling Code",   1.5),
-        ("Modeling Agents", 5.0),
-        ("Modeling Tasks",  8.5),
+    rows = [
+        # (representation, vision analog, code exemplars or None for "white space")
+        ("Token Sequence (TS)",
+         "Token-as-pixel (IRIS, Genie, Sora)",
+         "CWM, CodeExecutor, TRACED, NExT, SemCoder"),
+        ("Synthesized executable (N3)",
+         "—",
+         "GIF-MCTS, WorldCoder, ARC executable WMs"),
+        ("Global Latent Vector (GLV)",
+         "RSSM (Dreamer V1–V3)",
+         None),
+        ("Spatial / Structural Grid (SLG)",
+         "OccWorld, DriveWorld (BEV/voxel)",
+         None),
+        ("Decomposed Object / Slot (DOR)",
+         "SlotFormer, object-centric WMs",
+         None),
     ]
-    for label, x in columns:
-        ax.text(x, 5.4, label, ha="center", va="center",
-                fontsize=11, fontweight="bold", color=ACCENT)
-        ax.plot([x - 1.4, x + 1.4], [5.15, 5.15],
-                color=ACCENT, linewidth=1.1, solid_capstyle="round")
 
-    # Stack of section labels per column (no boxes, just text)
-    items = {
-        1.5: [
-            ("§6",  "Foundations"),
-            ("§7",  "Trace pretraining"),
-            ("§7",  "CWM lineage"),
-        ],
-        5.0: [
-            ("§8",  "Web / OS / SWE agents"),
-            ("§9",  "Execution-grounded RL"),
-            ("§10", "Planning & search"),
-        ],
-        8.5: [
-            ("§13", "Reasoning + memory"),
-            ("§14", "Verification + probing"),
-            ("§14", "Safety"),
-        ],
-    }
-    for x, rows in items.items():
-        y = 4.7
-        for tag, name in rows:
-            ax.text(x - 1.1, y, tag, ha="right", va="center",
-                    fontsize=9, color=MUTED, family="monospace")
-            ax.text(x - 0.95, y, name, ha="left", va="center",
-                    fontsize=10, color=INK)
-            y -= 0.45
+    # Column x positions
+    x_repr   = 0.2
+    x_vision = 4.0
+    x_code   = 7.4
 
-    # Horizontal rule
-    ax.plot([0.2, 9.8], [2.85, 2.85], color=RULE, linewidth=0.8)
+    # Header
+    y_top = len(rows) + 0.3
+    ax.text(x_repr,   y_top, "Representation", fontsize=10.5,
+            fontweight="bold", color=ACCENT)
+    ax.text(x_vision, y_top, "Vision analog",  fontsize=10.5,
+            fontweight="bold", color=ACCENT)
+    ax.text(x_code,   y_top, "Code-WM exemplars", fontsize=10.5,
+            fontweight="bold", color=ACCENT)
+    ax.plot([x_repr - 0.05, 12.0], [y_top - 0.25, y_top - 0.25],
+            color=ACCENT, linewidth=1.1, solid_capstyle="round")
 
-    # Cross-cutting bridge
-    ax.text(5.0, 2.55, "§11   JEPA · Dreamer · latent-action gap",
-            ha="center", va="center", fontsize=10.5,
-            fontweight="bold", color=ACCENT, style="italic")
-    ax.text(5.0, 2.2, "(applies across all three columns above)",
-            ha="center", va="center", fontsize=8.5, color=MUTED)
+    # Rows
+    for i, (repr_name, vision, code) in enumerate(rows):
+        y = len(rows) - i - 0.4
+        is_gap = code is None
+        ink_row = MUTED if is_gap else INK
+        weight = "normal"
+        ax.text(x_repr,   y, repr_name, fontsize=10, color=ink_row,
+                fontweight=weight)
+        ax.text(x_vision, y, vision,    fontsize=9.5, color=MUTED)
+        if is_gap:
+            ax.text(x_code, y, "white space — no code exemplar",
+                    fontsize=9.5, color=GAP, style="italic",
+                    fontweight="bold")
+        else:
+            ax.text(x_code, y, code, fontsize=9.5, color=INK)
+        # Light separator
+        if i < len(rows) - 1:
+            ax.plot([x_repr - 0.05, 12.0], [y - 0.4, y - 0.4],
+                    color=RULE, linewidth=0.5)
 
-    # Horizontal rule
-    ax.plot([0.2, 9.8], [1.85, 1.85], color=RULE, linewidth=0.8)
+    # Footnote
+    ax.text(x_repr, -0.5,
+            "Verifiers (Lean / Dafny / Z3) and PRMs are intentionally absent: "
+            "a verifier is a grounding oracle, not a representation; a PRM is a critic, not a forward predictor.",
+            fontsize=8.5, color=MUTED, style="italic", wrap=True)
 
-    # Synthesis chapters laid out horizontally
-    synth = [
-        ("§12",   "Specialized domains",                 1.5, 1.4),
-        ("§15-16","Benchmarks · Empirical landscape",    5.0, 1.4),
-        ("§17",   "Critical perspectives",               8.5, 1.4),
-    ]
-    for tag, name, x, y in synth:
-        ax.text(x, y, tag, ha="center", va="center",
-                fontsize=9, color=MUTED, family="monospace")
-        ax.text(x, y - 0.35, name, ha="center", va="center",
-                fontsize=10, color=INK)
-
-    # Footer
-    ax.text(5.0, 0.25, "§18   Open problems         §19   Conclusion",
-            ha="center", va="center", fontsize=9.5, color=INK)
-
-    ax.set_xlim(0, 10)
-    ax.set_ylim(-0.2, 6.0)
+    ax.set_xlim(0, 12.5)
+    ax.set_ylim(-0.9, len(rows) + 0.7)
     ax.axis("off")
 
     plt.tight_layout()

@@ -107,7 +107,7 @@ Diamond markers in the figure tag the moments where "world model" enters the *na
 
 Two cuts at the taxonomy are useful, and they are complementary. The first is a *lineage* cut — which research thread produced the system — and is the basis for §§6–13. The second, more durable cut adapts the three-axis framework of Li et al. ([@arxiv2510_16732], *A Comprehensive Survey on World Models for Embodied AI*) to the code domain. The lineage map is below; the three axes are developed in §§5.1–5.3.
 
-![Taxonomy of world models for coding. Three modeling axes (code, agents, tasks) bridged by JEPA / Dreamer / latent-action discussion in §11. Specialized domains and synthesis chapters sit below.](fig_taxonomy.pdf)
+![Representation taxonomy of code world models. Each row is one representation class (left), its vision precedent (centre), and the code-WM systems that instantiate it (right). Three classes — Global Latent Vector (Dreamer-style), Spatial/Structural Grid, and Decomposed Object/Slot — have no code exemplar in the corpus and are the survey's white-space gaps.](fig_taxonomy.pdf)
 
 Adjacent WM surveys converge on overlapping splits that the three-axis framework subsumes as projections. Ding et al. [@arxiv2411_14499] split top-level by *implicit representation* vs *future prediction*. JiahuaDong's awesome-list organizes by *paradigm*: RL-based / observation-generative / latent-space / object-centric. knightnemo's list surfaces *pixel vs mesh vs latent* as cross-cutting tags. The three axes — functionality, temporal modeling, and representation — capture the choices a system makes regardless of which lineage it belongs to.
 
