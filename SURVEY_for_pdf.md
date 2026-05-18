@@ -138,7 +138,7 @@ CWM occupies an instructive position. *Behaviorally*, it emits stack frames and 
 
 The lineage is best understood as a sequence of inheriting questions. Each era's answer dissolved the previous era's bottleneck and exposed the next.
 
-![Twelve-year arc of code world models (2014–2026). Three parallel lineages — neural execution, world models / RL, and code LLMs — converge in 2025–2026 around the named artifact CWM. ◆ marks the first paper to use "world model" / "Dreamer" in a contribution name; ◆◆ marks CWM as the named open-weights artifact.](fig_timeline.pdf){width=100%}
+![Twelve-year arc of code world models (2014–2026). Three parallel lineages — neural execution, world models / RL, and code LLMs — converge in 2025–2026 around the named artifact CWM. ◆ marks the first paper to use "world model" / "Dreamer" in a contribution name; ◆◆ marks CWM as the named open-weights artifact.](fig_timeline.pdf)
 
 Diamonds (◆) mark moments where "world model" enters the *name* of the contribution.
 
@@ -162,7 +162,7 @@ Diamonds (◆) mark moments where "world model" enters the *name* of the contrib
 
 Two cuts at the taxonomy are useful, and they are complementary. The first is a *lineage* cut — which research thread produced the system — and is the basis for §§6–13. The second, more durable cut adapts the three-axis framework of Li et al. ([@arxiv2510_16732], *A Comprehensive Survey on World Models for Embodied AI*) to the code domain. The lineage map is below; the three axes are developed in §§5.1–5.3.
 
-![Taxonomy of world models for coding. The three primary modeling axes (code, agents, tasks) are bridged by the JEPA / Dreamer / latent-action discussion in §11. Specialized domains and synthesis chapters sit below.](fig_taxonomy.pdf){width=100%}
+![Taxonomy of world models for coding. The three primary modeling axes (code, agents, tasks) are bridged by the JEPA / Dreamer / latent-action discussion in §11. Specialized domains and synthesis chapters sit below.](fig_taxonomy.pdf)
 
 Adjacent WM surveys converge on overlapping splits that the three-axis framework subsumes as projections. Ding et al. [@arxiv2411_14499] split top-level by *implicit representation* vs *future prediction*. JiahuaDong's awesome-list organizes by *paradigm*: RL-based / observation-generative / latent-space / object-centric. knightnemo's list surfaces *pixel vs mesh vs latent* as cross-cutting tags. The three axes — functionality, temporal modeling, and representation — capture the choices a system makes regardless of which lineage it belongs to.
 

@@ -1,22 +1,16 @@
 # A Comprehensive Survey of World Models for Coding
 
-*Last updated 2026-05*
-
-> **Genre note.** This document is a hybrid: §§6–16 are a conventional survey of the field (foundations, lineages, benchmarks, empirical landscape), while §17 is an explicitly argumentative critical synthesis. Readers who want only the catalog can skip §17; readers who want only the criticism can read the Theses Summary below plus §17 and skip §§6–16. The two halves are meant to be read together — neither alone captures the field's current shape.
-
 ---
 
 ## Abstract
 
-A *world model* is an internal predictor an agent maintains over the dynamics of its environment, used to imagine the consequences of actions. In coding, the environment is the program itself — its runtime state, its execution trace, the filesystem it manipulates, the tests it must satisfy, the developer task it is solving. Twelve years after Zaremba & Sutskever asked whether a network could execute code (1410.4615), and seven months after Meta FAIR released CWM (2510.02387) as the first openly-released LLM explicitly branded a Code World Model, the question has changed. It is no longer controversial that internal models of execution are *learnable*; whether they are *necessary*, *architecturally separable*, or *causally responsible* for coding-agent gains remains unsettled. The open questions are whether the *named artifact* "code world model" is a structural commitment or a marketing label, whether trace pretraining buys what it claims, and whether the field's Dreamer-shaped vocabulary will survive when the empirical evidence comes in.
+A *world model* is an internal predictor over environment dynamics, used to imagine the consequences of actions. In coding, the environment is the program: its runtime state, execution trace, filesystem, tests, and developer task. Twelve years after Zaremba & Sutskever asked whether a network could execute code (1410.4615), and seven months after Meta FAIR released CWM (2510.02387) as the first open-weights LLM branded a Code World Model, the question has shifted. Internal models of execution are demonstrably *learnable*; whether they are *necessary*, *architecturally separable*, or *causally responsible* for coding-agent gains is unsettled.
 
-This survey synthesizes 184 papers around the world-model lens. We define the object of study with two distinct definitions — a permissive *descriptive* one (what the field currently calls a code WM) and a strict *normative* one (architectural commitment to forward state prediction); trace its twelve-year arc; build a three-axis taxonomy (functionality × temporal × representation); produce technical system cards for thirteen representative systems; assemble protocol-stratified benchmark tables for SWE-bench, CRUXEval, web agents, and formal verification; develop seven critical theses where the field overclaims; and identify the open problems where new work would matter most. The single most defensible empirical claim is that *execution-grounded supervision improves code agents on runtime-reasoning-heavy benchmarks*; the single most defensible critical claim is that broader inferences from this to "world models in coding" remain underdetermined by the evidence at this date.
+This survey synthesizes 184 papers under two definitions — a permissive *descriptive* one matching field usage, and a strict *normative* one requiring forward-prediction machinery. It traces a twelve-year arc; builds a three-axis taxonomy (functionality × temporal × representation); produces system cards for thirteen representative systems; assembles protocol-stratified tables for SWE-bench, CRUXEval, web agents, and formal verification; develops seven critical theses; and lists open problems. The defensible empirical claim is that execution-grounded supervision improves code agents on runtime-reasoning benchmarks. The defensible critical claim is that broader inferences to "world models for coding" remain underdetermined.
 
 ---
 
-## Theses Summary (Read First)
-
-The survey is a hybrid: catalog plus critique. Readers pressed for time can read this summary and §17 (Critical Perspectives) and skip the lineage chapters (§§6–14). Readers entering the field should read §§1–5 first, then §§6–16, then §17. The catalog and the critique are meant to be read together.
+## Theses Summary
 
 The seven critical theses developed in §17, each grounded in a specific disconfirmation from the corpus:
 
@@ -34,8 +28,6 @@ The seven critical theses developed in §17, each grounded in a specific disconf
 
 7. **The evaluation gap is the structural reason the field looks confused.** No benchmark holds policy fixed and varies WM quality. Models with 85–98% output-prediction accuracy still produce traces with systematic errors throughout — outcome accuracy decouples from process fidelity.
 
-These theses are the survey's main contribution. §§6–16 catalog the work; §§16–17 provide the empirical and critical synthesis that grounds the theses; §18 lists open problems.
-
 ---
 
 ## 1. Introduction
@@ -44,43 +36,15 @@ Autoregressive code LLMs generate tokens conditioned on syntactic context. Corre
 
 Two adjacent surveys cover non-overlapping ground. **A Survey on LLMs for Code Generation** (2406.00515) maps the code-LLM space without the world-model lens. **Understanding World or Predicting Future** (2411.14499) maps world models in general without the code lens. **A Comprehensive Survey on World Models for Embodied AI** (2510.16732) maps embodied world models but excludes the coding domain. The intersection — the subject of this document — has cohered only recently into a recognizable program.
 
-We aim for three things at once: comprehensive coverage of the corpus, technical depth on the canonical systems, and an honest accounting of where the prevailing rhetoric outruns the evidence. The first two are owed to readers entering the field; the third is owed to those already in it.
-
 ---
 
 ## 2. Methodology
 
-**Corpus construction.** The 184-PDF corpus enumerated in `papers.json` was assembled in four iterative passes between March and May 2026. The seed paper was CWM (2510.02387). Each pass expanded the corpus along a different axis: (i) snowball search on cited and citing papers via Semantic Scholar's reference API and arxiv listings; (ii) targeted topic searches on subdomains where the previous pass was thin (latent-action WMs for LLMs; safety/malicious-code; symbolic-execution and formal verification; agent memory; REPL-grounded models); (iii) a 2026-specific sweep to capture papers the earlier passes missed because of arxiv-ID ambiguity; (iv) a focused fourth pass on reasoning models, process reward models, test-generation, decompilation, diffusion code models, mech-interp, ARC synthesis, self-improvement, Verilog/RTL, and major 2026 capstones. Each pass produced a written rationale for accepted and rejected candidates.
+**Corpus.** 184 PDFs in `papers.json`, assembled in four iterative passes between March and May 2026. Seed: CWM (2510.02387). Each pass expanded along a different axis — citation BFS via Semantic Scholar, targeted topic search for thin subdomains (latent-action WMs, safety, symbolic verification, agent memory, REPL-grounded), a 2026-specific sweep, and a final pass on reasoning models, PRMs, decompilation, diffusion code, mech-interp, ARC, and hardware/RTL. Of ~250 candidates considered across passes, 184 were accepted.
 
-**Inclusion criteria.** A paper was included if it credibly intersected *both* (a) world-modeling, state-tracking, or environment-prediction architectures, and (b) code generation, debugging, repair, or agentic coding. Pure code-LLM papers without a world-model angle and pure world-model papers without a code angle were excluded. Where the boundary was ambiguous, we erred on the side of inclusion when the paper introduced a representation, training objective, or evaluation that could plausibly be adopted by code-WM work.
+**Inclusion.** A paper enters the corpus if it credibly intersects *both* world-model/state-tracking architectures and code generation, debugging, repair, or agentic coding. Date cutoff: arxiv submissions through 2026-05-15. Pure code-LLM papers without a world-model angle and pure vision world models (DreamerV1–V3, V-JEPA, Genie) are excluded except where cited as precedent.
 
-**Exclusion criteria.** Excluded: pure transformer scaling papers; pure vision world models (DreamerV1/V2/V3, V-JEPA, Genie) except where cited as architectural precedent; generic RL theory; classical PL foundations; benchmark surveys without methodological contribution. We retained DreamerV1–V3 as named citations in §11 because they ground the latent-action discussion, but did not include their PDFs in the corpus.
-
-**Date cutoff.** Papers with arxiv submission dates through 2026-05-15. Arxiv-ID format YYMM.NNNNN means IDs beginning 2601, 2602, 2603, 2604, 2605 are valid 2026 papers (Jan–May 2026), not future-dated. An earlier survey pass mistakenly excluded these; the fourth pass corrected the omission.
-
-**Selection bias and reproducibility.** Two biases are explicit. First, anglocentric arxiv-first selection — we did not systematically cover Chinese-language preprint servers, workshop proceedings without arxiv copies, or industry technical reports. Second, recency bias — 60% of the corpus is from 2025 onward, reflecting the field's actual growth curve but also our search recency. The full corpus is enumerated in `papers.json` with arxiv IDs, titles, and filenames; readers can regenerate the bibliography from this index.
-
-**Sources reconciled with adjacent surveys.** We compared our taxonomy and corpus against three awesome-list repositories (knightnemo/Awesome-World-Models, JiahuaDong/Awesome-World-Models, tsinghua-fib-lab/World-Model) and two prior surveys (Ding et al. 2411.14499 on world models in general; Li et al. 2510.16732 on world models for embodied AI). The three-axis taxonomy in §5 is adapted from Li et al. with code-specific representation classes added. Where our judgment diverges from these adjacent works — for example, in our classification of CWM as architecturally a token-policy rather than a world-model proper (§17.1) — we mark the divergence explicitly.
-
-**Taxonomy coding.** Each paper was assigned at least one lineage label (§§6–13) and at least one representation label (§5.3 table). The assignments were made by one of us and are recorded in the per-section enumerations and `README.md`. We have not yet performed inter-rater reliability checks; readers should treat the assignments as one curator's best judgment, not consensus.
-
-**Search procedure (for reproducibility).** Seed: arxiv 2510.02387. Search engines: arxiv listing API (cs.SE, cs.PL, cs.LG, cs.CL submission categories), Semantic Scholar Graph API (`/paper/arXiv:{id}/references` and `/paper/arXiv:{id}/citations`, fields=title,externalIds,abstract,year), and WebSearch with query variants enumerated below. Date cutoff: arxiv submissions through 2026-05-15.
-
-Representative search queries used across the four passes (non-exhaustive):
-- "world model code generation", "code world model"
-- "neural code execution", "learning to execute"
-- "execution trace pretraining LLM", "trace-aware code model"
-- "Dreamer code", "JEPA LLM", "latent action LLM"
-- "SWE agent reinforcement learning", "agentic coding world model"
-- "self-debugging execution simulation", "trace-driven program repair"
-- "symbolic execution LLM", "verified code generation Dafny", "Lean code agent"
-- "diffusion code model", "decompilation LLM semantic equivalence"
-- "Verilog RL world model", "ARC executable world model"
-- "process reward model code", "long-CoT code reasoning"
-
-**Inclusion / exclusion counts.** Pass 1 considered ~70 candidates, accepted 31. Pass 2 considered ~40, accepted 20 (focused on 2026 papers earlier passes missed). Pass 3 considered ~80, accepted 52 via citation BFS from 11 central papers. Pass 4 considered ~60, accepted 28 across 5 thin niches. Final corpus: 184 PDFs (one was added late: 2510.16732). Total candidates considered: ~250. Rejection reasons recorded per-paper in the pass reports.
-
-**Limitations of this methodology.** Four. (1) No formal inter-rater reliability metric — one curator did the taxonomy coding. (2) No systematic verification of the headline numerical claims in every cited paper; §16 numbers were verified by reading the source PDFs but §§7–14 inline claims rely on abstracts and our prior reading. (3) The corpus is unstable — between drafts several 2026 papers we initially excluded as off-topic turned out to be relevant. A fifth pass would change the count by ±15 papers without materially changing the survey's conclusions. (4) Selection bias toward arxiv-first, anglophone, code-LLM-adjacent sources; we did not systematically cover Chinese-language preprint servers, workshop proceedings without arxiv copies, or industry technical reports.
+**Limitations.** No inter-rater reliability — one curator did the taxonomy coding. Inline numerical claims in §§6–14 rely on author abstracts and prior reading; §16 numbers were verified against source PDFs. Recency bias: 60% of the corpus is 2025 or later. Anglocentric arxiv-first selection skips Chinese-language preprint servers and industry technical reports. A fifth pass would change the count by ±15 without materially changing conclusions.
 
 ---
 

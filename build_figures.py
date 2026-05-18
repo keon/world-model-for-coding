@@ -27,7 +27,7 @@ LANE_COLORS = {
 
 
 def timeline():
-    fig, ax = plt.subplots(figsize=(14, 8.5))
+    fig, ax = plt.subplots(figsize=(11, 6))
     fig.patch.set_facecolor("white")
 
     lanes = ["Neural execution", "World models / RL", "Code LLMs"]
@@ -124,7 +124,7 @@ def timeline():
 
 
 def taxonomy():
-    fig, ax = plt.subplots(figsize=(14, 9))
+    fig, ax = plt.subplots(figsize=(11, 8))
     fig.patch.set_facecolor("white")
 
     def box(x, y, w, h, text, fc, ec, fontsize=10, weight="normal",
