@@ -1,0 +1,21 @@
+% Minimal trimspaces.sty stub.
+% Provides just the macros required by environ.sty.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{trimspaces}[2009/09/17 v1.1 Trim spaces from a token list (stub)]
+
+\def\trim@spaces#1{%
+  \romannumeral-`\q\trim@trim@\noexpand#1\trim@mark@}
+\def\trim@trim@#1\trim@mark@{\trim@trim@@#1\trim@mark@}
+\def\trim@trim@@#1 \trim@mark@{\trim@@trim#1\trim@mark@}
+\def\trim@@trim#1\trim@mark@{ #1}
+
+\def\trim@spaces@noexp#1{%
+  \trim@trim@\noexpand#1\trim@mark@}
+
+\def\trim@pre@space#1{%
+  \trim@trim@@#1\trim@mark@}
+
+\def\trim@post@space#1{%
+  \trim@@trim#1\trim@mark@}
+
+\endinput
