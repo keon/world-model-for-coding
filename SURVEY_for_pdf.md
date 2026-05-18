@@ -149,39 +149,9 @@ CWM occupies an instructive position. *Behaviorally*, it emits stack frames and 
 
 The lineage is best understood as a sequence of inheriting questions. Each era's answer dissolved the previous era's bottleneck and exposed the next.
 
-```
-                    LINEAGE 1                    LINEAGE 2                  LINEAGE 3
-                    Neural execution             World models / RL          Code LLMs
-                    ─────────────────            ─────────────────          ──────────
+![Twelve-year arc of code world models (2014–2026). Three parallel lineages — neural execution, world models / RL, and code LLMs — converge in 2025–2026 around the named artifact CWM. ◆ marks the first paper to use "world model" / "Dreamer" in a contribution name; ◆◆ marks CWM as the named open-weights artifact.](fig_timeline.pdf){width=100%}
 
-2014   ─┬─ Learning to Execute [@arxiv1410_4615]
-        │   LSTM seq2seq predicts program output
-2015    │  Neural Programmer-Interpreters [@arxiv1511_06279]
-2017    │  Dynamic Neural Program Embedding [@arxiv1711_07163]
-2018    │                                    Ha & Schmidhuber [@arxiv1803_10122]
-2019    │  Neural Code Fusion [@arxiv1906_07181]
-2020   ─┴─ IPA-GNN [@arxiv2010_12621] — interpreter-architectures stall
-                ▼                                                              ▼
-2021                                                              Codex [@arxiv2107_03374]
-              Show Your Work / Scratchpads [@arxiv2112_00114] — intermediate compute
-2022                                                              CodeRL [@arxiv2207_01780]
-2023      CodeExecutor [@arxiv2305_05383] — first trace pretraining
-          TRACED [@arxiv2306_07487] — trace as auxiliary objective
-          RAP [@arxiv2305_14992] — LLM-as-world-model + MCTS                SWE-bench [@arxiv2310_06770]
-2024      NExT [@arxiv2404_14662], SemCoder [@arxiv2406_01006]                   SWE-agent [@arxiv2405_15793]
-          Gen. Code World Models via MCTS [@arxiv2405_15383] ◆── name appears
-          WebDreamer [@arxiv2411_06559] ◆── Dreamer-for-web-agents          RLEF [@arxiv2410_02089]
-2025      DeepSeek-R1 [@arxiv2501_12948] — reasoning-RL pivot               SWE-RL [@arxiv2502_18449]
-          CoLA [@arxiv2503_21383] ◆── Dreamer-for-LLMs first concrete       LLM-JEPA [@arxiv2509_14252]
-          General Agents Contain WMs [@arxiv2506_01622]                     CLEVER [@arxiv2505_13938]
-          CWM [@arxiv2510_02387] ◆◆── the named open-weights artifact       ATLAS [@arxiv2512_10173]
-2026      Debugging CWMs [@arxiv2602_07672] — critique era
-          Industrial / Parallel CWMs ([@arxiv2604_03144], [@arxiv2604_20926])
-          Demystifying Errors in Traces [@arxiv2512_00215]
-          Executable WMs for ARC-AGI-3 [@arxiv2605_05138]
-                                                                ▼
-                                                  the WM is now an artifact, not a hope
-```
+*(For the text-only version of this diagram see SURVEY.md on the repository.)*
 
 Diamonds (◆) mark moments where "world model" enters the *name* of the contribution.
 
@@ -205,31 +175,7 @@ Diamonds (◆) mark moments where "world model" enters the *name* of the contrib
 
 Two cuts at the taxonomy are useful, and they are complementary. The first is a *lineage* cut — which research thread produced the system — and is the basis for §§6–13. The second, more durable cut adapts the three-axis framework of Li et al. ([@arxiv2510_16732], *A Comprehensive Survey on World Models for Embodied AI*) to the code domain. The lineage map is below; the three axes are developed in §§5.1–5.3.
 
-```
-                        World Models for Coding
-                                  │
-        ┌─────────────────────────┼─────────────────────────┐
-        │                         │                         │
-  Modeling Code             Modeling Agents          Modeling Tasks
-        │                         │                         │
- §6 Foundations          §8 Web/OS/SWE agents       §13 Reasoning + memory
- §7 Trace pretraining    §9 Execution-grounded RL   §14 Verification + safety
- §7 CWM proper           §10 Planning & search       §14 Probing + interp
-        │                         │                         │
-        └─────────────── §11 JEPA / Dreamer ──────────────────┘
-                          (latent-action gap)
-                                  │
-                       §12 Specialized domains
-              (diffusion, decompilation, hardware, ARC)
-                                  │
-                          §15 Benchmarks
-                                  │
-                   §16 Empirical Landscape
-                                  │
-                  §17 Critical Perspectives
-                                  │
-                       §18 Open problems
-```
+![Taxonomy of world models for coding. The three primary modeling axes (code, agents, tasks) are bridged by the JEPA / Dreamer / latent-action discussion in §11. Specialized domains and synthesis chapters sit below.](fig_taxonomy.pdf){width=100%}
 
 Adjacent WM surveys converge on overlapping splits that the three-axis framework subsumes as projections. Ding et al. [@arxiv2411_14499] split top-level by *implicit representation* vs *future prediction*. JiahuaDong's awesome-list organizes by *paradigm*: RL-based / observation-generative / latent-space / object-centric. knightnemo's list surfaces *pixel vs mesh vs latent* as cross-cutting tags. The three axes — functionality, temporal modeling, and representation — capture the choices a system makes regardless of which lineage it belongs to.
 
