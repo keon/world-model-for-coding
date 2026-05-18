@@ -1,14 +1,14 @@
-# A Comprehensive Survey on World Models for Coding
+# World Models for Coding: A Critical Survey of Execution-Grounded Code Models, Agentic Evaluation, and Overloaded Terminology
 
-*A critical survey and synthesis · last updated 2026-05*
+*Last updated 2026-05*
 
-> **Genre note.** This document is a hybrid: §§6–14 are a conventional survey of the field, while §17 is an explicitly argumentative critical synthesis. Readers who want only the catalog can skip §17; readers who want only the criticism can skip §§6–14. The two halves are meant to be read together — neither alone captures the field's current shape.
+> **Genre note.** This document is a hybrid: §§6–16 are a conventional survey of the field (foundations, lineages, benchmarks, empirical landscape), while §17 is an explicitly argumentative critical synthesis. Readers who want only the catalog can skip §17; readers who want only the criticism can read the Theses Summary below plus §17 and skip §§6–16. The two halves are meant to be read together — neither alone captures the field's current shape.
 
 ---
 
 ## Abstract
 
-A *world model* is an internal predictor an agent maintains over the dynamics of its environment, used to imagine the consequences of actions. In coding, the environment is the program itself — its runtime state, its execution trace, the filesystem it manipulates, the tests it must satisfy, the developer task it is solving. Twelve years after Zaremba & Sutskever asked whether a network could execute code (1410.4615), and seven months after Meta FAIR released CWM (2510.02387) as the first openly-released LLM explicitly branded a Code World Model, the question has changed. It is no longer whether internal models of execution are necessary or learnable — both are settled — but whether the *named artifact* "code world model" is a structural commitment or a marketing label, whether trace pretraining buys what it claims, and whether the field's Dreamer-shaped vocabulary will survive when the empirical evidence comes in.
+A *world model* is an internal predictor an agent maintains over the dynamics of its environment, used to imagine the consequences of actions. In coding, the environment is the program itself — its runtime state, its execution trace, the filesystem it manipulates, the tests it must satisfy, the developer task it is solving. Twelve years after Zaremba & Sutskever asked whether a network could execute code (1410.4615), and seven months after Meta FAIR released CWM (2510.02387) as the first openly-released LLM explicitly branded a Code World Model, the question has changed. It is no longer controversial that internal models of execution are *learnable*; whether they are *necessary*, *architecturally separable*, or *causally responsible* for coding-agent gains remains unsettled. The open questions are whether the *named artifact* "code world model" is a structural commitment or a marketing label, whether trace pretraining buys what it claims, and whether the field's Dreamer-shaped vocabulary will survive when the empirical evidence comes in.
 
 This survey synthesizes 184 papers around the world-model lens. We define the object of study with two distinct definitions — a permissive *descriptive* one (what the field currently calls a code WM) and a strict *normative* one (architectural commitment to forward state prediction); trace its twelve-year arc; build a three-axis taxonomy (functionality × temporal × representation); produce technical system cards for thirteen representative systems; assemble protocol-stratified benchmark tables for SWE-bench, CRUXEval, web agents, and formal verification; develop seven critical theses where the field overclaims; and identify the open problems where new work would matter most. The single most defensible empirical claim is that *execution-grounded supervision improves code agents on runtime-reasoning-heavy benchmarks*; the single most defensible critical claim is that broader inferences from this to "world models in coding" remain underdetermined by the evidence at this date.
 
@@ -16,11 +16,11 @@ This survey synthesizes 184 papers around the world-model lens. We define the ob
 
 ## Theses Summary (Read First)
 
-The survey is a hybrid: catalog plus critique. Readers pressed for time can read this summary and §6 (Critical Perspectives, expanded below) and skip the lineage chapters (§§8–15). Readers entering the field should read §§1–5 and §§7–17 first, then return here. The catalog and the critique are meant to be read together.
+The survey is a hybrid: catalog plus critique. Readers pressed for time can read this summary and §17 (Critical Perspectives) and skip the lineage chapters (§§6–14). Readers entering the field should read §§1–5 first, then §§6–16, then §17. The catalog and the critique are meant to be read together.
 
-The seven critical theses developed in §6, each grounded in a specific disconfirmation from the corpus:
+The seven critical theses developed in §17, each grounded in a specific disconfirmation from the corpus:
 
-1. **The "world model" label has become overloaded.** Under the field's permissive descriptive definition, CWM, TRACED, SemCoder, LLM-JEPA, and DyMo are all "world models" despite being architecturally standard LLMs with enriched training. A strict normative definition (architectural commitment to forward state prediction) admits only CoLA and the Dreamer/JEPA gestures.
+1. **The "world model" label has become overloaded.** Under the field's permissive descriptive definition (D, §3.1), CWM, TRACED, SemCoder, LLM-JEPA, and DyMo are all "world models" despite being architecturally standard LLMs with enriched training. A strict normative definition (N1/N2/N3, §3.1) admits only systems with explicit forward-prediction machinery: neural dynamics models (N1, no code exemplar), latent-action rollout models such as CoLA (N2), and synthesized executable simulators such as GIF-MCTS and ARC executable WMs (N3).
 
 2. **Trace pretraining has a causal-isolation problem.** "Do Code Semantics Help?" (2509.11686) finds no trace representation consistently improves code synthesis across multiple backbones; CWM's 65.8% SWE-bench Verified is confounded between trace mid-training, ForagerAgent trajectories, and RL.
 
@@ -34,7 +34,7 @@ The seven critical theses developed in §6, each grounded in a specific disconfi
 
 7. **The evaluation gap is the structural reason the field looks confused.** No benchmark holds policy fixed and varies WM quality. Models with 85–98% output-prediction accuracy still produce traces with systematic errors throughout — outcome accuracy decouples from process fidelity.
 
-These theses are the survey's main contribution. §§7–17 catalog the work; §§16–17 provide the empirical synthesis that grounds the theses; §18 lists the open problems.
+These theses are the survey's main contribution. §§6–16 catalog the work; §§16–17 provide the empirical and critical synthesis that grounds the theses; §18 lists open problems.
 
 ---
 
@@ -103,7 +103,13 @@ The literature uses "world model" in two distinct senses that this survey will c
 
 **Definition D (descriptive, permissive).** A *world model for coding* is any code LLM whose training objective concretely encodes program semantics — execution traces, runtime state, environment feedback, or simulated outcomes — in addition to or instead of source-token prediction. This is the field's current usage. Under D, CWM, TRACED, SemCoder, LLM-JEPA, DyMo, RLEF, and most papers in the corpus are world models.
 
-**Definition N (normative, strict).** A *world model for coding* is a learned function `W : (state, action) → (next_state, observation)` instantiated as a distinct architectural component — separate dynamics head, latent recurrent state, inverse model, or rollout module — such that the model can simulate counterfactual futures without committing to a particular policy. Under N, CoLA (2503.21383), GIF-MCTS (2405.15383), and the Dreamer/JEPA-style gestures qualify; CWM, TRACED, SemCoder, and most of the corpus do *not*.
+**Definition N (normative, strict).** A *world model for coding* is a system with an explicit, separable forward-prediction mechanism. We split N into three sub-types:
+
+- **N1 — Neural dynamics model.** A learned `W : (state, action) → next_state` instantiated as a distinct architectural component with latent recurrent state, separate dynamics head, or inverse model. Dreamer-class. No code exemplar in the corpus.
+- **N2 — Latent-action model.** A learned action abstraction over a base LLM, with the LLM serving as transition model in compressed action space, supporting rollout or tree search over latent actions. CoLA (2503.21383) is the canonical example.
+- **N3 — Synthesized executable simulator.** The world model is an executable program (Python, DSL) synthesized by an LLM and run against ground-truth transitions during planning. GIF-MCTS (2405.15383), WorldCoder, Executable WMs for ARC-AGI-3 (2605.05138).
+
+Each N-subtype has a distinct architectural commitment. N1 commits to learned latent dynamics; N2 commits to a discrete latent-action space; N3 commits to program synthesis as the dynamics. Conflating them — as the loose "Dreamer-for-LLMs gesture" framing did — obscures which architectural bet is being made. Under any N-subtype, CWM, TRACED, SemCoder, and most of the corpus do *not* qualify.
 
 The two definitions agree on the empirical fact that execution-grounded supervision helps. They disagree on whether that grounding is correctly named a *world model* in the model-based-RL sense.
 
@@ -117,7 +123,7 @@ The two definitions agree on the empirical fact that execution-grounded supervis
 | Includes verifiers (Lean, Dafny, Z3) | Sometimes grouped | No (deterministic oracles, not learned WMs) |
 | Includes Dreamer / V-JEPA (vision precedents) | Yes | Yes |
 
-This survey uses **D throughout §§7–15** because that is how the literature talks, and **N in §6** because the critical synthesis depends on it. We mark the switch each time it matters. The split has been called for in prior reviews of the field and the two-definition framework is, in our reading, the cleanest resolution.
+This survey uses **D throughout the catalog sections (§§6–16)** because that is how the literature talks, and **N in §17** because the critical synthesis depends on it. We mark the switch each time it matters. The split has been called for in prior reviews of the field and the two-definition framework is, in our reading, the cleanest resolution.
 
 ### 3.2 What is modeled
 
@@ -240,7 +246,7 @@ Adjacent WM surveys converge on overlapping splits that the three-axis framework
 
 ### 5.3 Axis 3 — Representation
 
-This is the axis where the WM literature has converged most strongly, and where the code-WM literature is most uneven. Adapting Li et al.'s four-category split (GLV / TFS / SLG / DRR) to code yields six classes, of which only three are populated.
+This is the axis where the WM literature has converged most strongly, and where the code-WM literature is most uneven. Adapting Li et al.'s four-category split (GLV / TFS / SLG / DRR) to code yields five classes, of which only two are well-populated.
 
 | Class | Encodes the world as | Vision analog | Code exemplars |
 |---|---|---|---|
@@ -248,14 +254,25 @@ This is the axis where the WM literature has converged most strongly, and where 
 | **Global Latent Vector (GLV)** | A compact vector updated recurrently, encoding the entire program/agent state | RSSM (Hafner et al., DreamerV1–V3) | **No clean exemplar.** CoLA (2503.21383) introduces a learned action codebook but is otherwise a standard LLM, not RSSM-style |
 | **Spatial / Structural Grid (SLG)** | A geometric or structural grid (BEV/voxel in vision; AST, call-graph, CFG in code) | OccWorld, DriveWorld | **No exemplar.** RepoGraph (2410.14684) uses a static dependency graph but does not predict over it as a WM |
 | **Decomposed Object / Slot (DOR)** | Distinct persistent latent slots for objects in the world | SlotFormer and object-centric WMs | **No exemplar.** No code-WM models variables, scopes, or classes as discrete persistent slots |
-| **Code-as-WM** | The world model *is* an executable program, synthesized rather than learned | (orthogonal to vision) | GIF-MCTS (2405.15383), WorldCoder, Executable WMs for ARC-AGI-3 (2605.05138) |
-| **Verifier / Symbolic** *(definition D only — see §3.1)* | A non-learned engine (Lean, Dafny, Z3) that provides ground truth | (no vision analog) | ATLAS (2512.10173), Re:Form (2507.16331), CLEVER (2505.13938) — see §14.1 and §17.6 |
+| **Synthesized executable (N3)** | The world model *is* an executable program, synthesized rather than learned | (orthogonal to vision) | GIF-MCTS (2405.15383), WorldCoder, Executable WMs for ARC-AGI-3 (2605.05138) |
 
-**Three white spaces.** The empty rows are not accidents. Token-sequence representations dominate because they bolt cleanly onto an LLM. The Dreamer-style GLV, the object-centric DOR, and the spatial-grid SLG representations have not been instantiated for code, despite being mature for vision. §18 lists these as open problems, with the caveat that not all three are equally promising — the Dreamer-style gap is contestable (§17.3), while the object-centric and structural-grid gaps look more genuine.
+Verifiers (Lean, Dafny, Z3) and PRMs are intentionally absent from this table. A verifier is not a *representation* of the world; it is a *grounding oracle* over candidate artifacts. A PRM is a *backward-looking critic*, not a forward predictor. Both belong in §5.4 below.
 
-### 5.4 Execution-grounding (per-paper tag, not a separate axis)
+**Three white spaces.** The Dreamer-style GLV, the object-centric DOR, and the spatial-grid SLG representations have not been instantiated for code, despite being mature for vision. §18 lists these as open problems, with the caveat that not all three are equally promising — the Dreamer-style gap is contestable (§17.3), while the object-centric and structural-grid gaps look more genuine.
 
-Beyond the three axes above, each system can be tagged for whether its predictions were ever validated against ground-truth dynamics. Li et al. (2510.16732) include a "reality" column for this in their tables. For code-WMs the analog is *execution-grounding*: was the predicted state ever executed against the real interpreter? CWM and trace-pretraining systems are execution-grounded by construction. LLM-as-WM planners (RAP, WebDreamer-without-finetune) are not. The decoupling between WM fidelity and policy success that DyMo (2506.02918) and §17.7 develop is, in part, a symptom of insufficient execution-grounding: when a system is never asked to defend its predictions against the runtime, its WM can drift arbitrarily while still appearing useful for downstream tasks. We treat execution-grounding as a binary tag per paper rather than a structural axis.
+### 5.4 Grounding mode (orthogonal to representation)
+
+A second classification asks how each system's predictions are validated. This is the analog of Li et al.'s "reality" column and addresses the decoupling between WM-head accuracy and downstream task success that DyMo (2506.02918) and §17.7 develop.
+
+| Grounding mode | Definition | Code exemplars |
+|---|---|---|
+| None / self-report | Predictions never validated against ground truth | RAP (2305.14992), basic LLM-as-WM planners |
+| Execution-grounded | Predictions checked against real interpreter / runtime | CWM (2510.02387), TRACED (2306.07487), NExT (2404.14662), SemCoder (2406.01006), RLEF (2410.02089) |
+| Verifier-grounded | Outputs checked by Lean / Dafny / Verus / Rocq / Z3 | ATLAS (2512.10173), Re:Form (2507.16331), CLEVER (2505.13938), VeriStruct (2510.25015), AutoRocq (2511.17330) |
+| Synthesized-simulator-checked | Synthesized world model checked against held-out transitions | GIF-MCTS (2405.15383), Executable WMs for ARC-AGI-3 (2605.05138) |
+| Critic-grounded (not a WM) | Backward-looking value/quality score, no rollout | ExecVerify (2603.11226), SWE-PRM (2509.02360), ThinkPRM (2504.16828) — listed for contrast; these are critics, not WMs (§17.4) |
+
+Grounding mode is orthogonal to the representation axis: a token-sequence representation can be execution-grounded (CWM) or self-report (RAP); an N3 synthesized-simulator can be checked against transitions (GIF-MCTS) or never validated. The "WM fidelity" question of §17.7 is, structurally, a question about whether a system's grounding mode is strong enough to falsify a bad WM at training time.
 
 ---
 
@@ -375,7 +392,7 @@ Once an LLM is an *agent* taking actions in a non-trivial environment, the world
 
 **SWE-bench** (2310.06770) and **SWE-Gym** (2412.21139) defined the eval and training environment respectively. **CodeAct** (2402.01030) made the Python interpreter the unified action space. **Reflexion** (2303.11366) was the earliest entry with episodic verbal RL. **Nanbeige SWE-World** (2602.03419) trains a learned Docker-free execution surrogate. **Understanding by Reconstruction** (2603.11103) reverses the development process to harvest agentic pretraining traces. **SWE-TRACE** (2604.14820) provides process-level reward modeling over trajectories. **Self-Play SWE-RL** (2512.18552) introduces adversarial bug-injection/repair self-play. **Bootstrapping Coding Agents — The Specification Is the Program** (2603.17399) reframes the SWE task itself as a programmatic spec.
 
-The §16 empirical synthesis assembles a cross-cutting SWE-bench scoreboard. Headline: open-weight world-model-trained 32B systems (CWM, Nanbeige SWE-World, Huxley GM) now reach 60–68% on SWE-bench Verified, competitive with frontier closed-model scaffold-only systems at far smaller parameter counts.
+The §16 empirical synthesis separates three regimes: execution-grounded open-weight model training (CWM, SWE-RL), execution-grounded agents with learned simulators (Nanbeige SWE-World), and scaffold evolution around closed-model executors (Darwin GM, Huxley GM). Under best-of-k or verifier-reranked protocols, several systems report 60–68% on SWE-bench Verified, but those numbers are not directly comparable to pass@1 model-training results, and the scaffold-evolved systems are not "32B open-weight world-model-trained" — they run frontier closed models inside an evolved harness.
 
 ---
 
@@ -538,39 +555,41 @@ Benchmarks split cleanly by what they measure.
 
 ### 16.1 SWE-bench scoreboard
 
-Protocols mix in SWE-bench reporting and are non-comparable across the obvious axes. We split the table into three protocol classes and ask readers to compare within, not across, classes. **WM type**: *Scaffold* = no model training (agent loop around a frozen closed model); *SFT-Traj* = SFT on agent trajectories; *RL-Exec* = RL with execution rewards; *Self-Play* = recursive scaffold/agent self-improvement; *Mid-Trace+RL* = trace-mid-trained base + RL (the CWM lineage).
+Protocols mix in SWE-bench reporting and are non-comparable across the obvious axes. We split the table into three protocol classes and ask readers to compare within, not across, classes. **Training / Evaluation regime**: *Frozen-model scaffold* = no model training (agent loop around a frozen closed model); *EG-LLM SFT* = supervised fine-tune on agent trajectories; *EG-LLM + RL* = RL with execution rewards; *EG-agent + learned simulator* = SFT+RL plus a learned execution surrogate; *EG-LLM + trace mid-train + RL* = the CWM lineage; *Scaffold-evolved* = recursive scaffold/agent self-improvement around a frozen closed model. **WM-Arch** is reserved for systems with explicit transition/rollout machinery (N1/N2/N3 from §3); no row in this table qualifies. **Tier** is the evidence grading from §2 (A peer-reviewed, B major arxiv preprint with code, C single-author/institution, D blog/leaderboard).
 
 **Table 16.1a — Single-sample resolution (pass@1 on Verified unless noted)**
 
-| System | Base model | Bench | Pass@1 | WM type | Source |
-|---|---|---|---|---|---|
-| SWE-agent | GPT-4 Turbo | full | 12.5% | Scaffold | 2405.15793 |
-| AutoCodeRover | GPT-4 | Lite | 19.0% | Scaffold | 2404.05427 |
-| Agentless | GPT-4o | Lite | 32.0% | Scaffold | 2407.01489 |
-| SWE-Gym | Qwen-2.5-Coder-32B | Verified | 20.6% | SFT-Traj | 2412.21139 |
-| Agent-RLVR (no RM) | Qwen-2.5-72B | Verified | 22.4% | RL-Exec | 2506.11425 |
-| Long-Context Multi-Turn RL | Qwen-2.5-72B | Verified | 39.0% | RL-Exec | 2508.03501 |
-| SWE-RL (Llama3-SWE-RL-70B) | Llama-3.3-70B | Verified | **41.0%** | RL-Exec | 2502.18449 |
-| Nanbeige SWE-World (RL) | Qwen-2.5-Coder-32B | Verified | 55.0% | SFT+RL+sim WM | 2602.03419 |
-| CWM (estimated pass@1)* | CWM-32B | Verified | ~53–55% | Mid-Trace+RL | 2510.02387 |
+| System | Base model | Bench | Pass@1 | Regime | Tier | Source |
+|---|---|---|---|---|---|---|
+| SWE-agent | GPT-4 Turbo | full | 12.5% | Frozen-model scaffold | A | 2405.15793 |
+| AutoCodeRover | GPT-4 | Lite | 19.0% | Frozen-model scaffold | A | 2404.05427 |
+| Agentless | GPT-4o | Lite | 32.0% | Frozen-model scaffold | B | 2407.01489 |
+| SWE-Gym | Qwen-2.5-Coder-32B | Verified | 20.6% | EG-LLM SFT | B | 2412.21139 |
+| Agent-RLVR (no RM) | Qwen-2.5-72B | Verified | 22.4% | EG-LLM + RL | B | 2506.11425 |
+| Long-Context Multi-Turn RL | Qwen-2.5-72B | Verified | 39.0% | EG-LLM + RL | B | 2508.03501 |
+| SWE-RL (Llama3-SWE-RL-70B) | Llama-3.3-70B | Verified | **41.0%** | EG-LLM + RL | B | 2502.18449 |
+| Nanbeige SWE-World (RL) | Qwen-2.5-Coder-32B | Verified | 55.0% | EG-agent + learned simulator | B | 2602.03419 |
+| CWM | CWM-32B | Verified | *not directly reported* † | EG-LLM + trace mid-train + RL | B | 2510.02387 |
+
+† The CWM paper does not report a pure pass@1 number under the standard protocol; the headline 65.8% in Table 16.1b is best@16 with verifier reranking. Inferred pass@1 from the paper's reported figures is approximately 53–55%, but this is *our estimate, not a directly reported number*, and we do not place it in the main row.
 
 **Table 16.1b — Best-of-k with verifier reranking / TTS**
 
-| System | Base | Bench | Score | Sample budget | Source |
-|---|---|---|---|---|---|
-| Agent-RLVR + RM rerank | Qwen-2.5-72B | Verified | 27.8% | rerank over multi-sample | 2506.11425 |
-| Nanbeige SWE-World (TTS@8) | Qwen-2.5-Coder-32B | Verified | **68.2%** | best@8 | 2602.03419 |
-| CWM (TTS) | CWM-32B | Verified | **65.8%** | best@16 over 40 reranked | 2510.02387 |
+| System | Base | Bench | Score | Sample budget | Tier | Source |
+|---|---|---|---|---|---|---|
+| Agent-RLVR + RM rerank | Qwen-2.5-72B | Verified | 27.8% | rerank over multi-sample | B | 2506.11425 |
+| Nanbeige SWE-World (TTS@8) | Qwen-2.5-Coder-32B | Verified | **68.2%** | best@8 | B | 2602.03419 |
+| CWM (TTS) | CWM-32B | Verified | **65.8%** | best@16 over 40 reranked | B | 2510.02387 |
 
-**Table 16.1c — Self-play and scaffold-evolution (closed-model executor, not WM-trained)**
+**Table 16.1c — Scaffold-evolution and self-play around closed-model executors**
 
-| System | Backbone executor | Bench | Score (start → end) | Note | Source |
-|---|---|---|---|---|---|
-| Darwin Godel Machine | Claude-3.5-Sonnet | Verified | 20% → 50% | Scaffold evolves over 80 iterations | 2505.22954 |
-| Huxley Godel Machine | GPT-5-mini | Verified (500) | — → 61.4% | Scaffold optimized for Verified-60 | 2510.21614 |
-| SICA | Claude-3.5-Sonnet + o3-mini | Verified (subset) | 17% → 53% | Scaffold evolves; not a model-training method | 2504.15228 |
+| System | Backbone executor | Bench | Score (start → end) | Note | Tier | Source |
+|---|---|---|---|---|---|---|
+| Darwin Godel Machine | Claude-3.5-Sonnet | Verified | 20% → 50% | Scaffold evolves over 80 iterations | B | 2505.22954 |
+| Huxley Godel Machine | GPT-5-mini | Verified (500) | — → 61.4% | Scaffold optimized for Verified-60 | B | 2510.21614 |
+| SICA | Claude-3.5-Sonnet + o3-mini | Verified (subset) | 17% → 53% | Scaffold evolves; not a model-training method | C | 2504.15228 |
 
-*CWM pass@1 is estimated from the CWM paper's reporting; the headline 65.8% in Table 16.1b is best@16 with verifier reranking, not pass@1. Citations that quote "65.8% SWE-bench Verified" should disclose this.
+Citations that quote "CWM 65.8% SWE-bench Verified" without disclosing the best@16/TTS protocol should be read as misreporting, not as direct pass@1 numbers.
 
 **What can and cannot be compared.** Within Table 16.1a the comparable axis is pass@1. SWE-RL's 41.0%, Long-Context-MT-RL's 39.0%, and Nanbeige SWE-World's 55.0% are roughly comparable as "open-weight WM-trained pass@1 on Verified." Table 16.1c sits in a different category — these are scaffold-evolution methods over closed models, and treating them as evidence for "world-model training works" conflates scaffold search with model improvement. Reading them inside Table 16.1a, as some online discussion does, is apples-to-oranges.
 
@@ -578,57 +597,57 @@ Protocols mix in SWE-bench reporting and are non-comparable across the obvious a
 
 ### 16.2 Trace pretraining gains on execution-reasoning
 
-| Paper | Backbone | Baseline | After trace pretrain/FT | Delta | Benchmark |
-|---|---|---|---|---|---|
-| TRACED | UnixCoder | — | +12.4% rel branch-coverage; +25.2% rel variable-value | rel | CodeNet exec |
-| NExT | PaLM 2-L | 23.2 | 49.3 | **+26.1 abs** | MBPP-R |
-| NExT | PaLM 2-L | 32.2 | 42.5 | +10.3 abs | HumanEvalFix-Plus |
-| SemCoder (1.3B) | DS-Coder 1.3B | base | 63.6 / 63.9 | +23 abs | CRUXEval-I / O |
-| "What I cannot execute" | Llama-3.1-8B | 37.8% | ~80% | **+42 abs** | CRUXEval-O |
-| Do Code Semantics Help? | DSCoder, Llama-3, Gemma-2 | various | ≤ a few abs; some regressions | mixed | comprehensive |
+| Paper | Backbone | Baseline | After trace pretrain/FT | Delta | Benchmark | Tier |
+|---|---|---|---|---|---|---|
+| TRACED | UnixCoder | — | +12.4% rel branch-coverage; +25.2% rel variable-value | rel | CodeNet exec | A |
+| NExT | PaLM 2-L | 23.2 | 49.3 | **+26.1 abs** | MBPP-R | A |
+| NExT | PaLM 2-L | 32.2 | 42.5 | +10.3 abs | HumanEvalFix-Plus | A |
+| SemCoder (1.3B) | DS-Coder 1.3B | base | 63.6 / 63.9 | +23 abs | CRUXEval-I / O | B |
+| "What I cannot execute" | Llama-3.1-8B | 37.8% | ~80% | **+42 abs** | CRUXEval-O | B |
+| Do Code Semantics Help? | DSCoder, Llama-3, Gemma-2 | various | ≤ a few abs; some regressions | mixed | comprehensive | B |
 
 For under-trained ≤8B open-weights, trace pretraining delivers +15 to +42 absolute on CRUXEval-O. The "Do Code Semantics Help?" ablation (2509.11686) is the disconfirming evidence: across multiple backbones and five trace representations, no single representation consistently outperforms others, and several downstream tasks regress under trace augmentation. The gain shrinks rapidly with base-model quality. Trace pretraining is a remedial intervention for weak code models; whether frontier models still benefit is unsettled.
 
 ### 16.3 Web/OS agents from WMs
 
-| Paper | Benchmark | Base | With WM | Delta | Mechanism |
-|---|---|---|---|---|---|
-| WebDreamer (GPT-4o WM) | VisualWebArena | 17.6% | 23.6% | +34.1% rel (≈+6 abs) | LLM-as-WM + MPC |
-| WebDreamer | Online-Mind2Web | 26.0% | 37.0% | +42.3% rel (≈+11 abs) | same |
-| Dreamer-7B (trained WM) | VisualWebArena | base | +4.7 abs | — | trained WM |
-| WMA (2410.13232) | WebArena | base | action-selection 52→70% | — | trained transition WM |
-| Dyna-Think DDT (32B) | OSWorld BoN | RFT~28% | 43.1% | ≈+15 abs | Dyna-Q + WM head |
-| Dyna-Think DDT | WindowsAgentArena | 28.4% | 34.9% | +6.5 abs | same |
+| Paper | Benchmark | Base | With WM | Delta | Mechanism | Tier |
+|---|---|---|---|---|---|---|
+| WebDreamer (GPT-4o WM) | VisualWebArena | 17.6% | 23.6% | +34.1% rel (≈+6 abs) | LLM-as-WM + MPC | B |
+| WebDreamer | Online-Mind2Web | 26.0% | 37.0% | +42.3% rel (≈+11 abs) | same | B |
+| Dreamer-7B (trained WM) | VisualWebArena | base | +4.7 abs | — | trained WM | B |
+| WMA (2410.13232) | WebArena | base | action-selection 52→70% | — | trained transition WM | B |
+| Dyna-Think DDT (32B) | OSWorld BoN | RFT~28% | 43.1% | ≈+15 abs | Dyna-Q + WM head | B |
+| Dyna-Think DDT | WindowsAgentArena | 28.4% | 34.9% | +6.5 abs | same | B |
 
 WM gains on web/OS are real but quantitatively small (≤+5–10 absolute task success rate on most benchmarks), and partly confounded with the extra synthetic data the WM generates. DyMo's 90%+ state-prediction accuracy versus 72.8% task success rate exemplifies the decoupling: WM heads can be accurate without the agent being accurate.
 
 ### 16.4 Formal verification vs LLM-only
 
-| System | Language | Benchmark | Baseline | With system | Source |
-|---|---|---|---|---|---|
-| ATLAS | Dafny | DafnyBench Pass@1 | 32.4% | **55.8%** | 2512.10173 |
-| ATLAS | Dafny | DafnySynthesis Pass@5 | 15.8% | **65.8%** (>GPT-4 53.4) | 2512.10173 |
-| CLEVER | Lean 4 | 161 problems end-to-end | best frontier | **≤1/161** | 2505.13938 |
-| VeriStruct | Verus / Rust | 11 modules | — | **99.2%** (128/129 fns) | 2510.25015 |
-| AutoRocq | Rocq | math + verif lemmas | 5 baselines | 48.0% math / 30.9% verif | 2511.17330 |
-| Semantic Equiv Self-Play | Liquid Haskell | EquiBench | base | +13.3 pp | 2604.17010 |
+| System | Language | Benchmark | Baseline | With system | Tier | Source |
+|---|---|---|---|---|---|---|
+| ATLAS | Dafny | DafnyBench Pass@1 | 32.4% | **55.8%** | B | 2512.10173 |
+| ATLAS | Dafny | DafnySynthesis Pass@5 | 15.8% | **65.8%** (>GPT-4 53.4) | B | 2512.10173 |
+| CLEVER | Lean 4 | 161 problems end-to-end | best frontier | **≤1/161** | B | 2505.13938 |
+| VeriStruct | Verus / Rust | 11 modules | — | **99.2%** (128/129 fns) | C | 2510.25015 |
+| AutoRocq | Rocq | math + verif lemmas | 5 baselines | 48.0% math / 30.9% verif | B | 2511.17330 |
+| Semantic Equiv Self-Play | Liquid Haskell | EquiBench | base | +13.3 pp | B | 2604.17010 |
 
 Verified codegen has the steepest training-data sensitivity in the survey: small synthetic datasets (2.7K verified Dafny programs in ATLAS) produce +25–50 absolute gains because LLM-only baselines start near zero. CLEVER's ≤1/161 shows that without explicit data/scaffolding, frontier models cannot reliably produce verified code. VeriStruct shows that on curated targets near-perfect is reachable.
 
 ### 16.5 Reasoning-model competitive programming
 
-| Model | Codeforces | IOI / ICPC |
-|---|---|---|
-| gpt-4o | 808 (11th pct) | — |
-| o1-preview | 1258 (62nd pct) | — |
-| o1 | 1673 (89th pct) | — |
-| o1-ioi | 1807 (~93rd pct) | IOI 2024 49th pct live |
-| o3 | elite-human-class | IOI 2024 gold |
-| gpt-oss-120b + GenCluster | — | **IOI 2025 gold (first open-weight)** |
-| Gemini 2.5 Pro Exp | — | ICPC-Eval Pass@1 22.0% |
-| DeepSeek-R1 | — | ICPC-Eval Pass@1 14.4% |
-| Claude 3.7 Sonnet | — | ICPC-Eval Pass@1 11.8% |
-| GPT-4o | — | ICPC-Eval Pass@1 5.9% |
+| Model | Codeforces | IOI / ICPC | Tier |
+|---|---|---|---|
+| gpt-4o | 808 (11th pct) | — | D |
+| o1-preview | 1258 (62nd pct) | — | D |
+| o1 | 1673 (89th pct) | — | D |
+| o1-ioi | 1807 (~93rd pct) | IOI 2024 49th pct live | B |
+| o3 | elite-human-class | IOI 2024 gold | D |
+| gpt-oss-120b + GenCluster | — | IOI 2025 gold (open-weight) | B |
+| Gemini 2.5 Pro Exp | — | ICPC-Eval Pass@1 22.0% | B |
+| DeepSeek-R1 | — | ICPC-Eval Pass@1 14.4% | B |
+| Claude 3.7 Sonnet | — | ICPC-Eval Pass@1 11.8% | B |
+| GPT-4o | — | ICPC-Eval Pass@1 5.9% | B |
 
 Codeforces +999 rating points in 14 months on the o-series. The same line shows that frontier reasoning models gain almost everything from RL scaling, not from domain-specialized scaffolds — which complicates the case that "trace-style world models" are doing causal work for frontier systems.
 
@@ -690,7 +709,7 @@ ATLAS, Re:Form, CLEVER, VeriStruct, AutoRocq, and the Liquid Haskell self-play p
 
 The abstract-interpreter paper (2503.12686) is the diagnostic: when frontier reasoning LLMs are asked to reason in the style of formal abstract interpretation over 22 SV-COMP programs, they make systematic errors in widening, fixpoint termination, control-flow propagation, and meet/join operations. They generated unsound invariants on programs as small as `count_by_2.c`. If LLMs cannot reliably perform interval-domain abstract interpretation on toy C programs, claims that they have learned faithful internal world models of program semantics are doing a lot of inferential work.
 
-The verifier-grounded line is the only research direction that does not rely on LLM self-report for correctness, and it should be promoted from §14.1 to a co-equal pillar of the survey alongside trace pretraining and agentic SWE. The future of correct code is almost certainly hybrid: neural proposal, symbolic verification, with the verifier providing the ground truth that the world model fails to.
+The verifier-grounded line is the only research direction that does not rely on LLM self-report for correctness. Scoped carefully, it leads on *synthesis-from-spec* (ATLAS reaches 65.8% Pass@5 on DafnySynthesis at 7B, surpassing GPT-4) and on *near-perfect verified completion of curated targets* (VeriStruct 99.2% on 11 Verus modules). It does *not* lead on end-to-end verified codegen from natural language: CLEVER reports ≤1/161 on Lean problems requiring joint spec + implementation verification. The future of *correct* code is plausibly hybrid — neural proposal, symbolic verification, with the verifier providing ground truth that learned world models cannot — but the hybrid is not yet a finished pillar. We catalog the verifier line in §14.1 alongside symbolic execution and abstract-interpretation probing; readers who accept this thesis should weight that subsection more heavily than its sequence position suggests.
 
 ### 17.7 The evaluation gap is the structural reason the field looks confused
 
