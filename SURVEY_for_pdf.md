@@ -38,7 +38,7 @@ Two adjacent surveys cover non-overlapping ground. **A Survey on LLMs for Code G
 
 ## 2. Methodology
 
-The corpus is 184 arxiv preprints, assembled in four passes (March–May 2026) seeded from CWM [@arxiv2510_02387] via Semantic Scholar citation BFS and targeted topic searches. A paper enters the corpus if it intersects both world-model/state-tracking architectures and code generation, debugging, repair, or agentic coding. Pure vision world models (DreamerV1–V3, V-JEPA, Genie) and pure code-LLM papers without a world-model angle are excluded except as cited precedent. Date cutoff: 2026-05-15. The full list is enumerated in `papers.json`. One curator did the taxonomy coding; numerical claims in §§6–14 derive from abstracts, §16 from source PDFs. 60% of the corpus is 2025 or later.
+The corpus is 184 arxiv preprints, assembled in four passes (March–May 2026) seeded from CWM [@arxiv2510_02387] via citation BFS and targeted topic searches. A paper enters the corpus if it intersects both world-model/state-tracking architectures and code generation, debugging, repair, or agentic coding. Pure vision world models (DreamerV1–V3, V-JEPA, Genie) and pure code-LLM papers without a world-model angle are excluded except as cited precedent. Date cutoff: 2026-05-15. One curator did the taxonomy coding; numerical claims in §§6–14 derive from abstracts, §16 from source PDFs. 60% of the corpus is 2025 or later.
 
 ---
 
@@ -562,7 +562,7 @@ The opportunity is large precisely because the framework is now clear enough to 
 
 ## Appendix A · References
 
-All citations in this survey use arxiv identifiers inline (e.g. `[@arxiv2510_02387]`). Each cited identifier resolves to one entry below. For machine-readable access to the full 184-paper corpus (including non-cited entries considered during the survey passes), see `papers.json`.
+All citations in this survey use arxiv identifiers inline (e.g. `[@arxiv2510_02387]`). Each cited identifier resolves to one entry below.
 
 - **[@arxiv1410_4615]** — Learning to Execute. https://arxiv.org/abs/[@arxiv1410_4615]
 - **[@arxiv1511_06279]** — Neural Programmer-Interpreters. https://arxiv.org/abs/[@arxiv1511_06279]
