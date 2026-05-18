@@ -1,4 +1,4 @@
-# World Models for Coding: A Critical Survey of Execution-Grounded Code Models, Agentic Evaluation, and Overloaded Terminology
+# A Comprehensive Survey of World Models for Coding
 
 *Last updated 2026-05*
 
@@ -80,17 +80,6 @@ Representative search queries used across the four passes (non-exhaustive):
 
 **Inclusion / exclusion counts.** Pass 1 considered ~70 candidates, accepted 31. Pass 2 considered ~40, accepted 20 (focused on 2026 papers earlier passes missed). Pass 3 considered ~80, accepted 52 via citation BFS from 11 central papers. Pass 4 considered ~60, accepted 28 across 5 thin niches. Final corpus: 184 PDFs (one was added late: [@arxiv2510_16732]). Total candidates considered: ~250. Rejection reasons recorded per-paper in the pass reports.
 
-**Evidence grading.** Each citation in this survey can be classified by source type. We do not annotate inline (it would clutter the prose), but the following hierarchy is the implicit standard:
-
-| Tier | Definition | Survey use |
-|---|---|---|
-| A | Peer-reviewed venue (NeurIPS, ICML, ICLR, ACL, OOPSLA, FSE, etc.) | Highest weight; load-bearing claims |
-| B | Major arxiv preprint with code/checkpoints + multi-author institutional backing | Treated as A for technical accuracy, less for community vetting |
-| C | Solo-author or single-institution arxiv preprint | Cited for ideas; numerical claims hedged |
-| D | Technical report / blog / benchmark leaderboard claim | Cited as evidence of capability, not as scientific finding |
-
-Roughly 60% of the corpus is currently Tier B; ~25% Tier A (mostly pre-2024); ~12% Tier C; ~3% Tier D. The recency skew toward 2025–2026 means many headline claims are Tier B and have not yet been independently replicated. Numbers in §16 should be read accordingly — they are the best available evidence at this date, not settled science.
-
 **Limitations of this methodology.** Four. (1) No formal inter-rater reliability metric — one curator did the taxonomy coding. (2) No systematic verification of the headline numerical claims in every cited paper; §16 numbers were verified by reading the source PDFs but §§7–14 inline claims rely on abstracts and our prior reading. (3) The corpus is unstable — between drafts several 2026 papers we initially excluded as off-topic turned out to be relevant. A fifth pass would change the count by ±15 papers without materially changing the survey's conclusions. (4) Selection bias toward arxiv-first, anglophone, code-LLM-adjacent sources; we did not systematically cover Chinese-language preprint servers, workshop proceedings without arxiv copies, or industry technical reports.
 
 ---
@@ -150,8 +139,6 @@ CWM occupies an instructive position. *Behaviorally*, it emits stack frames and 
 The lineage is best understood as a sequence of inheriting questions. Each era's answer dissolved the previous era's bottleneck and exposed the next.
 
 ![Twelve-year arc of code world models (2014–2026). Three parallel lineages — neural execution, world models / RL, and code LLMs — converge in 2025–2026 around the named artifact CWM. ◆ marks the first paper to use "world model" / "Dreamer" in a contribution name; ◆◆ marks CWM as the named open-weights artifact.](fig_timeline.pdf){width=100%}
-
-*(For the text-only version of this diagram see SURVEY.md on the repository.)*
 
 Diamonds (◆) mark moments where "world model" enters the *name* of the contribution.
 
@@ -236,46 +223,25 @@ Zaremba & Sutskever's **Learning to Execute** [@arxiv1410_4615] established both
 
 The 2025 wave consolidated and stress-tested the approach. **"What I cannot execute, I do not understand"** [@arxiv2503_05703] trains and evaluates LLMs explicitly on traces with dynamic scratchpads, pushing Llama-3.1-8B from 37.8% to ~80% on CRUXEval-O. **Code Execution as Grounded Supervision** [@arxiv2506_10343] repurposes line-by-line traces as verifiable CoT. **Self-Execution Simulation** [@arxiv2604_03253] lets the model train on its own execution predictions. **Demystifying Errors in LLM Reasoning Traces** [@arxiv2512_00215] audits where trace-trained LLMs fail. **"Do Code Semantics Help?"** [@arxiv2509_11686] is the most damaging paper in the lineage: a comprehensive ablation across DeepSeek-Coder, LLaMA-3, and Gemma-2 with five trace representations finds that *no single representation consistently improves code generation*, and in 7 of 9 synthesis settings the no-trace baseline wins or ties.
 
-### 7.2 Deep dive — TRACED [@arxiv2306_07487]
+### 7.2 TRACED [@arxiv2306_07487]
 
-| | |
-|---|---|
-| **What it models** | Per-line program state (concrete variable values quantized into 30 bins crossing data-type × value-range) and per-line execution coverage of a C program, statically predicted from source. |
-| **Data** | CodeNet C subset: 1,805/1,900 problems, 121,319 training traces collected via `gdb` stepping through `-g -O0` builds. |
-| **Architecture / objective** | RoBERTa-base initialized from UnixCoder. Three jointly-optimized heads on input `[CLS] e₁..eᵢ [SEP][SEP] c₁..cⱼ [SEP]`: MLM, per-variable program-state classification `(data_type, value_type, quantized_value)`, per-variable binary coverage. |
-| **Headline results** | Static execution full-path accuracy 71.6% vs UnixCoder 63.7% (+12.4% relative); variable-value accuracy 89.2% vs 87.8%; POJ-104 clone-retrieval MAP@R 91.2 vs 89.5. |
-| **Distinctive contribution** | An early demonstration that *quantized* variable-value prediction is a viable pretraining signal — concrete values lose to discretized bins. |
+TRACED augments a RoBERTa/UnixCoder pre-training mix with two execution-grounded heads on top of standard MLM: per-line program-state classification (variable type and quantized value over 30 bins) and per-line execution coverage. Trained on ~121k C traces from CodeNet collected via gdb, it shows that *quantized* variable-value prediction is a viable auxiliary signal — concrete values lose to discretized bins. On static execution estimation, full-path accuracy rises from UnixCoder's 63.7% to 71.6%, and downstream clone retrieval and defect detection improve modestly. The essence: trace prediction as a pre-training side objective, not a separate model.
 
-### 7.3 Deep dive — NExT [@arxiv2404_14662]
 
-| | |
-|---|---|
-| **What it models** | Program execution as **inline-comment trace** appended to source: each statement annotated `# (k) varA=...; varB=...` capturing changed variables in execution order. |
-| **Data** | Mbpp-R (10,047 train / 1,468 dev repair tasks built from incorrect LLM outputs on MBPP) and HumanEvalFix-Plus. Base model: PaLM 2-L. |
-| **Training objective** | STaR-style self-training. Sample 32 (rationale, fix) candidates at T=0.8 from current model; filter by unit-test pass; SFT on accepted. Always restart from initial checkpoint each iteration. 10 iterations. |
-| **Headline results** | Mbpp-R pass@1 23.2 → **49.3 (+26.1 abs)**; HumanEvalFix-Plus 32.2 → 42.5 (+10.3). Crucially, generalizes when traces are removed at test time (40.8 vs 23.2). |
-| **Distinctive contribution** | Inline-comment trace format fits ~95% of MBPP into 2K window (vs ~60% for Scratchpad), and the trained model retains benefit even without traces at inference. |
+### 7.3 NExT [@arxiv2404_14662]
 
-### 7.4 Deep dive — SemCoder [@arxiv2406_01006]
+NExT inlines execution traces into source as Python-style comments (`# (k) varA=...; varB=...`) and trains PaLM 2-L on (rationale, fix) candidates via STaR-style self-training — sample 32 candidates per problem, accept those that pass unit tests, SFT on the accepted set, repeat. After ten iterations Mbpp-R pass@1 climbs from 23.2% to 49.3% (+26.1 absolute). The result that matters most for the rest of the survey: NExT *retains* a +17 absolute gain (23 → 40.8) on Mbpp-R when traces are *removed at inference*, which makes it the cleanest example of trace pretraining transferring to non-trace inference on a repair task.
 
-| | |
-|---|---|
-| **What it models** | Four jointly-trained semantics modalities: Approximate (NL docstring), Symbolic (source), Operational (execution effects), Abstract (input-invariant properties). |
-| **Data** | PYX — synthetically curated, retried by generator until each sample executes; 4.3k decontaminated CodeContest problems for SemCoder-S. Base: DeepSeekCoder-6.7B-base. |
-| **Training objective** | Standard NTP with loss on code + monologue tokens. **Forward monologue** verbalizes execution step-by-step (summarizing loop iterations rather than dumping every state). **Backward monologue** characterizes possible prior states given output (abstract constraints + concrete witness). Both rejection-sampled against ground-truth execution. |
-| **Headline results** | HumanEval+ 79.3% / MBPP+ 79.9% / LCB-Lite 27.5% at 6.7B — beats GPT-3.5-turbo. CRUXEval-I 63.6 / CRUXEval-O 65.1 vs GPT-3.5-turbo 50.3 / 59.0. Monologue beats Scratchpad (48.8) and NExT (49.4) on CRUXEval-I: 61.8. |
-| **Distinctive contribution** | Forward AND backward monologues (NExT is forward-only); abstract semantics constraints rather than concrete state at every step; entirely static at inference. |
 
-### 7.5 Deep dive — CWM [@arxiv2510_02387]
+### 7.4 SemCoder [@arxiv2406_01006]
 
-| | |
-|---|---|
-| **What it models** | Python interpreter state at the granularity of an *interpreter stack frame* (one observation–action pair per executed line), plus agentic SWE trajectories where actions are shell tool calls and observations are environment responses. |
-| **Architecture** | 32B dense decoder-only Transformer with GQA, sliding-window blocks, RoPE — Llama-class. No separate dynamics head, no inverse model, no recurrent latent. |
-| **Data composition** | Four-stage train: (i) 8T-token general pretraining at 8k ctx; (ii) **5T-token code-world-modeling mid-training at 131k ctx**: 120M traced Python functions, 262k CodeContests traces, ~70k repo-level traced commits, 75M natural-language trace rewrites, and **3M ForagerAgent trajectories from 10.2k Docker images / 3.15k repos** (55% issue-fix, 45% synthetic mutate-fix); (iii) 100B-token SFT at 32k; (iv) 172B-token joint RL at 131k. |
-| **Trace format** | Per-line `<\|frame_sep\|>{locals JSON}<\|action_sep\|>{source line}` so that next-token prediction *is* next-state prediction at line granularity. |
-| **Headline results** | **65.8% SWE-bench Verified with TTS** (best@16 over 40 verifier-reranked samples); 68.6% LiveCodeBench-v5; 94.3% CRUXEval-Output; competitive with much larger closed models. |
-| **Distinctive contribution** | To our knowledge the first open-weights model where line-level Python execution traces and large-scale (3M) agent–environment trajectories are mid-training data, not post-training data. Introduces *Activ* (using GitHub Actions CI for local image builds) to scale executable repository images. |
+SemCoder formalizes "monologue reasoning" linking four code modalities — natural-language description, source, operational trace, and abstract input-invariant constraints — under a single NTP objective with rejection-sampled training data (the PYX corpus). Distinctive features: forward *and* backward monologues (NExT is forward-only), abstract-semantics constraints rather than concrete state at every step, and entirely static inference. SemCoder-1.3B reaches CRUXEval-I/O 63.6/65.1 vs GPT-3.5-turbo's 50.3/59.0, and a monologue-format ablation beats Scratchpad and NExT.
+
+
+### 7.5 CWM [@arxiv2510_02387]
+
+CWM is a 32B dense decoder-only Transformer with grouped-query attention, sliding-window blocks, RoPE — architecturally Llama-class. What earns it the "world model" name is the mid-training datamix: 5T tokens of Python observation-action traces (120M traced functions, 262k CodeContests traces, 70k repo-level traced commits, 75M natural-language rewrites) plus 3M ForagerAgent SWE trajectories from 10.2k Dockerized repositories. Tokens are formatted so next-token prediction *is* next-state prediction at line granularity. CWM reaches 65.8% on SWE-bench Verified with test-time scaling (best@16 over 40 verifier-reranked samples), 94.3% on CRUXEval-Output. Its second technical contribution is *Activ*, which uses GitHub Actions CI to scale executable repository images. CWM is behaviorally explicit (emits stack frames) but architecturally implicit (no separate dynamics head).
+
 
 Important caveat (developed further in §17): the 65.8% headline is *not* pure pass@1 but best-of-16 with verifier reranking. Pure pass@1 is approximately 53–55%. The trace-mid-training contribution is not causally isolated from the ForagerAgent-trajectory contribution and from the joint-RL contribution. Without an ablation removing one while holding the others fixed, the "world model" component's causal role is unfalsifiable.
 
@@ -290,15 +256,10 @@ Important caveat (developed further in §17): the 65.8% headline is *not* pure p
 - **Generating Code World Models with LLMs Guided by MCTS** [@arxiv2405_15383] — the WM is *the code itself*, synthesized by an LLM.
 - **General Agents Contain World Models** [@arxiv2506_01622] — proves that sufficiently competent goal-conditioned agents must contain extractable world models, under restrictive conditions discussed critically in §17.
 
-### 7.7 Deep dive — GIF-MCTS / Generating Code World Models via MCTS [@arxiv2405_15383]
+### 7.7 GIF-MCTS / Generating Code World Models via MCTS [@arxiv2405_15383]
 
-| | |
-|---|---|
-| **What it models** | The world model itself is *Python code* — an `Environment.step(s,a) → (s', r, done)` class synthesized by an LLM to match a small set of pre-collected `(s, a, r, s', d)` transitions. |
-| **Data** | **CWMB** benchmark — 18 RL environments (classic control, PyGame, MuJoCo) with NL descriptions and 5 random + 5 above-threshold demonstrations each. Plus APPS-Competition and RTFM. |
-| **Algorithm** | Inference-time MCTS over partial programs with three action types: **generate** (append L=2 lines), **improve** (rewrite full program given failing transition), **fix** (repair runtime/syntax error). Reward = fraction of transitions correctly reproduced. |
-| **Headline results** | APPS-Competition 28.3% pass@20 (Llama-3-70B), beating WorldCoder 25.1%. CWMB normalized return 0.76 vs WorldCoder 0.60. RTFM: GPT-4 reaches 1.00 accuracy. |
-| **Distinctive contribution** | The world model *as code to be searched over*, not as a neural net to be trained. Once compiled and validated, runs 4–6 orders of magnitude faster than calling the LLM as WM. |
+GIF-MCTS treats the world model itself as a Python program — an `Environment.step(s,a) → (s', r, done)` class synthesized by an LLM to match a small batch of pre-collected `(s, a, r, s', d)` transitions. MCTS over partial programs uses three action types (*generate* lines, *improve* full program given a failing transition, *fix* runtime/syntax errors), with reward equal to the fraction of transitions reproduced correctly. The synthesized world model, once compiled, runs 4–6 orders of magnitude faster than calling an LLM as world model. On APPS-Competition it reaches 28.3% strict pass@20 (Llama-3-70B), beating WorldCoder's 25.1%. The conceptual contribution is to *search over candidate Python world-model programs* rather than train a neural one.
+
 
 ---
 
@@ -310,29 +271,15 @@ Once an LLM is an *agent* taking actions in a non-trivial environment, the world
 
 **Web Agents with World Models** [@arxiv2410_13232] systematizes the thread. **DyMo / World Modeling Improves LM Agents** [@arxiv2506_02918] adds a next-state prediction head to function-calling agents and reports gains on BFCL-V2 — though with a caveat (§17): the WM head reaches 90–94% state-prediction accuracy while the underlying policy reaches only 72.8% task success, illustrating that WM-head accuracy and agent accuracy can decouple.
 
-#### Deep dive — WebDreamer [@arxiv2411_06559]
+**WebDreamer [@arxiv2411_06559].** WebDreamer treats the web as a POMDP in which the LLM imagines natural-language state-change descriptions for each candidate click, type, or select. A specialist *Dreamer-7B* (Qwen2-VL-7B fine-tuned on 3.1M synthesized (initial visual state, action, state-change) tuples from random walks over Common Crawl URLs) provides cheap rollouts. At inference, model-predictive control samples actions, scores simulated trajectories with GPT-4o on a 3-scale rubric, and executes the argmax. On VisualWebArena, Online-Mind2Web, and Mind2Web-Live, this beats the reactive baseline by +34/+42/+24% relative (≈+6–11 absolute) while running 4–5× faster than tree search. The bet: when actions are irreversible (forms, purchases), one-step MPC over an LLM-as-WM beats backtracking search.
 
-| | |
-|---|---|
-| **What it models** | Web environment as a POMDP where the LLM imagines natural-language state-change descriptions for each candidate action. |
-| **Data** | **3.1M synthesized web-interaction instances** from Common Crawl URLs via biased random walking; state changes captured as before/after VLM screenshots described by Qwen2-VL-72B. |
-| **Training** | Dreamer-7B trained from Qwen2-VL-7B on `(initial state, action) → state-change description`. Horizon H=1 empirically optimal. |
-| **Planning** | Model Predictive Control — simulate each candidate action, GPT-4o scores trajectories on a 3-scale rubric, argmax executes. |
-| **Headline results** | VisualWebArena 23.6 vs reactive 17.6 (+34.1% rel); Online-Mind2Web 37.0 vs 26.0 (+42.3% rel); Mind2Web-Live 25.0 vs 20.2 (+23.8% rel). **4-5× more efficient than tree search**. Dreamer-7B specialist ≈ GPT-4o on online benchmarks. |
-| **Distinctive contribution** | An early open demonstration that LLM-as-WM + 1-step MPC beats tree search on web tasks where irreversibility makes backtracking infeasible. |
 
 ### 8.2 OS / computer-use agents
 
 **Reinforcement World Model Learning for LLM-based Agents** [@arxiv2602_05842] and **World Models as an Intermediary between Agents and the Real World** [@arxiv2602_00785] generalize the lens: a learned WM mediates between LLM and expensive environment.
 
-#### Deep dive — Dyna-Think [@arxiv2506_00320]
+**Dyna-Think [@arxiv2506_00320].** Dyna-Think trains a single Qwen2.5-32B to internalize world-model simulation inside its `<think>` block for OSWorld and WindowsAgentArena. Two stages: DIT (imitation learning on R1 traces cleaned to keep only WM-simulation text) and DDT (Dyna-Q-style joint training over three WM heads — next state, state-diff, critic-prediction — with rejection-sampled policy updates). On OSWorld BoN the 32B model reaches 43.1, essentially matching DeepSeek-R1 at 685B with half the tokens. World-model accuracy correlates with task success at r=0.32 across models. This is the cleanest instance in the corpus of policy and learned world model hosted in the *same* LLM.
 
-| | |
-|---|---|
-| **What it models** | A single Qwen2.5-32B that internalizes world-model simulation inside its `<think>` block — predicting next observation, action critique, or state-difference — for computer-use agents. |
-| **Training** | **DIT** (imitation learning): few-shot prompt GPT-4o to reconstruct DeepSeek-R1's CoT keeping only WM-simulation-related text; SFT on cleaned trace. **DDT** (Dyna-style RL): online rollouts feed three WM objectives — next-state, state-diff, critic — jointly with rejection-sampled policy training. |
-| **Headline results** | OSWorld BoN All 43.1 (DDT, 32B) vs R1-685B 44.8 — **matches 685B model at 5% of parameters and 2× fewer tokens**. WindowsAgentArena 34.9 vs Qwen2.5-32B 23.9 / R1 26.9. World-model accuracy correlates with task success at r=0.32 across models. |
-| **Distinctive contribution** | Among the first Dyna-Q-style integrations where a single LLM hosts both policy and world model with critique-prediction as the WM objective. |
 
 ### 8.3 SWE agents
 
@@ -346,25 +293,15 @@ The §16 empirical synthesis separates three regimes: execution-grounded open-we
 
 The model-based-RL framing — world model is what the policy plans over — has produced a clean lineage.
 
-### 9.1 Deep dive — RLEF [@arxiv2410_02089]
+### 9.1 RLEF [@arxiv2410_02089]
 
-| | |
-|---|---|
-| **What it models** | Iterative code synthesis as a POMDP — actions are full code responses, observations are formatted public-test execution feedback, rewards come from held-out private tests. |
-| **Data** | CodeContests train (13,328 problems, 669 discarded for missing tests). Initial policies Llama-3.0/3.1-Instruct 8B / 70B. |
-| **Objective** | PPO with `R(s,a) = r(s,a) − β · log π(aₜ|cₜ)/ρ(aₜ|cₜ)`. r = +1 if all tests pass, −1 if any fail, −0.2 for malformed output. Turn limit 3. Geometric-mean response probability for KL bias correction. |
-| **Headline results** | Llama-3.1-70B + RLEF: **37.5 / 40.1 valid/test pass@1 with budget 1@3** (vs 25.9 / 27.5 baseline). 54.5 / 54.5 at 10@100, surpassing AlphaCode 41B+clustering. Transfers to HumanEval+ (78.6 → 80.4) and MBPP+. Random-feedback ablation removes all gain. |
-| **Distinctive contribution** | An early clean demonstration that standard PPO on multi-turn execution feedback beats both SFT and few-shot for code agents; isolates that the model learns to *use* feedback, not just sample more. |
+RLEF formulates iterative code synthesis as a POMDP — actions are full code responses, observations are formatted public-test execution feedback, rewards come from held-out *private* tests. Standard PPO with KL regularization and a 3-turn limit. Llama-3.1-70B+RLEF reaches 37.5/40.1 pass@1 valid/test on CodeContests at budget 1@3 (vs 25.9/27.5 baseline), matching AlphaCodium-GPT-4 with 5 samples; at 10@100 it reaches 54.5/54.5, surpassing the AlphaCode 41B+clustering baseline. Critically, a random-feedback ablation removes the entire gain, isolating that the model is learning to *use* execution feedback rather than just sample more.
 
-### 9.2 Deep dive — SWE-RL [@arxiv2502_18449]
 
-| | |
-|---|---|
-| **What it models** | Bug-fix as single-shot search/replace edit conditioned on issue + full file context. *No execution at training time*. |
-| **Data** | 273k high-quality PR seeds extracted from a raw GitHub PR corpus. Trained on Llama-3.3-70B-Instruct. |
-| **Objective** | **GRPO** with rule-based reward `R(o) = compare(patch_pred, patch_gt)` via `difflib.SequenceMatcher` (continuous 0..1). −1 for format violations. Continuous reward beats discrete in ablation (34.8 vs 29.0 oracle-repair). |
-| **Headline results** | **41.0% SWE-bench Verified pass@1** with Agentless Mini scaffold. OOD: HumanEval+ 76.2 → 79.9; CRUXEval-O 61.9 → 75.5; MATH 70.9 → 73.7 — *SFT degrades on these while RL improves*. |
-| **Distinctive contribution** | Continuous-similarity reward on PR patches without execution induces emergent self-reflection, multi-approach exploration, and divide-and-conquer reasoning that transfers OOD. The "world model" is implicit in the patch-similarity reward. |
+### 9.2 SWE-RL [@arxiv2502_18449]
+
+SWE-RL applies GRPO to 273k high-quality PR seeds with a rule-based, continuous reward (`difflib.SequenceMatcher` similarity between predicted and oracle patch) — *no code execution at training time*. Llama-3.3-70B fine-tuned this way (Llama3-SWE-RL-70B) hits 41.0% pass@1 on SWE-bench Verified with the Agentless Mini scaffold. The surprising result is OOD transfer: HumanEval+ 76.2→79.9, CRUXEval-O 61.9→75.5, MATH 70.9→73.7, while SFT on the same data *degrades* on these. Continuous reward beats discrete in ablation (34.8 vs 29.0 oracle-repair). The thesis: partial-credit similarity rewards on real PR patches induce reasoning patterns that transfer beyond the training distribution.
+
 
 ### 9.3 Process Reward Models
 
@@ -374,14 +311,10 @@ The model-based-RL framing — world model is what the policy plans over — has
 
 ## 10. Planning and Search with Code World Models
 
-### 10.1 Deep dive — RAP [@arxiv2305_14992]
+### 10.1 RAP [@arxiv2305_14992]
 
-| | |
-|---|---|
-| **What it models** | Generic reasoning MDP — state = textual configuration, action = step proposed by the same LLM, transition obtained by re-prompting the LLM as world model. |
-| **Method** | MCTS-UCT over the reasoning tree. Rewards: action likelihood, state confidence (majority voting), self-evaluation (LLM "Is this correct?" probability), task heuristics. |
-| **Headline results** | Blocksworld 4-step: RAP@10 = 0.86 (LLaMA-33B) vs CoT-pass@10 = 0.07 vs GPT-4+CoT = 0.63. **LLaMA-33B+RAP beats GPT-4+CoT by 33% relative on plan generation.** GSM8K: 51.6 (RAP+aggr) vs CoT+SC 46.8. |
-| **Distinctive contribution** | Earliest clean formulation that repurposes the LLM as both policy and transition model under MCTS. The template every later "LLM-as-WM" paper extends. |
+RAP frames reasoning as MCTS in a self-consistent MDP where the same frozen LLM serves as both policy and transition model — a state is a textual configuration (blocks layout, intermediate variables, current fact), an action is a step proposed by the LLM, and the transition is obtained by re-prompting. Rewards combine action likelihood, state confidence (majority voting), self-evaluation ("Is this correct?"), and task heuristics. On Blocksworld 4-step, RAP@10 reaches 0.86 with LLaMA-33B, surpassing GPT-4+CoT's 0.63 by 33% relative. The conceptual template — *repurpose the LLM as both policy and transition model under MCTS* — is what every later LLM-as-WM paper extends.
+
 
 **Tree of Thoughts** [@arxiv2305_10601], **AlphaZero-like Tree Search for LLM Decoding** [@arxiv2309_17179], **Tree Search for LM Agents** [@arxiv2407_01476], and **Mastering Board Games by External/Internal Planning with LMs** [@arxiv2412_12119] develop the search frame; the last gives the clearest contemporary recipe for learned tree-search with LLM-as-WM, straightforwardly transferable to code.
 
@@ -395,26 +328,15 @@ The model-based-RL framing — world model is what the policy plans over — has
 
 LeCun's **Joint Embedding Predictive Architecture** (I-JEPA, [@arxiv2301_08243]) predicts in embedding space rather than pixel space. The Dreamer family — Hafner et al.'s DreamerV1 [@arxiv1912_01603], DreamerV2 [@arxiv2010_02193], and DreamerV3 [@arxiv2301_04104], built around the Recurrent State-Space Model — has near-zero direct application to code. Two papers occupy the gap.
 
-### 11.1 Deep dive — LLM-JEPA [@arxiv2509_14252]
+### 11.1 LLM-JEPA [@arxiv2509_14252]
 
-| | |
-|---|---|
-| **What it models** | A *joint embedding* between two views of the same knowledge — Text (NL prompt) and Code (e.g., SQL). Not a temporal world model; an embedding-space abstraction objective. |
-| **Architecture** | Predictor is **tied-weights**: a single `[PRED]` token (with K predictor tokens) is appended and the LLM re-runs to produce `Pred(Enc(·))`. A custom block-causal attention mask lets both views go through a single forward pass. |
-| **Objective** | `L = Σₜ L_NTP(text) + λ · d(Pred(Enc(Text)), Enc(Code))`. d = cosine. Encoder reuses last-layer last-token hidden state. |
-| **Headline results** | Llama-3.2-1B on NL-RX-SYNTH FT: 71.46% vs 57.29% NTP-FT (+14.2). Spider: ~50% vs ~47%. GSM8K: ~32% vs ~32%. Top-100 singular values of `Enc(Text) − Enc(Code)` collapse by orders of magnitude. |
-| **Distinctive contribution** | To our knowledge the first JEPA-style embedding-space objective added to a generative LLM that preserves NTP loss while inducing low-rank Text↔Code mapping. Critical question (§17): is this really JEPA in the LeCun sense, or a regularizer on LM training? |
+LLM-JEPA adds a joint-embedding predictive objective to standard NTP training, using (text, code) as the two JEPA views with the LLM's last-layer last-token hidden state as encoder and a tied-weights `[PRED]` token as predictor. The loss is `L_NTP(text) + λ · d(Pred(Enc(Text)), Enc(Code))` with cosine distance. On Llama-3.2-1B fine-tuned on NL-RX-SYNTH the gain is 57.3 → 71.5 (+14.2 absolute); on Spider, GSM8K, and HellaSwag the wins are smaller. The top-100 singular values of `Enc(Text) − Enc(Code)` collapse by orders of magnitude, indicating a low-rank text↔code mapping. Whether this is "JEPA in the LeCun sense" or a regularizer on top of NTP is the live question raised in §17.
 
-### 11.2 Deep dive — CoLA [@arxiv2503_21383]
 
-| | |
-|---|---|
-| **What it models** | An MDP over text where the LLM is the transition model and actions are discrete *latent* tokens from a learned codebook, not vocabulary tokens. |
-| **Data** | Llama-3.1-8B base, continued-pretrained on 200GB from SlimPajama / StarCoder / Proof-Pile-2 / WuDao; policy trained on 100GB subset. |
-| **Three modules** | Inverse-Dynamics Model `f_inverse(x₁:t, xₜ₊₁) → aₜ` implemented as VQ-VAE-style encoder with codebook C. Language World Model inserts the chosen latent action into the LLM embedding stream and decodes the next token. Policy π(aₜ|x₁:t) is then behavior-cloned then RL-tuned. |
-| **Planning** | Action-level MCTS over latent-action subtrees. MCTS-Q variant uses Double-DQN over (prompt, response, reward) tuples. |
-| **Headline results** | Math-500: 42.4 (CoLA+RL) vs 38.2 baseline. **MCTS-Q on Math-500: 68.2 vs 63.0 baseline MCTS-Q.** +11% averaged on math reasoning; 64% win rate on alignment. |
-| **Distinctive contribution** | Among the first to *replace* the 128k token-level action space of an LLM with a small learned latent-action codebook for RL — making the action space tractable for tree search. |
+### 11.2 CoLA [@arxiv2503_21383]
+
+CoLA replaces the 128k-token action space of an LLM with a small learned latent-action codebook. Three modules: a VQ-VAE-style inverse-dynamics model that infers latent action `aₜ` from `(x₁:t, xₜ₊₁)`; a language world model that inserts the chosen latent action into the LLM embedding stream and decodes the next token; and a policy `π(aₜ | x₁:t)` behavior-cloned from inverse-dynamics labels then RL-tuned. Action-level MCTS over the learned codebook (with a Double-DQN Q-function) reaches Math-500 68.2 vs 63.0 baseline MCTS-Q. CoLA is the corpus's clearest "Dreamer-for-LLMs" instance — the action space is genuinely compressed, and rollout/search operate in that compressed space.
+
 
 ### 11.3 The gap
 
@@ -452,15 +374,8 @@ Long-CoT reasoning is *mental execution* — the chain-of-thought simulates the 
 
 The verifier-grounded lineage is the only research direction in the corpus that does not rely on LLM self-report for correctness — the verifier provides ground truth.
 
-#### Deep dive — ATLAS [@arxiv2512_10173]
+**ATLAS [@arxiv2512_10173]** is the cleanest end-to-end pipeline in the corpus for scaling verified-code data. From TACO-verified (12.8k LeetCode-style problems with Python references and tests) ATLAS produces 2,751 verified Dafny programs decomposed into 19,385 training examples across six tasks (NL-to-Code, NL-to-Spec, Spec-to-Code, Spec-Repair, Impl-Repair, Proof-Infilling). Spec quality is filtered by three SMT-discharged lemma types — soundness, completeness-contradiction, and completeness-perturbation. Qwen-2.5-Coder-7B fine-tuned this way reaches DafnyBench Pass@1 of 55.8% (from 32.4%) and DafnySynthesis Pass@5 of 65.8% (from 15.8%, surpassing GPT-4's 53.4). ATLAS does for verified Dafny what auto-formalization did for Lean theorems.
 
-| | |
-|---|---|
-| **What it models** | Verifier-grounded synthesis of Dafny programs (specification + implementation + proof annotations) from NL + Python reference + tests. |
-| **Data** | TACO-verified yields 2,751 verified Dafny programs decomposed into 19,385 training examples across 6 tasks: NL-to-Code, NL-to-Spec, Spec-to-Code, Spec-Repair, Impl-Repair, Proof-Infilling. Base: Qwen-2.5-Coder-7B + LoRA. |
-| **Spec quality** | Three lemma types: **Soundness** (contract holds on test inputs), **Completeness-Contradiction** (negated output → false), **Completeness-Perturbation** (contract rejects structurally perturbed outputs). |
-| **Headline results** | **DafnyBench Pass@1: 32.4 → 55.8 (+23.4); Pass@10 → 56.9.** **DafnySynthesis Pass@5: 15.8 → 65.8 (+50)**, surpassing GPT-4 (53.4) by 12.4 points at 7B. |
-| **Distinctive contribution** | An early end-to-end pipeline for scaling verified-code data the way auto-formalization scaled Lean theorems. Operational soundness/completeness criteria via SMT-discharged lemmas filter degenerate specs. |
 
 The cluster also includes **Re:Form** ([@arxiv2507_16331], Dafny+RL), **CLEVER** ([@arxiv2505_13938], Lean), **VeriStruct** ([@arxiv2510_25015], Verus), **AutoRocq** ([@arxiv2511_17330], Rocq), and **Semantic Equivalence Self-Play with Formal Verification** ([@arxiv2604_17010], Liquid Haskell).
 
@@ -501,39 +416,39 @@ Benchmarks split cleanly by what they measure.
 
 ### 16.1 SWE-bench scoreboard
 
-Protocols mix in SWE-bench reporting and are non-comparable across the obvious axes. We split the table into three protocol classes and ask readers to compare within, not across, classes. **Training / Evaluation regime**: *Frozen-model scaffold* = no model training (agent loop around a frozen closed model); *EG-LLM SFT* = supervised fine-tune on agent trajectories; *EG-LLM + RL* = RL with execution rewards; *EG-agent + learned simulator* = SFT+RL plus a learned execution surrogate; *EG-LLM + trace mid-train + RL* = the CWM lineage; *Scaffold-evolved* = recursive scaffold/agent self-improvement around a frozen closed model. **WM-Arch** is reserved for systems with explicit transition/rollout machinery (N1/N2/N3 from §3); no row in this table qualifies. **Tier** is the evidence grading from §2 (A peer-reviewed, B major arxiv preprint with code, C single-author/institution, D blog/leaderboard).
+Protocols mix in SWE-bench reporting and are non-comparable across the obvious axes. We split the table into three protocol classes and ask readers to compare within, not across, classes. **Training / Evaluation regime**: *Frozen-model scaffold* = no model training (agent loop around a frozen closed model); *EG-LLM SFT* = supervised fine-tune on agent trajectories; *EG-LLM + RL* = RL with execution rewards; *EG-agent + learned simulator* = SFT+RL plus a learned execution surrogate; *EG-LLM + trace mid-train + RL* = the CWM lineage; *Scaffold-evolved* = recursive scaffold/agent self-improvement around a frozen closed model. **WM-Arch** is reserved for systems with explicit transition/rollout machinery (N1/N2/N3 from §3); no row in this table qualifies.
 
 **Table 16.1a — Single-sample resolution (pass@1 on Verified unless noted)**
 
-| System | Base model | Bench | Pass@1 | Regime | Tier | Source |
-|---|---|---|---|---|---|---|
-| SWE-agent | GPT-4 Turbo | full | 12.5% | Frozen-model scaffold | A | [@arxiv2405_15793] |
-| AutoCodeRover | GPT-4 | Lite | 19.0% | Frozen-model scaffold | A | [@arxiv2404_05427] |
-| Agentless | GPT-4o | Lite | 32.0% | Frozen-model scaffold | B | [@arxiv2407_01489] |
-| SWE-Gym | Qwen-2.5-Coder-32B | Verified | 20.6% | EG-LLM SFT | B | [@arxiv2412_21139] |
-| Agent-RLVR (no RM) | Qwen-2.5-72B | Verified | 22.4% | EG-LLM + RL | B | [@arxiv2506_11425] |
-| Long-Context Multi-Turn RL | Qwen-2.5-72B | Verified | 39.0% | EG-LLM + RL | B | [@arxiv2508_03501] |
-| SWE-RL (Llama3-SWE-RL-70B) | Llama-3.3-70B | Verified | **41.0%** | EG-LLM + RL | B | [@arxiv2502_18449] |
-| Nanbeige SWE-World (RL) | Qwen-2.5-Coder-32B | Verified | 55.0% | EG-agent + learned simulator | B | [@arxiv2602_03419] |
-| CWM | CWM-32B | Verified | *not directly reported* † | EG-LLM + trace mid-train + RL | B | [@arxiv2510_02387] |
+|System|Base model|Bench|Pass@1|Regime|Source|
+|---|---|---|---|---|---|
+|SWE-agent|GPT-4 Turbo|full|12.5%|Frozen-model scaffold|[@arxiv2405_15793]|
+|AutoCodeRover|GPT-4|Lite|19.0%|Frozen-model scaffold|[@arxiv2404_05427]|
+|Agentless|GPT-4o|Lite|32.0%|Frozen-model scaffold|[@arxiv2407_01489]|
+|SWE-Gym|Qwen-2.5-Coder-32B|Verified|20.6%|EG-LLM SFT|[@arxiv2412_21139]|
+|Agent-RLVR (no RM)|Qwen-2.5-72B|Verified|22.4%|EG-LLM + RL|[@arxiv2506_11425]|
+|Long-Context Multi-Turn RL|Qwen-2.5-72B|Verified|39.0%|EG-LLM + RL|[@arxiv2508_03501]|
+|SWE-RL (Llama3-SWE-RL-70B)|Llama-3.3-70B|Verified|**41.0%**|EG-LLM + RL|[@arxiv2502_18449]|
+|Nanbeige SWE-World (RL)|Qwen-2.5-Coder-32B|Verified|55.0%|EG-agent + learned simulator|[@arxiv2602_03419]|
+|CWM|CWM-32B|Verified|*not directly reported* †|EG-LLM + trace mid-train + RL|[@arxiv2510_02387]|
 
 † The CWM paper does not report a pure pass@1 number under the standard protocol; the headline 65.8% in Table 16.1b is best@16 with verifier reranking. Inferred pass@1 from the paper's reported figures is approximately 53–55%, but this is *our estimate, not a directly reported number*, and we do not place it in the main row.
 
 **Table 16.1b — Best-of-k with verifier reranking / TTS**
 
-| System | Base | Bench | Score | Sample budget | Tier | Source |
-|---|---|---|---|---|---|---|
-| Agent-RLVR + RM rerank | Qwen-2.5-72B | Verified | 27.8% | rerank over multi-sample | B | [@arxiv2506_11425] |
-| Nanbeige SWE-World (TTS@8) | Qwen-2.5-Coder-32B | Verified | **68.2%** | best@8 | B | [@arxiv2602_03419] |
-| CWM (TTS) | CWM-32B | Verified | **65.8%** | best@16 over 40 reranked | B | [@arxiv2510_02387] |
+|System|Base|Bench|Score|Sample budget|Source|
+|---|---|---|---|---|---|
+|Agent-RLVR + RM rerank|Qwen-2.5-72B|Verified|27.8%|rerank over multi-sample|[@arxiv2506_11425]|
+|Nanbeige SWE-World (TTS@8)|Qwen-2.5-Coder-32B|Verified|**68.2%**|best@8|[@arxiv2602_03419]|
+|CWM (TTS)|CWM-32B|Verified|**65.8%**|best@16 over 40 reranked|[@arxiv2510_02387]|
 
 **Table 16.1c — Scaffold-evolution and self-play around closed-model executors**
 
-| System | Backbone executor | Bench | Score (start → end) | Note | Tier | Source |
-|---|---|---|---|---|---|---|
-| Darwin Godel Machine | Claude-3.5-Sonnet | Verified | 20% → 50% | Scaffold evolves over 80 iterations | B | [@arxiv2505_22954] |
-| Huxley Godel Machine | GPT-5-mini | Verified (500) | — → 61.4% | Scaffold optimized for Verified-60 | B | [@arxiv2510_21614] |
-| SICA | Claude-3.5-Sonnet + o3-mini | Verified (subset) | 17% → 53% | Scaffold evolves; not a model-training method | C | [@arxiv2504_15228] |
+|System|Backbone executor|Bench|Score (start → end)|Note|Source|
+|---|---|---|---|---|---|
+|Darwin Godel Machine|Claude-3.5-Sonnet|Verified|20% → 50%|Scaffold evolves over 80 iterations|[@arxiv2505_22954]|
+|Huxley Godel Machine|GPT-5-mini|Verified (500)|— → 61.4%|Scaffold optimized for Verified-60|[@arxiv2510_21614]|
+|SICA|Claude-3.5-Sonnet + o3-mini|Verified (subset)|17% → 53%|Scaffold evolves; not a model-training method|[@arxiv2504_15228]|
 
 Citations that quote "CWM 65.8% SWE-bench Verified" without disclosing the best@16/TTS protocol should be read as misreporting, not as direct pass@1 numbers.
 
@@ -543,57 +458,57 @@ Citations that quote "CWM 65.8% SWE-bench Verified" without disclosing the best@
 
 ### 16.2 Trace pretraining gains on execution-reasoning
 
-| Paper | Backbone | Baseline | After trace pretrain/FT | Delta | Benchmark | Tier |
-|---|---|---|---|---|---|---|
-| TRACED | UnixCoder | — | +12.4% rel branch-coverage; +25.2% rel variable-value | rel | CodeNet exec | A |
-| NExT | PaLM 2-L | 23.2 | 49.3 | **+26.1 abs** | MBPP-R | A |
-| NExT | PaLM 2-L | 32.2 | 42.5 | +10.3 abs | HumanEvalFix-Plus | A |
-| SemCoder (1.3B) | DS-Coder 1.3B | base | 63.6 / 63.9 | +23 abs | CRUXEval-I / O | B |
-| "What I cannot execute" | Llama-3.1-8B | 37.8% | ~80% | **+42 abs** | CRUXEval-O | B |
-| Do Code Semantics Help? | DSCoder, Llama-3, Gemma-2 | various | ≤ a few abs; some regressions | mixed | comprehensive | B |
+|Paper|Backbone|Baseline|After trace pretrain/FT|Delta|Benchmark|
+|---|---|---|---|---|---|
+|TRACED|UnixCoder|—|+12.4% rel branch-coverage; +25.2% rel variable-value|rel|CodeNet exec|
+|NExT|PaLM 2-L|23.2|49.3|**+26.1 abs**|MBPP-R|
+|NExT|PaLM 2-L|32.2|42.5|+10.3 abs|HumanEvalFix-Plus|
+|SemCoder (1.3B)|DS-Coder 1.3B|base|63.6 / 63.9|+23 abs|CRUXEval-I / O|
+|"What I cannot execute"|Llama-3.1-8B|37.8%|~80%|**+42 abs**|CRUXEval-O|
+|Do Code Semantics Help?|DSCoder, Llama-3, Gemma-2|various|≤ a few abs; some regressions|mixed|comprehensive|
 
 For under-trained ≤8B open-weights, trace pretraining delivers +15 to +42 absolute on CRUXEval-O. The "Do Code Semantics Help?" ablation [@arxiv2509_11686] is the disconfirming evidence: across multiple backbones and five trace representations, no single representation consistently outperforms others, and several downstream tasks regress under trace augmentation. The gain shrinks rapidly with base-model quality. Trace pretraining is a remedial intervention for weak code models; whether frontier models still benefit is unsettled.
 
 ### 16.3 Web/OS agents from WMs
 
-| Paper | Benchmark | Base | With WM | Delta | Mechanism | Tier |
-|---|---|---|---|---|---|---|
-| WebDreamer (GPT-4o WM) | VisualWebArena | 17.6% | 23.6% | +34.1% rel (≈+6 abs) | LLM-as-WM + MPC | B |
-| WebDreamer | Online-Mind2Web | 26.0% | 37.0% | +42.3% rel (≈+11 abs) | same | B |
-| Dreamer-7B (trained WM) | VisualWebArena | base | +4.7 abs | — | trained WM | B |
-| WMA [@arxiv2410_13232] | WebArena | base | action-selection 52→70% | — | trained transition WM | B |
-| Dyna-Think DDT (32B) | OSWorld BoN | RFT~28% | 43.1% | ≈+15 abs | Dyna-Q + WM head | B |
-| Dyna-Think DDT | WindowsAgentArena | 28.4% | 34.9% | +6.5 abs | same | B |
+|Paper|Benchmark|Base|With WM|Delta|Mechanism|
+|---|---|---|---|---|---|
+|WebDreamer (GPT-4o WM)|VisualWebArena|17.6%|23.6%|+34.1% rel (≈+6 abs)|LLM-as-WM + MPC|
+|WebDreamer|Online-Mind2Web|26.0%|37.0%|+42.3% rel (≈+11 abs)|same|
+|Dreamer-7B (trained WM)|VisualWebArena|base|+4.7 abs|—|trained WM|
+|WMA [@arxiv2410_13232]|WebArena|base|action-selection 52→70%|—|trained transition WM|
+|Dyna-Think DDT (32B)|OSWorld BoN|RFT~28%|43.1%|≈+15 abs|Dyna-Q + WM head|
+|Dyna-Think DDT|WindowsAgentArena|28.4%|34.9%|+6.5 abs|same|
 
 WM gains on web/OS are real but quantitatively small (≤+5–10 absolute task success rate on most benchmarks), and partly confounded with the extra synthetic data the WM generates. DyMo's 90%+ state-prediction accuracy versus 72.8% task success rate exemplifies the decoupling: WM heads can be accurate without the agent being accurate.
 
 ### 16.4 Formal verification vs LLM-only
 
-| System | Language | Benchmark | Baseline | With system | Tier | Source |
-|---|---|---|---|---|---|---|
-| ATLAS | Dafny | DafnyBench Pass@1 | 32.4% | **55.8%** | B | [@arxiv2512_10173] |
-| ATLAS | Dafny | DafnySynthesis Pass@5 | 15.8% | **65.8%** (>GPT-4 53.4) | B | [@arxiv2512_10173] |
-| CLEVER | Lean 4 | 161 problems end-to-end | best frontier | **≤1/161** | B | [@arxiv2505_13938] |
-| VeriStruct | Verus / Rust | 11 modules | — | **99.2%** (128/129 fns) | C | [@arxiv2510_25015] |
-| AutoRocq | Rocq | math + verif lemmas | 5 baselines | 48.0% math / 30.9% verif | B | [@arxiv2511_17330] |
-| Semantic Equiv Self-Play | Liquid Haskell | EquiBench | base | +13.3 pp | B | [@arxiv2604_17010] |
+|System|Language|Benchmark|Baseline|With system|Source|
+|---|---|---|---|---|---|
+|ATLAS|Dafny|DafnyBench Pass@1|32.4%|**55.8%**|[@arxiv2512_10173]|
+|ATLAS|Dafny|DafnySynthesis Pass@5|15.8%|**65.8%** (>GPT-4 53.4)|[@arxiv2512_10173]|
+|CLEVER|Lean 4|161 problems end-to-end|best frontier|**≤1/161**|[@arxiv2505_13938]|
+|VeriStruct|Verus / Rust|11 modules|—|**99.2%** (128/129 fns)|[@arxiv2510_25015]|
+|AutoRocq|Rocq|math + verif lemmas|5 baselines|48.0% math / 30.9% verif|[@arxiv2511_17330]|
+|Semantic Equiv Self-Play|Liquid Haskell|EquiBench|base|+13.3 pp|[@arxiv2604_17010]|
 
 Verified codegen has the steepest training-data sensitivity in the survey: small synthetic datasets (2.7K verified Dafny programs in ATLAS) produce +25–50 absolute gains because LLM-only baselines start near zero. CLEVER's ≤1/161 shows that without explicit data/scaffolding, frontier models cannot reliably produce verified code. VeriStruct shows that on curated targets near-perfect is reachable.
 
 ### 16.5 Reasoning-model competitive programming
 
-| Model | Codeforces | IOI / ICPC | Tier |
-|---|---|---|---|
-| gpt-4o | 808 (11th pct) | — | D |
-| o1-preview | 1258 (62nd pct) | — | D |
-| o1 | 1673 (89th pct) | — | D |
-| o1-ioi | 1807 (~93rd pct) | IOI 2024 49th pct live | B |
-| o3 | elite-human-class | IOI 2024 gold | D |
-| gpt-oss-120b + GenCluster | — | IOI 2025 gold (open-weight) | B |
-| Gemini 2.5 Pro Exp | — | ICPC-Eval Pass@1 22.0% | B |
-| DeepSeek-R1 | — | ICPC-Eval Pass@1 14.4% | B |
-| Claude 3.7 Sonnet | — | ICPC-Eval Pass@1 11.8% | B |
-| GPT-4o | — | ICPC-Eval Pass@1 5.9% | B |
+|Model|Codeforces|IOI / ICPC|
+|---|---|---|
+|gpt-4o|808 (11th pct)|—|
+|o1-preview|1258 (62nd pct)|—|
+|o1|1673 (89th pct)|—|
+|o1-ioi|1807 (~93rd pct)|IOI 2024 49th pct live|
+|o3|elite-human-class|IOI 2024 gold|
+|gpt-oss-120b + GenCluster|—|IOI 2025 gold (open-weight)|
+|Gemini 2.5 Pro Exp|—|ICPC-Eval Pass@1 22.0%|
+|DeepSeek-R1|—|ICPC-Eval Pass@1 14.4%|
+|Claude 3.7 Sonnet|—|ICPC-Eval Pass@1 11.8%|
+|GPT-4o|—|ICPC-Eval Pass@1 5.9%|
 
 Codeforces +999 rating points in 14 months on the o-series. The same line shows that frontier reasoning models gain almost everything from RL scaling, not from domain-specialized scaffolds — which complicates the case that "trace-style world models" are doing causal work for frontier systems.
 
