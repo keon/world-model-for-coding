@@ -1,0 +1,917 @@
+[
+  {
+    "id": "2307.12856",
+    "title": "A Real-World WebAgent with Planning, Long Context Understanding, and Program Synthesis",
+    "filename": "A Real-World WebAgent with Planning, Long Context Understanding, and Program Synthesis (2307.12856).pdf"
+  },
+  {
+    "id": "2504.15228",
+    "title": "A Self-Improving Coding Agent",
+    "filename": "A Self-Improving Coding Agent (2504.15228).pdf"
+  },
+  {
+    "id": "2406.00515",
+    "title": "A Survey on Large Language Models for Code Generation",
+    "filename": "A Survey on Large Language Models for Code Generation (2406.00515).pdf"
+  },
+  {
+    "id": "2502.01718",
+    "title": "ACECODER - Acing Coder RL via Automated Test-Case Synthesis",
+    "filename": "ACECODER - Acing Coder RL via Automated Test-Case Synthesis (2502.01718).pdf"
+  },
+  {
+    "id": "2512.10173",
+    "title": "ATLAS - Automated Toolkit for Large-Scale Verified Code Synthesis",
+    "filename": "ATLAS - Automated Toolkit for Large-Scale Verified Code Synthesis (2512.10173).pdf"
+  },
+  {
+    "id": "2509.02360",
+    "title": "Act Like You're Paying for This - Course-Correcting Code Agents with PRMs",
+    "filename": "Act Like You're Paying for This - Course-Correcting Code Agents with PRMs (2509.02360).pdf"
+  },
+  {
+    "id": "2504.07634",
+    "title": "Agent That Debugs - Dynamic State-Guided Vulnerability Repair",
+    "filename": "Agent That Debugs - Dynamic State-Guided Vulnerability Repair (2504.07634).pdf"
+  },
+  {
+    "id": "2506.11425",
+    "title": "Agent-RLVR - Training Software Engineering Agents via Guidance and Environment Rewards",
+    "filename": "Agent-RLVR - Training Software Engineering Agents via Guidance and Environment Rewards (2506.11425).pdf"
+  },
+  {
+    "id": "2308.03688",
+    "title": "AgentBench - Evaluating LLMs as Agents",
+    "filename": "AgentBench - Evaluating LLMs as Agents (2308.03688).pdf"
+  },
+  {
+    "id": "2603.01896",
+    "title": "Agentic Code Reasoning",
+    "filename": "Agentic Code Reasoning (2603.01896).pdf"
+  },
+  {
+    "id": "2511.17330",
+    "title": "Agentic Program Verification",
+    "filename": "Agentic Program Verification (2511.17330).pdf"
+  },
+  {
+    "id": "2407.01489",
+    "title": "Agentless - Demystifying LLM-based Software Engineering Agents",
+    "filename": "Agentless - Demystifying LLM-based Software Engineering Agents (2407.01489).pdf"
+  },
+  {
+    "id": "2309.17179",
+    "title": "AlphaZero-like Tree-Search can Guide Large Language Model Decoding and Training",
+    "filename": "AlphaZero-like Tree-Search can Guide Large Language Model Decoding and Training (2309.17179).pdf"
+  },
+  {
+    "id": "2406.06822",
+    "title": "An LLM-Assisted Easy-to-Trigger Backdoor Attack on Code Completion Models",
+    "filename": "An LLM-Assisted Easy-to-Trigger Backdoor Attack on Code Completion Models (2406.06822).pdf"
+  },
+  {
+    "id": "2602.17688",
+    "title": "AnCoder - Anchored Code Generation via Discrete Diffusion Models",
+    "filename": "AnCoder - Anchored Code Generation via Discrete Diffusion Models (2602.17688).pdf"
+  },
+  {
+    "id": "2404.05427",
+    "title": "AutoCodeRover - Autonomous Program Improvement",
+    "filename": "AutoCodeRover - Autonomous Program Improvement (2404.05427).pdf"
+  },
+  {
+    "id": "2310.03173",
+    "title": "B-Coder - Value-Based Deep Reinforcement Learning for Program Synthesis",
+    "filename": "B-Coder - Value-Based Deep Reinforcement Learning for Program Synthesis (2310.03173).pdf"
+  },
+  {
+    "id": "2509.11252",
+    "title": "Beyond Autoregression - An Empirical Study of Diffusion LLMs for Code Generation",
+    "filename": "Beyond Autoregression - An Empirical Study of Diffusion LLMs for Code Generation (2509.11252).pdf"
+  },
+  {
+    "id": "2603.17399",
+    "title": "Bootstrapping Coding Agents - The Specification Is the Program",
+    "filename": "Bootstrapping Coding Agents - The Specification Is the Program (2603.17399).pdf"
+  },
+  {
+    "id": "2505.13938",
+    "title": "CLEVER - A Curated Benchmark for Formally Verified Code Generation",
+    "filename": "CLEVER - A Curated Benchmark for Formally Verified Code Generation (2505.13938).pdf"
+  },
+  {
+    "id": "2502.05664",
+    "title": "CODESIM - Multi-Agent Code Generation and Problem Solving through Simulation-Driven Planning and Debugging",
+    "filename": "CODESIM - Multi-Agent Code Generation and Problem Solving through Simulation-Driven Planning and Debugging (2502.05664).pdf"
+  },
+  {
+    "id": "2401.03065",
+    "title": "CRUXEval - A Benchmark for Code Reasoning, Understanding and Execution",
+    "filename": "CRUXEval - A Benchmark for Code Reasoning, Understanding and Execution (2401.03065).pdf"
+  },
+  {
+    "id": "2408.13001",
+    "title": "CRUXEval-X - A Benchmark for Multilingual Code Reasoning Understanding and Execution",
+    "filename": "CRUXEval-X - A Benchmark for Multilingual Code Reasoning Understanding and Execution (2408.13001).pdf"
+  },
+  {
+    "id": "2510.02387",
+    "title": "CWM - An Open-Weights LLM for Research on Code Generation with World Models",
+    "filename": "CWM - An Open-Weights LLM for Research on Code Generation with World Models (2510.02387).pdf"
+  },
+  {
+    "id": "2511.19130",
+    "title": "Can LLMs Recover Program Semantics - A Systematic Evaluation of Semantic Preservation in Decompilation",
+    "filename": "Can LLMs Recover Program Semantics - A Systematic Evaluation of Semantic Preservation in Decompilation (2511.19130).pdf"
+  },
+  {
+    "id": "2511.18288",
+    "title": "Can Large Language Models Solve Path Constraints in Symbolic Execution",
+    "filename": "Can Large Language Models Solve Path Constraints in Symbolic Execution (2511.18288).pdf"
+  },
+  {
+    "id": "2507.04736",
+    "title": "ChipSeek - Optimizing Verilog Generation via EDA-Integrated Reinforcement Learning",
+    "filename": "ChipSeek - Optimizing Verilog Generation via EDA-Integrated Reinforcement Learning (2507.04736).pdf"
+  },
+  {
+    "id": "2503.21383",
+    "title": "CoLA - Controlling Large Language Models with Latent Actions",
+    "filename": "CoLA - Controlling Large Language Models with Latent Actions (2503.21383).pdf"
+  },
+  {
+    "id": "2506.10343",
+    "title": "Code Execution as Grounded Supervision for LLM Reasoning",
+    "filename": "Code Execution as Grounded Supervision for LLM Reasoning (2506.10343).pdf"
+  },
+  {
+    "id": "2305.05383",
+    "title": "Code Execution with Pre-trained Language Models",
+    "filename": "Code Execution with Pre-trained Language Models (2305.05383).pdf"
+  },
+  {
+    "id": "2503.23145",
+    "title": "CodeARC - Benchmarking Reasoning Capabilities of LLM Agents for Inductive Program Synthesis",
+    "filename": "CodeARC - Benchmarking Reasoning Capabilities of LLM Agents for Inductive Program Synthesis (2503.23145).pdf"
+  },
+  {
+    "id": "2207.01780",
+    "title": "CodeRL - Mastering Code Generation through Pretrained Models and Deep Reinforcement Learning",
+    "filename": "CodeRL - Mastering Code Generation through Pretrained Models and Deep Reinforcement Learning (2207.01780).pdf"
+  },
+  {
+    "id": "2510.18471",
+    "title": "CodeRL+ - Improving Code Generation via Reinforcement with Execution Semantics Alignment",
+    "filename": "CodeRL+ - Improving Code Generation via Reinforcement with Execution Semantics Alignment (2510.18471).pdf"
+  },
+  {
+    "id": "2301.09043",
+    "title": "CodeScore - Evaluating Code Generation by Learning Code Execution",
+    "filename": "CodeScore - Evaluating Code Generation by Learning Code Execution (2301.09043).pdf"
+  },
+  {
+    "id": "2502.06807",
+    "title": "Competitive Programming with Large Reasoning Models",
+    "filename": "Competitive Programming with Large Reasoning Models (2502.06807).pdf"
+  },
+  {
+    "id": "2508.01365",
+    "title": "ConfGuard - A Simple and Effective Backdoor Detection for Large Language Models",
+    "filename": "ConfGuard - A Simple and Effective Backdoor Detection for Large Language Models (2508.01365).pdf"
+  },
+  {
+    "id": "2601.09913",
+    "title": "Continuum Memory Architectures for Long-Horizon LLM Agents",
+    "filename": "Continuum Memory Architectures for Long-Horizon LLM Agents (2601.09913).pdf"
+  },
+  {
+    "id": "2511.19874",
+    "title": "Cross-LLM Generalization of Behavioral Backdoor Detection in AI Agent Supply Chains",
+    "filename": "Cross-LLM Generalization of Behavioral Backdoor Detection in AI Agent Supply Chains (2511.19874).pdf"
+  },
+  {
+    "id": "2505.22954",
+    "title": "Darwin Godel Machine - Open-Ended Evolution of Self-Improving Agents",
+    "filename": "Darwin Godel Machine - Open-Ended Evolution of Self-Improving Agents (2505.22954).pdf"
+  },
+  {
+    "id": "2604.24198",
+    "title": "DataPRM - Process-Level Reward Modeling for Agentic Data Analysis",
+    "filename": "DataPRM - Process-Level Reward Modeling for Agentic Data Analysis (2604.24198).pdf"
+  },
+  {
+    "id": "2503.07044",
+    "title": "DatawiseAgent - A Notebook-Centric LLM Agent Framework for Adaptive and Robust Data Science Automation",
+    "filename": "DatawiseAgent - A Notebook-Centric LLM Agent Framework for Adaptive and Robust Data Science Automation (2503.07044).pdf"
+  },
+  {
+    "id": "2402.16906",
+    "title": "Debug like a Human - A Large Language Model Debugger via Verifying Runtime Execution Step by Step",
+    "filename": "Debug like a Human - A Large Language Model Debugger via Verifying Runtime Execution Step by Step (2402.16906).pdf"
+  },
+  {
+    "id": "2602.07672",
+    "title": "Debugging Code World Models",
+    "filename": "Debugging Code World Models (2602.07672).pdf"
+  },
+  {
+    "id": "2605.08717",
+    "title": "Debugging the Debuggers - Failure-Anchored Structured Recovery for Software Engineering Agents",
+    "filename": "Debugging the Debuggers - Failure-Anchored Structured Recovery for Software Engineering Agents (2605.08717).pdf"
+  },
+  {
+    "id": "2401.14196",
+    "title": "DeepSeek-Coder - When the Large Language Model Meets Programming",
+    "filename": "DeepSeek-Coder - When the Large Language Model Meets Programming (2401.14196).pdf"
+  },
+  {
+    "id": "2501.12948",
+    "title": "DeepSeek-R1 incentivizes reasoning in LLMs through reinforcement learning",
+    "filename": "DeepSeek-R1 incentivizes reasoning in LLMs through reinforcement learning (2501.12948).pdf"
+  },
+  {
+    "id": "2512.00215",
+    "title": "Demystifying Errors in LLM Reasoning Traces - An Empirical Study of Code Execution Simulation",
+    "filename": "Demystifying Errors in LLM Reasoning Traces - An Empirical Study of Code Execution Simulation (2512.00215).pdf"
+  },
+  {
+    "id": "2506.20639",
+    "title": "DiffuCoder - Understanding and Improving Masked Diffusion Models for Code Generation",
+    "filename": "DiffuCoder - Understanding and Improving Masked Diffusion Models for Code Generation (2506.20639).pdf"
+  },
+  {
+    "id": "2509.11686",
+    "title": "Do Code Semantics Help - A Comprehensive Study on Execution Trace-Based Information for Code LLMs",
+    "filename": "Do Code Semantics Help - A Comprehensive Study on Execution Trace-Based Information for Code LLMs (2509.11686).pdf"
+  },
+  {
+    "id": "2509.01142",
+    "title": "Dream-Coder 7B - An Open Diffusion Language Model for Code",
+    "filename": "Dream-Coder 7B - An Open Diffusion Language Model for Code (2509.01142).pdf"
+  },
+  {
+    "id": "2506.00320",
+    "title": "Dyna-Think - Synergizing Reasoning, Acting, and World Model Simulation in AI Agents",
+    "filename": "Dyna-Think - Synergizing Reasoning, Acting, and World Model Simulation in AI Agents (2506.00320).pdf"
+  },
+  {
+    "id": "1711.07163",
+    "title": "Dynamic Neural Program Embedding for Program Repair",
+    "filename": "Dynamic Neural Program Embedding for Program Repair (1711.07163).pdf"
+  },
+  {
+    "id": "2604.24212",
+    "title": "Empowering Autonomous Debugging Agents with Efficient Dynamic Analysis",
+    "filename": "Empowering Autonomous Debugging Agents with Efficient Dynamic Analysis (2604.24212).pdf"
+  },
+  {
+    "id": "2502.12466",
+    "title": "EquiBench - Benchmarking LLMs' Reasoning about Program Semantics via Equivalence Checking",
+    "filename": "EquiBench - Benchmarking LLMs' Reasoning about Program Semantics via Equivalence Checking (2502.12466).pdf"
+  },
+  {
+    "id": "2107.03374",
+    "title": "Evaluating Large Language Models Trained on Code",
+    "filename": "Evaluating Large Language Models Trained on Code (2107.03374).pdf"
+  },
+  {
+    "id": "2403.16437",
+    "title": "Evaluating Large Language Models with Runtime Behavior of Program Execution",
+    "filename": "Evaluating Large Language Models with Runtime Behavior of Program Execution (2403.16437).pdf"
+  },
+  {
+    "id": "2307.13883",
+    "title": "ExeDec - Execution Decomposition for Compositional Generalization in Neural Program Synthesis",
+    "filename": "ExeDec - Execution Decomposition for Compositional Generalization in Neural Program Synthesis (2307.13883).pdf"
+  },
+  {
+    "id": "2603.11226",
+    "title": "ExecVerify - White-Box RL with Verifiable Stepwise Rewards for Code Execution Reasoning",
+    "filename": "ExecVerify - White-Box RL with Verifiable Stepwise Rewards for Code Execution Reasoning (2603.11226).pdf"
+  },
+  {
+    "id": "2402.01030",
+    "title": "Executable Code Actions Elicit Better LLM Agents",
+    "filename": "Executable Code Actions Elicit Better LLM Agents (2402.01030).pdf"
+  },
+  {
+    "id": "2605.05138",
+    "title": "Executable World Models for ARC-AGI-3 in the Era of Coding Agents",
+    "filename": "Executable World Models for ARC-AGI-3 in the Era of Coding Agents (2605.05138).pdf"
+  },
+  {
+    "id": "2506.10948",
+    "title": "Execution Guided Line-by-Line Code Generation",
+    "filename": "Execution Guided Line-by-Line Code Generation (2506.10948).pdf"
+  },
+  {
+    "id": "2301.13816",
+    "title": "Execution-based Code Generation using Deep Reinforcement Learning",
+    "filename": "Execution-based Code Generation using Deep Reinforcement Learning (2301.13816).pdf"
+  },
+  {
+    "id": "2604.15136",
+    "title": "Feedback-Driven Execution for LLM-Based Binary Analysis",
+    "filename": "Feedback-Driven Execution for LLM-Based Binary Analysis (2604.15136).pdf"
+  },
+  {
+    "id": "2410.01215",
+    "title": "From Code to Correctness - Closing the Last Mile of Code Generation with Hierarchical Debugging",
+    "filename": "From Code to Correctness - Closing the Last Mile of Code Generation with Hierarchical Debugging (2410.01215).pdf"
+  },
+  {
+    "id": "2601.22249",
+    "title": "FunPRM - Function-as-Step Process Reward Model with Meta Reward Correction for Code Generation",
+    "filename": "FunPRM - Function-as-Step Process Reward Model with Meta Reward Correction for Code Generation (2601.22249).pdf"
+  },
+  {
+    "id": "2412.13464",
+    "title": "GenX - Mastering Code and Test Generation with Execution Feedback",
+    "filename": "GenX - Mastering Code and Test Generation with Execution Feedback (2412.13464).pdf"
+  },
+  {
+    "id": "2506.01622",
+    "title": "General Agents Contain World Models",
+    "filename": "General Agents Contain World Models (2506.01622).pdf"
+  },
+  {
+    "id": "2405.15383",
+    "title": "Generating Code World Models with Large Language Models Guided by Monte Carlo Tree Search",
+    "filename": "Generating Code World Models with Large Language Models Guided by Monte Carlo Tree Search (2405.15383).pdf"
+  },
+  {
+    "id": "2402.15391",
+    "title": "Genie - Generative Interactive Environments",
+    "filename": "Genie - Generative Interactive Environments (2402.15391).pdf"
+  },
+  {
+    "id": "2510.21614",
+    "title": "Huxley-Godel Machine - Human-Level Coding Agent Development",
+    "filename": "Huxley-Godel Machine - Human-Level Coding Agent Development (2510.21614).pdf"
+  },
+  {
+    "id": "2301.08243",
+    "title": "I-JEPA - Self-Supervised Learning from Images with a Joint-Embedding Predictive Architecture",
+    "filename": "I-JEPA - Self-Supervised Learning from Images with a Joint-Embedding Predictive Architecture (2301.08243).pdf"
+  },
+  {
+    "id": "2506.04894",
+    "title": "ICPC-Eval - Probing the Frontiers of LLM Reasoning Through Competitive Programming",
+    "filename": "ICPC-Eval - Probing the Frontiers of LLM Reasoning Through Competitive Programming (2506.04894).pdf"
+  },
+  {
+    "id": "2604.17010",
+    "title": "Improving LLM Code Reasoning via Semantic Equivalence Self-Play with Formal Verification",
+    "filename": "Improving LLM Code Reasoning via Semantic Equivalence Self-Play with Formal Verification (2604.17010).pdf"
+  },
+  {
+    "id": "2604.03144",
+    "title": "InCoder-32B-Thinking - Industrial Code World Model for Thinking",
+    "filename": "InCoder-32B-Thinking - Industrial Code World Model for Thinking (2604.03144).pdf"
+  },
+  {
+    "id": "2504.15804",
+    "title": "Insights from Verification - Training a Verilog Generation LLM with RL with Testbench Feedback",
+    "filename": "Insights from Verification - Training a Verilog Generation LLM with RL with Testbench Feedback (2504.15804).pdf"
+  },
+  {
+    "id": "2510.18327",
+    "title": "InspectCoder - Dynamic Analysis-Enabled Self Repair through Interactive LLM-Debugger Collaboration",
+    "filename": "InspectCoder - Dynamic Analysis-Enabled Self Repair through Interactive LLM-Debugger Collaboration (2510.18327).pdf"
+  },
+  {
+    "id": "2504.15210",
+    "title": "Integrating Symbolic Execution into the Fine-Tuning of Code-Generating LLMs",
+    "filename": "Integrating Symbolic Execution into the Fine-Tuning of Code-Generating LLMs (2504.15210).pdf"
+  },
+  {
+    "id": "2506.09550",
+    "title": "Integrating Symbolic Execution with LLMs for Automated Generation of Program Specifications",
+    "filename": "Integrating Symbolic Execution with LLMs for Automated Generation of Program Specifications (2506.09550).pdf"
+  },
+  {
+    "id": "2306.09896",
+    "title": "Is Self-Repair a Silver Bullet for Code Generation",
+    "filename": "Is Self-Repair a Silver Bullet for Code Generation (2306.09896).pdf"
+  },
+  {
+    "id": "2305.01210",
+    "title": "Is Your Code Generated by ChatGPT Really Correct - EvalPlus",
+    "filename": "Is Your Code Generated by ChatGPT Really Correct - EvalPlus (2305.01210).pdf"
+  },
+  {
+    "id": "2411.06559",
+    "title": "Is Your LLM Secretly a World Model of the Internet - WebDreamer",
+    "filename": "Is Your LLM Secretly a World Model of the Internet - WebDreamer (2411.06559).pdf"
+  },
+  {
+    "id": "2504.16591",
+    "title": "JEPA for RL - Investigating Joint-Embedding Predictive Architectures for Reinforcement Learning",
+    "filename": "JEPA for RL - Investigating Joint-Embedding Predictive Architectures for Reinforcement Learning (2504.16591).pdf"
+  },
+  {
+    "id": "2509.09245",
+    "title": "Jupiter - Enhancing LLM Data Analysis Capabilities via Notebook and Inference-Time Value-Guided Search",
+    "filename": "Jupiter - Enhancing LLM Data Analysis Capabilities via Notebook and Inference-Time Value-Guided Search (2509.09245).pdf"
+  },
+  {
+    "id": "2302.08468",
+    "title": "LEVER - Learning to Verify Language-to-Code Generation with Execution",
+    "filename": "LEVER - Learning to Verify Language-to-Code Generation with Execution (2302.08468).pdf"
+  },
+  {
+    "id": "2302.02343",
+    "title": "LExecutor - Learning-Guided Execution",
+    "filename": "LExecutor - Learning-Guided Execution (2302.02343).pdf"
+  },
+  {
+    "id": "2509.14252",
+    "title": "LLM-JEPA - Large Language Models Meet Joint Embedding Predictive Architectures",
+    "filename": "LLM-JEPA - Large Language Models Meet Joint Embedding Predictive Architectures (2509.14252).pdf"
+  },
+  {
+    "id": "2505.13452",
+    "title": "Large Language Model Powered Symbolic Execution",
+    "filename": "Large Language Model Powered Symbolic Execution (2505.13452).pdf"
+  },
+  {
+    "id": "2107.00101",
+    "title": "Latent Execution for Neural Program Synthesis Beyond Domain-Specific Languages",
+    "filename": "Latent Execution for Neural Program Synthesis Beyond Domain-Specific Languages (2107.00101).pdf"
+  },
+  {
+    "id": "1906.07181",
+    "title": "Learning Execution through Neural Code Fusion",
+    "filename": "Learning Execution through Neural Code Fusion (1906.07181).pdf"
+  },
+  {
+    "id": "2604.20926",
+    "title": "Learning Reasoning World Models for Parallel Code",
+    "filename": "Learning Reasoning World Models for Parallel Code (2604.20926).pdf"
+  },
+  {
+    "id": "1410.4615",
+    "title": "Learning to Execute",
+    "filename": "Learning to Execute (1410.4615).pdf"
+  },
+  {
+    "id": "2010.12621",
+    "title": "Learning to Execute Programs with Instruction Pointer Attention Graph Neural Networks",
+    "filename": "Learning to Execute Programs with Instruction Pointer Attention Graph Neural Networks (2010.12621).pdf"
+  },
+  {
+    "id": "2403.07974",
+    "title": "LiveCodeBench - Holistic and Contamination Free Evaluation of Large Language Models for Code",
+    "filename": "LiveCodeBench - Holistic and Contamination Free Evaluation of Large Language Models for Code (2403.07974).pdf"
+  },
+  {
+    "id": "2508.00419",
+    "title": "Loop Invariant Generation - A Hybrid Framework of Reasoning Optimised LLMs and SMT Solvers",
+    "filename": "Loop Invariant Generation - A Hybrid Framework of Reasoning Optimised LLMs and SMT Solvers (2508.00419).pdf"
+  },
+  {
+    "id": "2412.12119",
+    "title": "Mastering Board Games by External and Internal Planning with Language Models",
+    "filename": "Mastering Board Games by External and Internal Planning with Language Models (2412.12119).pdf"
+  },
+  {
+    "id": "2510.02917",
+    "title": "Mechanistic Interpretability of Code Correctness in LLMs via Sparse Autoencoders",
+    "filename": "Mechanistic Interpretability of Code Correctness in LLMs via Sparse Autoencoders (2510.02917).pdf"
+  },
+  {
+    "id": "2510.12635",
+    "title": "Memory as Action - Autonomous Context Curation for Long-Horizon Agentic Tasks",
+    "filename": "Memory as Action - Autonomous Context Curation for Long-Horizon Agentic Tasks (2510.12635).pdf"
+  },
+  {
+    "id": "2306.06070",
+    "title": "Mind2Web - Towards a Generalist Agent for the Web",
+    "filename": "Mind2Web - Towards a Generalist Agent for the Web (2306.06070).pdf"
+  },
+  {
+    "id": "2404.14662",
+    "title": "NExT - Teaching Large Language Models to Reason about Code Execution",
+    "filename": "NExT - Teaching Large Language Models to Reason about Code Execution (2404.14662).pdf"
+  },
+  {
+    "id": "2602.03419",
+    "title": "Nanbeige SWE-World - Building Software Engineering Agents in Docker-Free Environments",
+    "filename": "Nanbeige SWE-World - Building Software Engineering Agents in Docker-Free Environments (2602.03419).pdf"
+  },
+  {
+    "id": "2210.02853",
+    "title": "NeuDep - Neural Binary Memory Dependence Analysis",
+    "filename": "NeuDep - Neural Binary Memory Dependence Analysis (2210.02853).pdf"
+  },
+  {
+    "id": "2604.06425",
+    "title": "Neural Computers",
+    "filename": "Neural Computers (2604.06425).pdf"
+  },
+  {
+    "id": "2512.19980",
+    "title": "Neuron-Guided Interpretation of Code LLMs - Where, Why, and How",
+    "filename": "Neuron-Guided Interpretation of Code LLMs - Where, Why, and How (2512.19980).pdf"
+  },
+  {
+    "id": "2510.26423",
+    "title": "Nexus - Execution-Grounded Multi-Agent Test Oracle Synthesis",
+    "filename": "Nexus - Execution-Grounded Multi-Agent Test Oracle Synthesis (2510.26423).pdf"
+  },
+  {
+    "id": "2512.07404",
+    "title": "On LLMs' Internal Representation of Code Correctness",
+    "filename": "On LLMs' Internal Representation of Code Correctness (2512.07404).pdf"
+  },
+  {
+    "id": "2507.09075",
+    "title": "OpenCodeReasoning-II - A Simple Test Time Scaling Approach via Self-Critique",
+    "filename": "OpenCodeReasoning-II - A Simple Test Time Scaling Approach via Self-Critique (2507.09075).pdf"
+  },
+  {
+    "id": "2507.15877",
+    "title": "Out-of-Distribution Generalization in the ARC-AGI Domain - Execution-Guided Neural Program Synthesis vs Test-Time Fine-Tuning",
+    "filename": "Out-of-Distribution Generalization in the ARC-AGI Domain - Execution-Guided Neural Program Synthesis vs Test-Time Fine-Tuning (2507.15877).pdf"
+  },
+  {
+    "id": "2412.15118",
+    "title": "Outcome-Refining Process Supervision for Code Generation",
+    "filename": "Outcome-Refining Process Supervision for Code Generation (2412.15118).pdf"
+  },
+  {
+    "id": "2510.03415",
+    "title": "PLSemanticsBench - LLMs as Programming Language Interpreters",
+    "filename": "PLSemanticsBench - LLMs as Programming Language Interpreters (2510.03415).pdf"
+  },
+  {
+    "id": "2409.03733",
+    "title": "Planning In Natural Language Improves LLM Search For Code Generation",
+    "filename": "Planning In Natural Language Improves LLM Search For Code Generation (2409.03733).pdf"
+  },
+  {
+    "id": "2502.06975",
+    "title": "Position - Episodic Memory is the Missing Piece for Long-Term LLM Agents",
+    "filename": "Position - Episodic Memory is the Missing Piece for Long-Term LLM Agents (2502.06975).pdf"
+  },
+  {
+    "id": "2504.16828",
+    "title": "Process Reward Models That Think",
+    "filename": "Process Reward Models That Think (2504.16828).pdf"
+  },
+  {
+    "id": "2410.17621",
+    "title": "Process Supervision-Guided Policy Optimization for Code Generation",
+    "filename": "Process Supervision-Guided Policy Optimization for Code Generation (2410.17621).pdf"
+  },
+  {
+    "id": "2108.07732",
+    "title": "Program Synthesis with Large Language Models",
+    "filename": "Program Synthesis with Large Language Models (2108.07732).pdf"
+  },
+  {
+    "id": "2407.16732",
+    "title": "PyBench - Evaluating LLM Agent on Various Real-World Coding Tasks",
+    "filename": "PyBench - Evaluating LLM Agent on Various Real-World Coding Tasks (2407.16732).pdf"
+  },
+  {
+    "id": "2409.09271",
+    "title": "Python Symbolic Execution with LLM-powered Code Generation",
+    "filename": "Python Symbolic Execution with LLM-powered Code Generation (2409.09271).pdf"
+  },
+  {
+    "id": "2505.21668",
+    "title": "R1-Code-Interpreter - LLMs Reason with Code via Supervised and Multi-stage Reinforcement Learning",
+    "filename": "R1-Code-Interpreter - LLMs Reason with Code via Supervised and Multi-stage Reinforcement Learning (2505.21668).pdf"
+  },
+  {
+    "id": "2411.13826",
+    "title": "REPL-Plan - Interactive and Expressive Code-Augmented Planning with Large Language Models",
+    "filename": "REPL-Plan - Interactive and Expressive Code-Augmented Planning with Large Language Models (2411.13826).pdf"
+  },
+  {
+    "id": "2410.02089",
+    "title": "RLEF - Grounding Code LLMs in Execution Feedback with Reinforcement Learning",
+    "filename": "RLEF - Grounding Code LLMs in Execution Feedback with Reinforcement Learning (2410.02089).pdf"
+  },
+  {
+    "id": "2307.04349",
+    "title": "RLTF - Reinforcement Learning from Unit Test Feedback",
+    "filename": "RLTF - Reinforcement Learning from Unit Test Feedback (2307.04349).pdf"
+  },
+  {
+    "id": "2507.16331",
+    "title": "Re-Form - Reducing Human Priors in Scalable Formal Software Verification with RL in LLMs on Dafny",
+    "filename": "Re-Form - Reducing Human Priors in Scalable Formal Software Verification with RL in LLMs on Dafny (2507.16331).pdf"
+  },
+  {
+    "id": "2305.14992",
+    "title": "Reasoning with Language Model is Planning with World Model - RAP",
+    "filename": "Reasoning with Language Model is Planning with World Model - RAP (2305.14992).pdf"
+  },
+  {
+    "id": "2303.11366",
+    "title": "Reflexion - Language Agents with Verbal Reinforcement Learning",
+    "filename": "Reflexion - Language Agents with Verbal Reinforcement Learning (2303.11366).pdf"
+  },
+  {
+    "id": "2502.01600",
+    "title": "Reinforcement Learning for Long-Horizon Interactive LLM Agents",
+    "filename": "Reinforcement Learning for Long-Horizon Interactive LLM Agents (2502.01600).pdf"
+  },
+  {
+    "id": "2602.05842",
+    "title": "Reinforcement World Model Learning for LLM-based Agents",
+    "filename": "Reinforcement World Model Learning for LLM-based Agents (2602.05842).pdf"
+  },
+  {
+    "id": "2410.14684",
+    "title": "RepoGraph - Enhancing AI Software Engineering with Repository-level Code Graph",
+    "filename": "RepoGraph - Enhancing AI Software Engineering with Repository-level Code Graph (2410.14684).pdf"
+  },
+  {
+    "id": "2501.12793",
+    "title": "Revisit Self-Debugging with Self-Generated Tests for Code Generation",
+    "filename": "Revisit Self-Debugging with Self-Generated Tests for Code Generation (2501.12793).pdf"
+  },
+  {
+    "id": "2604.02647",
+    "title": "Runtime Execution Traces Guided Automated Program Repair with Multi-Agent Debate",
+    "filename": "Runtime Execution Traces Guided Automated Program Repair with Multi-Agent Debate (2604.02647).pdf"
+  },
+  {
+    "id": "2502.14382",
+    "title": "S-star - Test Time Scaling for Code Generation",
+    "filename": "S-star - Test Time Scaling for Code Generation (2502.14382).pdf"
+  },
+  {
+    "id": "2509.14646",
+    "title": "SALT4Decompile - Inferring Source-level Abstract Logic Tree for LLM-Based Binary Decompilation",
+    "filename": "SALT4Decompile - Inferring Source-level Abstract Logic Tree for LLM-Based Binary Decompilation (2509.14646).pdf"
+  },
+  {
+    "id": "2509.22114",
+    "title": "SK2Decompile - LLM-Based Two-Phase Binary Decompilation",
+    "filename": "SK2Decompile - LLM-Based Two-Phase Binary Decompilation (2509.22114).pdf"
+  },
+  {
+    "id": "2507.14172",
+    "title": "SOAR - Self-Improving Language Models for Evolutionary Program Synthesis on ARC-AGI",
+    "filename": "SOAR - Self-Improving Language Models for Evolutionary Program Synthesis on ARC-AGI (2507.14172).pdf"
+  },
+  {
+    "id": "2502.18449",
+    "title": "SWE-RL - Advancing LLM Reasoning via Reinforcement Learning on Open Software Evolution",
+    "filename": "SWE-RL - Advancing LLM Reasoning via Reinforcement Learning on Open Software Evolution (2502.18449).pdf"
+  },
+  {
+    "id": "2604.14820",
+    "title": "SWE-TRACE - Optimizing Long-Horizon SWE Agents Through Rubric Process Reward Models and Heuristic Test-Time Scaling",
+    "filename": "SWE-TRACE - Optimizing Long-Horizon SWE Agents Through Rubric Process Reward Models and Heuristic Test-Time Scaling (2604.14820).pdf"
+  },
+  {
+    "id": "2405.15793",
+    "title": "SWE-agent - Agent-Computer Interfaces Enable Automated Software Engineering",
+    "filename": "SWE-agent - Agent-Computer Interfaces Enable Automated Software Engineering (2405.15793).pdf"
+  },
+  {
+    "id": "2310.06770",
+    "title": "SWE-bench - Can Language Models Resolve Real-World GitHub Issues",
+    "filename": "SWE-bench - Can Language Models Resolve Real-World GitHub Issues (2310.06770).pdf"
+  },
+  {
+    "id": "2408.03314",
+    "title": "Scaling LLM Test-Time Compute Optimally",
+    "filename": "Scaling LLM Test-Time Compute Optimally (2408.03314).pdf"
+  },
+  {
+    "id": "2510.14232",
+    "title": "Scaling Test-Time Compute to Achieve IOI Gold Medal with Open-Weight Models",
+    "filename": "Scaling Test-Time Compute to Achieve IOI Gold Medal with Open-Weight Models (2510.14232).pdf"
+  },
+  {
+    "id": "2604.03253",
+    "title": "Self-Execution Simulation",
+    "filename": "Self-Execution Simulation (2604.03253).pdf"
+  },
+  {
+    "id": "2512.02731",
+    "title": "Self-Improving AI Agents through Self-Play",
+    "filename": "Self-Improving AI Agents through Self-Play (2512.02731).pdf"
+  },
+  {
+    "id": "2511.02854",
+    "title": "Self-Redraft - Eliciting Intrinsic Exploration-Exploitation Balance in Test-Time Scaling for Code Generation",
+    "filename": "Self-Redraft - Eliciting Intrinsic Exploration-Exploitation Balance in Test-Time Scaling for Code Generation (2511.02854).pdf"
+  },
+  {
+    "id": "2203.12755",
+    "title": "SelfAPR - Self-supervised Program Repair with Test Execution Diagnostics",
+    "filename": "SelfAPR - Self-supervised Program Repair with Test Execution Diagnostics (2203.12755).pdf"
+  },
+  {
+    "id": "2406.01006",
+    "title": "SemCoder - Training Code Language Models with Comprehensive Semantics Reasoning",
+    "filename": "SemCoder - Training Code Language Models with Comprehensive Semantics Reasoning (2406.01006).pdf"
+  },
+  {
+    "id": "2112.00114",
+    "title": "Show Your Work - Scratchpads for Intermediate Computation with Language Models",
+    "filename": "Show Your Work - Scratchpads for Intermediate Computation with Language Models (2112.00114).pdf"
+  },
+  {
+    "id": "2203.03771",
+    "title": "Static Prediction of Runtime Errors by Learning to Execute Programs with External Resource Descriptions",
+    "filename": "Static Prediction of Runtime Errors by Learning to Execute Programs with External Resource Descriptions (2203.03771).pdf"
+  },
+  {
+    "id": "2402.01391",
+    "title": "StepCoder - Improve Code Generation with Reinforcement Learning from Compiler Feedback",
+    "filename": "StepCoder - Improve Code Generation with Reinforcement Learning from Compiler Feedback (2402.01391).pdf"
+  },
+  {
+    "id": "2603.09044",
+    "title": "Synergistic Directed Execution and LLM-Driven Analysis for Zero-Day AI-Generated Malware Detection",
+    "filename": "Synergistic Directed Execution and LLM-Driven Analysis for Zero-Day AI-Generated Malware Detection (2603.09044).pdf"
+  },
+  {
+    "id": "2007.08095",
+    "title": "Synthesize, Execute and Debug - Learning to Repair for Neural Program Synthesis",
+    "filename": "Synthesize, Execute and Debug - Learning to Repair for Neural Program Synthesis (2007.08095).pdf"
+  },
+  {
+    "id": "2306.07487",
+    "title": "TRACED - Execution-aware Pre-training for Source Code",
+    "filename": "TRACED - Execution-aware Pre-training for Source Code (2306.07487).pdf"
+  },
+  {
+    "id": "2304.05128",
+    "title": "Teaching Large Language Models to Self-Debug",
+    "filename": "Teaching Large Language Models to Self-Debug (2304.05128).pdf"
+  },
+  {
+    "id": "2503.07215",
+    "title": "The CodeInverter Suite - Control-Flow and Data-Mapping Augmented Binary Decompilation with LLMs",
+    "filename": "The CodeInverter Suite - Control-Flow and Data-Mapping Augmented Binary Decompilation with LLMs (2503.07215).pdf"
+  },
+  {
+    "id": "2512.13821",
+    "title": "The Double Life of Code World Models - Provably Unmasking Malicious Behavior Through Execution Traces",
+    "filename": "The Double Life of Code World Models - Provably Unmasking Malicious Behavior Through Execution Traces (2512.13821).pdf"
+  },
+  {
+    "id": "2512.18552",
+    "title": "Toward Training Superintelligent Software Agents through Self-Play SWE-RL",
+    "filename": "Toward Training Superintelligent Software Agents through Self-Play SWE-RL (2512.18552).pdf"
+  },
+  {
+    "id": "2505.24480",
+    "title": "Towards Effective Code-Integrated Reasoning",
+    "filename": "Towards Effective Code-Integrated Reasoning (2505.24480).pdf"
+  },
+  {
+    "id": "2505.04441",
+    "title": "Towards Effectively Leveraging Execution Traces for Program Repair with Code LLMs",
+    "filename": "Towards Effectively Leveraging Execution Traces for Program Repair with Code LLMs (2505.04441).pdf"
+  },
+  {
+    "id": "2603.09951",
+    "title": "Towards a Neural Debugger for Python",
+    "filename": "Towards a Neural Debugger for Python (2603.09951).pdf"
+  },
+  {
+    "id": "2602.06875",
+    "title": "TraceCoder - A Trace-Driven Multi-Agent Framework for Automated Debugging of LLM-Generated Code",
+    "filename": "TraceCoder - A Trace-Driven Multi-Agent Framework for Automated Debugging of LLM-Generated Code (2602.06875).pdf"
+  },
+  {
+    "id": "2605.11006",
+    "title": "TraceEval - An Execution-Verified Multi-Language Benchmark for Code Semantic Reasoning",
+    "filename": "TraceEval - An Execution-Verified Multi-Language Benchmark for Code Semantic Reasoning (2605.11006).pdf"
+  },
+  {
+    "id": "2304.12743",
+    "title": "TraceFixer - Execution Trace-Driven Program Repair",
+    "filename": "TraceFixer - Execution Trace-Driven Program Repair (2304.12743).pdf"
+  },
+  {
+    "id": "2508.03501",
+    "title": "Training Long-Context, Multi-Turn Software Engineering Agents with Reinforcement Learning",
+    "filename": "Training Long-Context, Multi-Turn Software Engineering Agents with Reinforcement Learning (2508.03501).pdf"
+  },
+  {
+    "id": "2412.21139",
+    "title": "Training Software Engineering Agents and Verifiers with SWE-Gym",
+    "filename": "Training Software Engineering Agents and Verifiers with SWE-Gym (2412.21139).pdf"
+  },
+  {
+    "id": "2407.01476",
+    "title": "Tree Search for Language Model Agents",
+    "filename": "Tree Search for Language Model Agents (2407.01476).pdf"
+  },
+  {
+    "id": "2305.10601",
+    "title": "Tree of Thoughts - Deliberate Problem Solving with Large Language Models",
+    "filename": "Tree of Thoughts - Deliberate Problem Solving with Large Language Models (2305.10601).pdf"
+  },
+  {
+    "id": "2012.08680",
+    "title": "Trex - Learning Execution Semantics from Micro-Traces for Binary Similarity",
+    "filename": "Trex - Learning Execution Semantics from Micro-Traces for Binary Similarity (2012.08680).pdf"
+  },
+  {
+    "id": "2311.14850",
+    "title": "TrojanedCM - A Repository of Trojaned Large Language Models of Code",
+    "filename": "TrojanedCM - A Repository of Trojaned Large Language Models of Code (2311.14850).pdf"
+  },
+  {
+    "id": "2512.17385",
+    "title": "UCoder - Unsupervised Code Generation by Internal Probing of Large Language Models",
+    "filename": "UCoder - Unsupervised Code Generation by Internal Probing of Large Language Models (2512.17385).pdf"
+  },
+  {
+    "id": "2503.12686",
+    "title": "Understanding Formal Reasoning Failures in LLMs as Abstract Interpreters",
+    "filename": "Understanding Formal Reasoning Failures in LLMs as Abstract Interpreters (2503.12686).pdf"
+  },
+  {
+    "id": "2601.05542",
+    "title": "Understanding LLM-Driven Test Oracle Generation",
+    "filename": "Understanding LLM-Driven Test Oracle Generation (2601.05542).pdf"
+  },
+  {
+    "id": "2411.14499",
+    "title": "Understanding World or Predicting Future - A Comprehensive Survey of World Models",
+    "filename": "Understanding World or Predicting Future - A Comprehensive Survey of World Models (2411.14499).pdf"
+  },
+  {
+    "id": "2603.11103",
+    "title": "Understanding by Reconstruction - Reversing the Software Development Process for LLM Pretraining",
+    "filename": "Understanding by Reconstruction - Reversing the Software Development Process for LLM Pretraining (2603.11103).pdf"
+  },
+  {
+    "id": "2406.10667",
+    "title": "UniZero - Generalized and Efficient Planning with Scalable Latent World Models",
+    "filename": "UniZero - Generalized and Efficient Planning with Scalable Latent World Models (2406.10667).pdf"
+  },
+  {
+    "id": "2504.15659",
+    "title": "VeriCoder - Enhancing LLM-Based RTL Code Generation through Functional Correctness Validation",
+    "filename": "VeriCoder - Enhancing LLM-Based RTL Code Generation through Functional Correctness Validation (2504.15659).pdf"
+  },
+  {
+    "id": "2508.18462",
+    "title": "VeriRL - Boosting LLM-based Verilog Code Generation via Reinforcement Learning",
+    "filename": "VeriRL - Boosting LLM-based Verilog Code Generation via Reinforcement Learning (2508.18462).pdf"
+  },
+  {
+    "id": "2510.25015",
+    "title": "VeriStruct - AI-assisted Automated Verification of Data-Structure Modules in Verus",
+    "filename": "VeriStruct - AI-assisted Automated Verification of Data-Structure Modules in Verus (2510.25015).pdf"
+  },
+  {
+    "id": "2410.13232",
+    "title": "Web Agents with World Models - Learning and Leveraging Environment Dynamics in Web Navigation",
+    "filename": "Web Agents with World Models - Learning and Leveraging Environment Dynamics in Web Navigation (2410.13232).pdf"
+  },
+  {
+    "id": "2307.13854",
+    "title": "WebArena - A Realistic Web Environment for Building Autonomous Agents",
+    "filename": "WebArena - A Realistic Web Environment for Building Autonomous Agents (2307.13854).pdf"
+  },
+  {
+    "id": "2401.13919",
+    "title": "WebVoyager - Building an End-to-End Web Agent with Large Multimodal Models",
+    "filename": "WebVoyager - Building an End-to-End Web Agent with Large Multimodal Models (2401.13919).pdf"
+  },
+  {
+    "id": "2503.05703",
+    "title": "What I cannot execute, I do not understand - Training and Evaluating LLMs on Program Execution Traces",
+    "filename": "What I cannot execute, I do not understand - Training and Evaluating LLMs on Program Execution Traces (2503.05703).pdf"
+  },
+  {
+    "id": "2410.08105",
+    "title": "What Makes Large Language Models Reason in Multi-Turn Code Generation",
+    "filename": "What Makes Large Language Models Reason in Multi-Turn Code Generation (2410.08105).pdf"
+  },
+  {
+    "id": "2506.02918",
+    "title": "World Modeling Improves Language Model Agents",
+    "filename": "World Modeling Improves Language Model Agents (2506.02918).pdf"
+  },
+  {
+    "id": "1803.10122",
+    "title": "World Models",
+    "filename": "World Models (1803.10122).pdf"
+  },
+  {
+    "id": "2602.00785",
+    "title": "World Models as an Intermediary between Agents and the Real World",
+    "filename": "World Models as an Intermediary between Agents and the Real World (2602.00785).pdf"
+  },
+  {
+    "id": "2412.00154",
+    "title": "o1-Coder - an o1 Replication for Coding",
+    "filename": "o1-Coder - an o1 Replication for Coding (2412.00154).pdf"
+  }
+]
