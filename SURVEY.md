@@ -10,15 +10,39 @@
 
 A *world model* is an internal predictor an agent maintains over the dynamics of its environment, used to imagine the consequences of actions. In coding, the environment is the program itself — its runtime state, its execution trace, the filesystem it manipulates, the tests it must satisfy, the developer task it is solving. Twelve years after Zaremba & Sutskever asked whether a network could execute code (1410.4615), and seven months after Meta FAIR released CWM (2510.02387) as the first openly-released LLM explicitly branded a Code World Model, the question has changed. It is no longer whether internal models of execution are necessary or learnable — both are settled — but whether the *named artifact* "code world model" is a structural commitment or a marketing label, whether trace pretraining buys what it claims, and whether the field's Dreamer-shaped vocabulary will survive when the empirical evidence comes in.
 
-This survey synthesizes 183 papers around the world-model lens. We define the object of study; trace its twelve-year arc; build a four-axis taxonomy; produce technical system cards for thirteen representative systems; assemble cross-paper benchmark tables for SWE-bench, CRUXEval, web agents, and formal verification; develop seven critical theses where the field overclaims; and identify the open problems where new work would matter most. The single most defensible empirical claim is that *execution-grounded supervision improves code agents*; the single most defensible critical claim is that almost everything else the field says about world models for coding is, at this date, underdetermined by the evidence.
+This survey synthesizes 184 papers around the world-model lens. We define the object of study with two distinct definitions — a permissive *descriptive* one (what the field currently calls a code WM) and a strict *normative* one (architectural commitment to forward state prediction); trace its twelve-year arc; build a three-axis taxonomy (functionality × temporal × representation); produce technical system cards for thirteen representative systems; assemble protocol-stratified benchmark tables for SWE-bench, CRUXEval, web agents, and formal verification; develop seven critical theses where the field overclaims; and identify the open problems where new work would matter most. The single most defensible empirical claim is that *execution-grounded supervision improves code agents on runtime-reasoning-heavy benchmarks*; the single most defensible critical claim is that broader inferences from this to "world models in coding" remain underdetermined by the evidence at this date.
+
+---
+
+## Theses Summary (Read First)
+
+The survey is a hybrid: catalog plus critique. Readers pressed for time can read this summary and §6 (Critical Perspectives, expanded below) and skip the lineage chapters (§§8–15). Readers entering the field should read §§1–5 and §§7–17 first, then return here. The catalog and the critique are meant to be read together.
+
+The seven critical theses developed in §6, each grounded in a specific disconfirmation from the corpus:
+
+1. **The "world model" label has become overloaded.** Under the field's permissive descriptive definition, CWM, TRACED, SemCoder, LLM-JEPA, and DyMo are all "world models" despite being architecturally standard LLMs with enriched training. A strict normative definition (architectural commitment to forward state prediction) admits only CoLA and the Dreamer/JEPA gestures.
+
+2. **Trace pretraining has a causal-isolation problem.** "Do Code Semantics Help?" (2509.11686) finds no trace representation consistently improves code synthesis across multiple backbones; CWM's 65.8% SWE-bench Verified is confounded between trace mid-training, ForagerAgent trajectories, and RL.
+
+3. **The Dreamer-for-code gap may be a non-problem.** Vision needed latent rollouts because pixels are expensive; Python state is small and CPython is free, so the architectural pressure does not transfer. CWM in token space reaches state-of-the-art at 32B.
+
+4. **PRMs are critics, not world models.** A learned evaluator of partial trajectories cannot roll out future states; the conceptual conflation dilutes the world-model vocabulary.
+
+5. **"General Agents Contain World Models" (2506.01622) is weaker than its title.** The theorem applies under restrictive assumptions (full observability, stationarity, deep-composite-goal regret bounds) that SWE agents demonstrably violate.
+
+6. **The verifier-grounded lineage is the actual leading edge, but scoped.** ATLAS, Re:Form, CLEVER, VeriStruct, AutoRocq produce machine-checkable correctness. Scoped: they lead on synthesis-from-spec (e.g., ATLAS DafnySynthesis 65.8% pass@5); they do *not* lead on end-to-end verified codegen from NL (CLEVER ≤1/161 Lean).
+
+7. **The evaluation gap is the structural reason the field looks confused.** No benchmark holds policy fixed and varies WM quality. Models with 85–98% output-prediction accuracy still produce traces with systematic errors throughout — outcome accuracy decouples from process fidelity.
+
+These theses are the survey's main contribution. §§7–17 catalog the work; §§16–17 provide the empirical synthesis that grounds the theses; §18 lists the open problems.
 
 ---
 
 ## 1. Introduction
 
-Autoregressive code LLMs generate tokens conditioned on syntactic context. Correct programs, however, live in two worlds simultaneously: a *syntactic* world of tokens and a *semantic* world of values, control flow, side effects, and developer intent. A model that has learned only the first is a stylist; a model that has learned the second is a programmer. The world-model framing — imported from model-based reinforcement learning, where it names an internal predictor of environment dynamics used to imagine action outcomes — is the field's bet that the gap between stylist and programmer closes when the network has been trained on what code does rather than only on what code looks like.
+Autoregressive code LLMs generate tokens conditioned on syntactic context. Correct programs live in two worlds: a *syntactic* world of tokens and a *semantic* world of values, control flow, side effects, and developer intent. The world-model framing — imported from model-based reinforcement learning, where it names an internal predictor of environment dynamics used to imagine action outcomes — is the field's bet that the gap between these two worlds closes when the network has been trained on what code does rather than only on what code looks like.
 
-Two adjacent surveys cover non-overlapping ground. **A Survey on LLMs for Code Generation** (2406.00515) maps the code-LLM space without the world-model lens. **Understanding World or Predicting Future** (2411.14499) maps world models in general without the code lens. The intersection — the subject of this document — has cohered only recently into a recognizable program.
+Two adjacent surveys cover non-overlapping ground. **A Survey on LLMs for Code Generation** (2406.00515) maps the code-LLM space without the world-model lens. **Understanding World or Predicting Future** (2411.14499) maps world models in general without the code lens. **A Comprehensive Survey on World Models for Embodied AI** (2510.16732) maps embodied world models but excludes the coding domain. The intersection — the subject of this document — has cohered only recently into a recognizable program.
 
 We aim for three things at once: comprehensive coverage of the corpus, technical depth on the canonical systems, and an honest accounting of where the prevailing rhetoric outruns the evidence. The first two are owed to readers entering the field; the third is owed to those already in it.
 
@@ -40,24 +64,78 @@ We aim for three things at once: comprehensive coverage of the corpus, technical
 
 **Taxonomy coding.** Each paper was assigned at least one lineage label (§§6–13) and at least one representation label (§5.3 table). The assignments were made by one of us and are recorded in the per-section enumerations and `README.md`. We have not yet performed inter-rater reliability checks; readers should treat the assignments as one curator's best judgment, not consensus.
 
-**Limitations of this methodology.** Three. First, no formal inter-rater reliability metric. Second, no systematic verification of the headline numerical claims in every cited paper — the numbers in §16 were verified by reading the source PDFs but the §§6–13 inline claims rely on author abstracts and our prior reading. Third, the corpus is unstable: between drafts, several 2026 papers we initially excluded as off-topic turned out to be relevant after better understanding their contributions. We expect a fifth pass would change the count by ±15 papers without materially changing the survey's conclusions.
+**Search procedure (for reproducibility).** Seed: arxiv 2510.02387. Search engines: arxiv listing API (cs.SE, cs.PL, cs.LG, cs.CL submission categories), Semantic Scholar Graph API (`/paper/arXiv:{id}/references` and `/paper/arXiv:{id}/citations`, fields=title,externalIds,abstract,year), and WebSearch with query variants enumerated below. Date cutoff: arxiv submissions through 2026-05-15.
+
+Representative search queries used across the four passes (non-exhaustive):
+- "world model code generation", "code world model"
+- "neural code execution", "learning to execute"
+- "execution trace pretraining LLM", "trace-aware code model"
+- "Dreamer code", "JEPA LLM", "latent action LLM"
+- "SWE agent reinforcement learning", "agentic coding world model"
+- "self-debugging execution simulation", "trace-driven program repair"
+- "symbolic execution LLM", "verified code generation Dafny", "Lean code agent"
+- "diffusion code model", "decompilation LLM semantic equivalence"
+- "Verilog RL world model", "ARC executable world model"
+- "process reward model code", "long-CoT code reasoning"
+
+**Inclusion / exclusion counts.** Pass 1 considered ~70 candidates, accepted 31. Pass 2 considered ~40, accepted 20 (focused on 2026 papers earlier passes missed). Pass 3 considered ~80, accepted 52 via citation BFS from 11 central papers. Pass 4 considered ~60, accepted 28 across 5 thin niches. Final corpus: 184 PDFs (one was added late: 2510.16732). Total candidates considered: ~250. Rejection reasons recorded per-paper in the pass reports.
+
+**Evidence grading.** Each citation in this survey can be classified by source type. We do not annotate inline (it would clutter the prose), but the following hierarchy is the implicit standard:
+
+| Tier | Definition | Survey use |
+|---|---|---|
+| A | Peer-reviewed venue (NeurIPS, ICML, ICLR, ACL, OOPSLA, FSE, etc.) | Highest weight; load-bearing claims |
+| B | Major arxiv preprint with code/checkpoints + multi-author institutional backing | Treated as A for technical accuracy, less for community vetting |
+| C | Solo-author or single-institution arxiv preprint | Cited for ideas; numerical claims hedged |
+| D | Technical report / blog / benchmark leaderboard claim | Cited as evidence of capability, not as scientific finding |
+
+Roughly 60% of the corpus is currently Tier B; ~25% Tier A (mostly pre-2024); ~12% Tier C; ~3% Tier D. The recency skew toward 2025–2026 means many headline claims are Tier B and have not yet been independently replicated. Numbers in §16 should be read accordingly — they are the best available evidence at this date, not settled science.
+
+**Limitations of this methodology.** Four. (1) No formal inter-rater reliability metric — one curator did the taxonomy coding. (2) No systematic verification of the headline numerical claims in every cited paper; §16 numbers were verified by reading the source PDFs but §§7–14 inline claims rely on abstracts and our prior reading. (3) The corpus is unstable — between drafts several 2026 papers we initially excluded as off-topic turned out to be relevant. A fifth pass would change the count by ±15 papers without materially changing the survey's conclusions. (4) Selection bias toward arxiv-first, anglophone, code-LLM-adjacent sources; we did not systematically cover Chinese-language preprint servers, workshop proceedings without arxiv copies, or industry technical reports.
 
 ---
 
 ## 3. Defining a World Model for Coding
 
-> A **world model for coding** is a learned function `W : (state, action) → (next_state, observation)` whose state and action are drawn from a coding environment — program runtime state, source code, repository state, agent action history, or some structured abstraction thereof.
+The literature uses "world model" in two distinct senses that this survey will carefully separate.
 
-This admits four architecturally distinct flavors:
+### 3.1 Two definitions
 
-- **Explicit symbolic WMs** emit actual stack frames, variable bindings, or runtime values. CWM (2510.02387), CodeExecutor (2305.05383), NExT (2404.14662).
-- **Latent WMs** predict environment dynamics in compressed embedding space without surfacing state tokens. CoLA (2503.21383), LLM-JEPA (2509.14252).
-- **Generative environment WMs** synthesize an executable simulator of the task — the WM *is* the code it emits. Generating Code World Models with LLMs (2405.15383), Executable World Models for ARC-AGI-3 (2605.05138).
-- **Implicit WMs in token policies** arise when a standard LLM is trained on objectives that indirectly encode semantics — execution-trace pretraining (TRACED, 2306.07487; SemCoder, 2406.01006) or execution-feedback RL (RLEF, 2410.02089). The world model lives in the weights rather than in any nameable head.
+**Definition D (descriptive, permissive).** A *world model for coding* is any code LLM whose training objective concretely encodes program semantics — execution traces, runtime state, environment feedback, or simulated outcomes — in addition to or instead of source-token prediction. This is the field's current usage. Under D, CWM, TRACED, SemCoder, LLM-JEPA, DyMo, RLEF, and most papers in the corpus are world models.
 
-A pure code-LLM trained only on source-token prediction is **not** a world model under this definition; the same transformer trained additionally to predict execution traces *is*. The distinction is objective, not architecture. (We return to this distinction critically in §17: most "code world models" published in 2025–2026 are architecturally identical to standard LLMs, with the WM badge resting entirely on the training-data composition.)
+**Definition N (normative, strict).** A *world model for coding* is a learned function `W : (state, action) → (next_state, observation)` instantiated as a distinct architectural component — separate dynamics head, latent recurrent state, inverse model, or rollout module — such that the model can simulate counterfactual futures without committing to a particular policy. Under N, CoLA (2503.21383), GIF-MCTS (2405.15383), and the Dreamer/JEPA-style gestures qualify; CWM, TRACED, SemCoder, and most of the corpus do *not*.
 
-A second axis — orthogonal to the four flavors — asks *what* is modeled. The corpus splits across variable values and stack frames; linear or branching traces; test outcomes; environment/OS/web state; repository state; developer task or specification; adversarial behavior. A given system typically commits strongly to one or two of these.
+The two definitions agree on the empirical fact that execution-grounded supervision helps. They disagree on whether that grounding is correctly named a *world model* in the model-based-RL sense.
+
+| Aspect | Definition D (descriptive) | Definition N (normative) |
+|---|---|---|
+| Granted to | Any LLM trained with execution-related signal | Only systems with explicit forward-prediction module |
+| Includes CWM | Yes | No (architecturally a Llama-class decoder) |
+| Includes TRACED, SemCoder, NExT | Yes | No (auxiliary heads on a Transformer) |
+| Includes CoLA, GIF-MCTS | Yes | Yes |
+| Includes PRMs (ExecVerify, ThinkPRM) | Often grouped | No (critics, not forward predictors) |
+| Includes verifiers (Lean, Dafny, Z3) | Sometimes grouped | No (deterministic oracles, not learned WMs) |
+| Includes Dreamer / V-JEPA (vision precedents) | Yes | Yes |
+
+This survey uses **D throughout §§7–15** because that is how the literature talks, and **N in §6** because the critical synthesis depends on it. We mark the switch each time it matters. The split has been called for in prior reviews of the field and the two-definition framework is, in our reading, the cleanest resolution.
+
+### 3.2 What is modeled
+
+Orthogonal to D-vs-N, a fourth question asks *what* is modeled. The corpus splits across:
+
+- variable values and stack frames (CWM, CodeExecutor)
+- linear or branching execution traces (NExT, SemCoder, TRACED)
+- test outcomes and runtime errors (LEVER, RLEF)
+- environment/OS/web state (WebDreamer, Dyna-Think)
+- repository state (RepoGraph, Understanding by Reconstruction)
+- developer task or specification (ATLAS, Re:Form)
+- adversarial behavior (Double Life of CWMs)
+
+A given system typically commits strongly to one or two of these.
+
+### 3.3 Behavioral vs architectural classification
+
+CWM occupies an instructive position. *Behaviorally*, it emits stack frames and variable bindings, which feels like an "explicit symbolic world model." *Architecturally*, it is a 32B Llama-class decoder with no separate dynamics head, RSSM, or inverse model. The two readings are both correct: CWM is **behaviorally explicit but architecturally implicit**. Earlier framings in the literature (and earlier drafts of this survey) collapsed these into a single "explicit WM" label; we recommend separating them. SemCoder, NExT, and TRACED follow the same pattern.
 
 ---
 
@@ -103,7 +181,7 @@ Diamonds (◆) mark moments where "world model" enters the *name* of the contrib
 
 **Pre-2020 — Can a network execute code?** Zaremba & Sutskever's **Learning to Execute** (1410.4615) handed an LSTM character-level Python and asked it to predict output. The model worked on straight-line programs with bounded loops, but only with a curated curriculum, and only because the LSTM's constant memory was just enough to simulate the interpreter when the interpreter ran in constant memory too. Everything that followed in this lineage tried to escape that curse. **Neural Programmer-Interpreters** (1511.06279) and the **Differentiable Forth Interpreter** built differentiable program counters and call stacks — the bet that the right architecture would close the gap. **Dynamic Neural Program Embedding** (1711.07163) made the inverse move: run the real interpreter, embed the resulting state traces. **Neural Code Fusion** (1906.07181) and **IPA-GNN** (2010.12621) extended the GNN-over-execution playbook to the point where attention played the role of the program counter. By 2020 the lineage had answered its question — yes, a neural network can play interpreter, but only when the interpreter is encoded into its architecture, and these architectures did not transfer to Python, C, or assembly at corpus scale. Ha & Schmidhuber's **World Models** paper (1803.10122) had already named for vision and RL exactly the pattern this lineage was reaching for. The vocabulary existed; the coding community had not yet borrowed it.
 
-**2020–2022 — Can the network's training include execution?** The era's reframing was simple: instead of *can the network execute*, ask *can we train a normally-shaped Transformer on enough execution evidence that semantics seep into its weights*. **Codex** (2107.03374) and **MBPP** (2108.07732) made code generation a real engineering target. **Show Your Work / Scratchpads** (2112.00114) made the decisive move: a Transformer that could not predict a program's output could predict it perfectly if it was allowed to emit the intermediate computation first. Same trick Dynamic Neural Program Embedding had pulled, now at LLM scale, in token space, without architectural surgery. The dream of 2014–2020 was a cul-de-sac; the right move was to bake execution into training data, not architecture.
+**2020–2022 — Can the network's training include execution?** The era's reframing was simple: instead of *can the network execute*, ask *can we train a normally-shaped Transformer on enough execution evidence that semantics seep into its weights*. **Codex** (2107.03374) and **MBPP** (2108.07732) made code generation a real engineering target. **Show Your Work / Scratchpads** (2112.00114) made the decisive move: a Transformer that could not predict a program's output could predict it perfectly if it was allowed to emit the intermediate computation first. Same trick Dynamic Neural Program Embedding had pulled, now at LLM scale, in token space, without architectural surgery. The neural-as-interpreter program of 2014–2020 did not scale beyond toy languages; the next era's move was to bake execution into training data rather than architecture.
 
 **2023 — Trace pretraining as a named recipe.** **CodeExecutor** (2305.05383) made the recipe explicit: mutate competitive-programming submissions, run them in a sandbox, capture per-line state tokens, train a transformer to emit the trace from source. **TRACED** (2306.07487) generalized this to a pretraining auxiliary that any code-LLM could absorb. **CRUXEval** (2401.03065) provided the canonical input/output-prediction benchmark and suddenly there was a number that captured "does this model understand what code does, as opposed to what code looks like." In parallel, **Reflexion** (2303.11366) and **Self-Debug** (2304.05128) showed that an LLM's mistakes could be fed back to itself as natural-language critiques, **LEVER** (2302.08468) used execution to verify candidate generations during decoding, and **RAP** (2305.14992) framed the LLM itself as a world model and ran MCTS over its imagined rollouts. The year's unifying insight: execution traces are an auxiliary objective, not a separate model.
 
@@ -171,13 +249,13 @@ This is the axis where the WM literature has converged most strongly, and where 
 | **Spatial / Structural Grid (SLG)** | A geometric or structural grid (BEV/voxel in vision; AST, call-graph, CFG in code) | OccWorld, DriveWorld | **No exemplar.** RepoGraph (2410.14684) uses a static dependency graph but does not predict over it as a WM |
 | **Decomposed Object / Slot (DOR)** | Distinct persistent latent slots for objects in the world | SlotFormer and object-centric WMs | **No exemplar.** No code-WM models variables, scopes, or classes as discrete persistent slots |
 | **Code-as-WM** | The world model *is* an executable program, synthesized rather than learned | (orthogonal to vision) | GIF-MCTS (2405.15383), WorldCoder, Executable WMs for ARC-AGI-3 (2605.05138) |
-| **Verifier / Symbolic** | A non-learned engine (Lean, Dafny, Z3) that provides ground truth | (no vision analog) | ATLAS (2512.10173), Re:Form (2507.16331), CLEVER (2505.13938) — see §14.1 and §17.6 |
+| **Verifier / Symbolic** *(definition D only — see §3.1)* | A non-learned engine (Lean, Dafny, Z3) that provides ground truth | (no vision analog) | ATLAS (2512.10173), Re:Form (2507.16331), CLEVER (2505.13938) — see §14.1 and §17.6 |
 
 **Three white spaces.** The empty rows are not accidents. Token-sequence representations dominate because they bolt cleanly onto an LLM. The Dreamer-style GLV, the object-centric DOR, and the spatial-grid SLG representations have not been instantiated for code, despite being mature for vision. §18 lists these as open problems, with the caveat that not all three are equally promising — the Dreamer-style gap is contestable (§17.3), while the object-centric and structural-grid gaps look more genuine.
 
-### 5.4 A fourth implicit axis — execution-grounding
+### 5.4 Execution-grounding (per-paper tag, not a separate axis)
 
-Li et al. include a "reality" column in their tables, marking whether each system's predictions were ever validated against ground-truth dynamics. For code-WMs the analog is *execution-grounding*: was the predicted state ever executed against the real interpreter? CWM and trace-pretraining systems are execution-grounded by construction. LLM-as-WM planners (RAP, WebDreamer-without-finetune) are not. The decoupling between WM fidelity and policy success that DyMo (2506.02918) and §17.7 develop is, in part, a symptom of insufficient execution-grounding: when a system is never asked to defend its predictions against the runtime, its WM can drift arbitrarily while still appearing useful for downstream tasks.
+Beyond the three axes above, each system can be tagged for whether its predictions were ever validated against ground-truth dynamics. Li et al. (2510.16732) include a "reality" column for this in their tables. For code-WMs the analog is *execution-grounding*: was the predicted state ever executed against the real interpreter? CWM and trace-pretraining systems are execution-grounded by construction. LLM-as-WM planners (RAP, WebDreamer-without-finetune) are not. The decoupling between WM fidelity and policy success that DyMo (2506.02918) and §17.7 develop is, in part, a symptom of insufficient execution-grounding: when a system is never asked to defend its predictions against the runtime, its WM can drift arbitrarily while still appearing useful for downstream tasks. We treat execution-grounding as a binary tag per paper rather than a structural axis.
 
 ---
 
