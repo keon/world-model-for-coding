@@ -2,7 +2,7 @@
 
 ## Abstract
 
-A *world model* is an internal predictor over environment dynamics, used to imagine the consequences of actions. In coding, the environment is the program: its runtime state, execution trace, filesystem, tests, and developer task. Twelve years after Zaremba & Sutskever asked whether a network could execute code [@arxiv1410_4615], and seven months after Meta FAIR released CWM [@arxiv2510_02387] as the first open-weights LLM branded a Code World Model, the question has shifted. Internal models of execution are demonstrably *learnable*; whether they are *necessary*, *architecturally separable*, or *causally responsible* for coding-agent gains is unsettled.
+A *world model* is an internal predictor over environment dynamics, used to imagine the consequences of actions. In coding, the environment is the program: its runtime state, execution trace, filesystem, tests, and developer task. Zaremba and Sutskever [@arxiv1410_4615] trained an LSTM to predict Python execution output in 2014. Meta FAIR released CWM [@arxiv2510_02387], the first open-weights LLM branded a Code World Model, in October 2025. Internal models of execution are learnable. Whether they are necessary, architecturally separable, or causally responsible for coding-agent gains is not yet established.
 
 This survey synthesizes 184 papers under two definitions — a permissive *descriptive* one matching field usage, and a strict *normative* one requiring forward-prediction machinery. It traces a twelve-year arc; builds a three-axis taxonomy (functionality × temporal × representation); produces system cards for thirteen representative systems; assembles protocol-stratified tables for SWE-bench, CRUXEval, web agents, and formal verification; develops seven critical theses; and lists open problems. The defensible empirical claim is that execution-grounded supervision improves code agents on runtime-reasoning benchmarks. The defensible critical claim is that broader inferences to "world models for coding" remain underdetermined.
 
@@ -16,7 +16,7 @@ The seven critical theses developed in §17, each grounded in a specific disconf
 
 2. **Trace pretraining has a causal-isolation problem.** "Do Code Semantics Help?" [@arxiv2509_11686] finds no trace representation consistently improves code synthesis across multiple backbones; CWM's 65.8% SWE-bench Verified is confounded between trace mid-training, ForagerAgent trajectories, and RL.
 
-3. **The Dreamer-for-code gap may be a non-problem.** Vision needed latent rollouts because pixels are expensive; Python state is small and CPython is free, so the architectural pressure does not transfer. CWM in token space reaches state-of-the-art at 32B.
+3. **The Dreamer-for-code gap may be a non-problem.** Vision needed latent rollouts because pixels are expensive; Python state is small and CPython is free, so the architectural pressure does not transfer. CWM in token space reaches 65.8% on SWE-bench Verified at 32B parameters.
 
 4. **PRMs are critics, not world models.** A learned evaluator of partial trajectories cannot roll out future states; the conceptual conflation dilutes the world-model vocabulary.
 
@@ -24,13 +24,13 @@ The seven critical theses developed in §17, each grounded in a specific disconf
 
 6. **The verifier-grounded lineage is the actual leading edge, but scoped.** ATLAS, Re:Form, CLEVER, VeriStruct, AutoRocq produce machine-checkable correctness. Scoped: they lead on synthesis-from-spec (e.g., ATLAS DafnySynthesis 65.8% pass@5); they do *not* lead on end-to-end verified codegen from NL (CLEVER ≤1/161 Lean).
 
-7. **The evaluation gap is the structural reason the field looks confused.** No benchmark holds policy fixed and varies WM quality. Models with 85–98% output-prediction accuracy still produce traces with systematic errors throughout — outcome accuracy decouples from process fidelity.
+7. **The evaluation gap is structural.** No benchmark holds policy fixed and varies WM quality. Models with 85–98% output-prediction accuracy still produce traces with systematic errors throughout — outcome accuracy decouples from process fidelity.
 
 ---
 
 ## 1. Introduction
 
-Autoregressive code LLMs generate tokens conditioned on syntactic context. Correct programs live in two worlds: a *syntactic* world of tokens and a *semantic* world of values, control flow, side effects, and developer intent. The world-model framing — imported from model-based reinforcement learning, where it names an internal predictor of environment dynamics used to imagine action outcomes — is the field's bet that the gap between these two worlds closes when the network has been trained on what code does rather than only on what code looks like.
+Autoregressive code LLMs generate tokens conditioned on syntactic context. Correct programs are objects in two domains: source tokens, and the values, control flow, side effects, and developer intent those tokens encode. The world-model framing comes from model-based reinforcement learning, where it names an internal predictor of environment dynamics. The hypothesis examined in this survey is that training on execution rather than only on source-token prediction reduces the gap between code that compiles and code that runs.
 
 Two adjacent surveys cover non-overlapping ground. **A Survey on LLMs for Code Generation** [@arxiv2406_00515] maps the code-LLM space without the world-model lens. **Understanding World or Predicting Future** [@arxiv2411_14499] maps world models in general without the code lens. **A Comprehensive Survey on World Models for Embodied AI** [@arxiv2510_16732] maps embodied world models but excludes the coding domain. The intersection — the subject of this document — has cohered only recently into a recognizable program.
 
@@ -156,7 +156,7 @@ Grounding mode is orthogonal to the representation axis: a token-sequence repres
 
 ## 6. Foundations: Neural Execution as Implicit World Modeling
 
-Zaremba & Sutskever's **Learning to Execute** [@arxiv1410_4615] established both feasibility and brittleness. **Show Your Work — Scratchpads** [@arxiv2112_00114] is the hinge moment: by training a Transformer to emit intermediate computation states, the authors recovered much of the LSTM-era execution-prediction performance at scale, presaging the trace-pretraining lineage of §6. **CRUXEval** [@arxiv2401_03065] and **REval** [@arxiv2403_16437] provide the canonical execution-reasoning benchmarks. The lesson the field absorbed: *replacing* the interpreter with a neural network is harder than *augmenting* a transformer with interpreter-style supervision. Modern systems all take the latter path.
+Zaremba & Sutskever's **Learning to Execute** [@arxiv1410_4615] established both feasibility and brittleness. **Show Your Work — Scratchpads** [@arxiv2112_00114] is the pivotal contribution: by training a Transformer to emit intermediate computation states, the authors recovered much of the LSTM-era execution-prediction performance at scale, presaging the trace-pretraining lineage of §6. **CRUXEval** [@arxiv2401_03065] and **REval** [@arxiv2403_16437] provide the canonical execution-reasoning benchmarks. The lesson the field absorbed: *replacing* the interpreter with a neural network is harder than *augmenting* a transformer with interpreter-style supervision. Modern systems all take the latter path.
 
 ---
 

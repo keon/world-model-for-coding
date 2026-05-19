@@ -1,6 +1,6 @@
 \documentclass{article}
 
-\PassOptionsToPackage{numbers, compress}{natbib}
+\PassOptionsToPackage{round}{natbib}
 \usepackage[preprint]{neurips_2025}
 
 \usepackage{ifxetex,ifluatex}
@@ -28,10 +28,8 @@
 \usepackage{url}
 \usepackage[dvipsnames]{xcolor}
 \usepackage[
-  colorlinks=true,
-  citecolor=NavyBlue,
-  linkcolor=NavyBlue,
-  urlcolor=NavyBlue
+  colorlinks=false,
+  pdfborder={0 0 0}
 ]{hyperref}
 \usepackage[font=small,labelfont=bf]{caption}
 \usepackage{fontawesome5}
@@ -88,7 +86,7 @@ $endif$
 
 $body$
 
-\bibliographystyle{unsrtnat}
+\bibliographystyle{apalike}
 \bibliography{references}
 
 \end{document}
