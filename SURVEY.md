@@ -42,9 +42,30 @@ Two adjacent surveys cover non-overlapping ground. A Survey on LLMs for Code Gen
 
 The corpus contains 184 arxiv preprints, assembled in four passes (March–May 2026) seeded from CWM (2510.02387) via citation BFS and targeted topic searches. A paper enters the corpus if it intersects both world-model or state-tracking architectures and code generation, debugging, repair, or agentic coding. Pure vision world models (DreamerV1–V3, V-JEPA, Genie) and pure code-LLM papers without a world-model angle are excluded except as cited precedent. Date cutoff: 2026-05-15. One curator performed the taxonomy coding. Numerical claims in §§6–14 derive from abstracts, §16 from source PDFs. 60% of the corpus dates from 2025 or later.
 
+Cross-tabulation across the two primary taxonomic axes:
+
+| | What is modeled | | | |
+|---|---:|---:|---:|---:|
+| **Architectural form (§3.1)** | Variable values / traces | Env / repo state | Spec / intent | Adversarial |
+| Definition D (data-side) | ~70 | ~30 | ~12 | ~6 |
+| N1 (neural dynamics) | 0 | 0 | 0 | 0 |
+| N2 (latent action) | 2 | 1 | 0 | 0 |
+| N3 (synthesized simulator) | 4 | 2 | 1 | 0 |
+| Verifier / PRM (related) | ~15 | ~10 | ~10 | ~5 |
+
+Two facts dominate the table. First, the descriptive bucket (D) holds the majority of the corpus and concentrates on variable values and traces. Second, the N1 row contains zero code exemplars: no system in the corpus instantiates a Dreamer-style learned dynamics model for code. §18 lists this as an open problem.
+
 ---
 
 ## 3. Defining a World Model for Coding
+
+Three properties distinguish a *code* world model from a generic one and explain why the design space for coding diverges from the vision-WM design space.
+
+- **Executable ground truth.** The environment ships with a precise simulator: CPython, the Java VM, an SMT solver, a hardware verifier. The WM can be evaluated against this oracle at training time, which is rare for vision and impossible for natural-language reasoning.
+- **Compact, observable state.** A program frame at a given line is a small structured object: local variables, the call stack, file handles. Pixel-space WMs needed compression because a frame is high-dimensional. Code WMs face the opposite question — whether to predict full state or to abstract it.
+- **Source–trace duality.** Every executed trace corresponds to a piece of source, and every piece of source admits many traces. The two views are linked by the interpreter, so a WM for coding can be trained on either side or on their alignment.
+
+These three properties explain why most current code WMs are token-space predictors over execution traces rather than latent-space rollouts: the simulator is free, state is small, and source–trace alignment supplies plentiful supervised pairs. They also explain why verifier-grounded systems form a distinct cluster: the ground-truth oracle replaces the learned WM entirely.
 
 The literature uses *world model* in two distinct senses, which this survey separates.
 
@@ -281,6 +302,17 @@ SWE-bench (2310.06770) and SWE-Gym (2412.21139) defined the eval and training en
 
 The §16 empirical synthesis separates three regimes: execution-grounded open-weight model training (CWM, SWE-RL), execution-grounded agents with learned simulators (Nanbeige SWE-World), and scaffold evolution around closed-model executors (Darwin GM, Huxley GM). Under best-of-k or verifier-reranked protocols, several systems report 60–68% on SWE-bench Verified, but those numbers are not directly comparable to pass@1 model-training results, and the scaffold-evolved systems are not 32B open-weight world-model-trained — they run frontier closed models inside an evolved harness.
 
+### 8.4 SDLC phase predicts which WM form pays off
+
+The SWE-agent literature aggregates many phases of software development under one benchmark score. Decomposing by phase clarifies which world-model form each phase actually exercises.
+
+- **Localization and plan** (pre-edit): predominantly retrieval and code-graph reasoning. RepoGraph (2410.14684) and Agentless (2407.01489) exemplify the phase. WM benefit is small because the agent does not yet simulate execution; retrieval quality dominates.
+- **Edit generation**: where token-space trace-pretrained models help most. CWM, SWE-RL, and the entire §7 lineage land here.
+- **Debug and test**: the phase where forward state prediction would matter most. The agent forms hypotheses about runtime behavior, queries the program to falsify them, and edits the candidate. NExT (2404.14662), InspectCoder (2510.18327), and Agentic Code Reasoning (2603.01896) cluster here. This phase is also where probe-style evaluation (§15.2) would be most informative, because the agent's belief state about runtime is observable.
+- **Verify and deploy**: the verifier-grounded line (ATLAS, Re:Form, CLEVER) replaces the WM with a deterministic oracle.
+
+Most SWE-bench gains over the past year accrued to edit-generation; debug-and-test remains the phase where forward-prediction commitments (§3.1 N1–N3) have the clearest mechanism to help and the weakest current evidence.
+
 ---
 
 ## 9. RL with Execution as the World Signal
@@ -393,15 +425,25 @@ The Double Life of Code World Models (2512.13821) repurposes CWM-style trace pre
 
 ---
 
-## 15. Benchmarks and the Evaluation Gap
+## 15. Three Regimes of Evaluation for Code World Models
 
-Benchmarks split cleanly by what they measure.
-- **Static code quality.** HumanEval, MBPP, and LiveCodeBench (2403.07974) measure code-LLM output without exercising the world-model claim.
-- **Execution reasoning.** CRUXEval (2401.03065), REval (2403.16437), CRUXEval-X (2408.13001), TraceEval (2605.11006), and PLSemanticsBench (2510.03415). The canonical WM evals.
-- **Semantic equivalence.** EquiBench (2502.12466), CodeARC (2503.23145).
-- **Agentic.** SWE-bench, SWE-Gym, WebArena (2307.13854), Mind2Web (2306.06070), PyBench (2407.16732), OSWorld, WindowsAgentArena.
+Benchmarks for code world models fall into three regimes that differ in what they actually measure. The distinction matters because most current evaluation conflates them, and the missing third regime is what would allow direct measurement of WM quality.
 
-**The eval gap.** No widely adopted benchmark directly measures world-model fidelity by holding the policy fixed and varying the WM. Every measurement of WM capability is mediated through downstream task performance, so the field cannot distinguish *the model has internalized program semantics* from *the model is exploiting trace-token shortcuts in the test distribution*. Demystifying Errors in LLM Reasoning Traces (2512.00215) supplies the diagnostic: even DeepSeek-R1, o4-mini, Gemini 2.5 Flash, and Claude 4, when asked to simulate execution and explain their reasoning, produced traces with errors clustering into nine categories (Computation, Indexing, Control Flow, Skip Statements, Misvaluation of Native API, Hallucination, Input Misread, etc.). Models with 85–98% final-answer accuracy on output prediction produced traces with systematic errors throughout. The decoupling — high outcome accuracy, low process fidelity — is the signature of a system that has learned to predict outcomes without faithfully simulating dynamics.
+### 15.1 Endpoint evaluations (what the system produces)
+
+Endpoint benchmarks score the system's final output against a held-out test. SWE-bench (2310.06770), HumanEval, MBPP, LiveCodeBench (2403.07974), and PyBench (2407.16732) all fit here. They measure end-to-end task success without isolating any internal capability. A system can score well on endpoint benchmarks by exploiting test-distribution shortcuts, by retrieving similar solutions, or by genuinely simulating program semantics; the score alone cannot distinguish these mechanisms. Current SWE-bench leaders all use endpoint evaluation, which is why §16.1 stratifies by protocol rather than ranking by score.
+
+### 15.2 Process probes (what the system internally simulates)
+
+Process probes hold the task fixed but require the system to surface intermediate state — execution traces, variable bindings, branch coverage. CRUXEval (2401.03065), REval (2403.16437), CRUXEval-X (2408.13001), TraceEval (2605.11006), and PLSemanticsBench (2510.03415) all fit here. EquiBench (2502.12466) and CodeARC (2503.23145) extend the regime to semantic equivalence. Process probes are the closest existing measurement of WM quality: they ask whether the model can simulate execution rather than just produce a final answer.
+
+Demystifying Errors in LLM Reasoning Traces (2512.00215) exposed the limit of this regime. When DeepSeek-R1, o4-mini, Gemini 2.5 Flash, and Claude 4 were prompted to simulate execution and explain their reasoning, the produced traces contained errors clustered into nine categories: computation, indexing, control flow, skipped statements, native-API misvaluation, hallucination, input misreads, and others. Models with 85–98% accuracy on final-output prediction produced traces with systematic intermediate errors. Outcome accuracy decouples from process fidelity, which is the signature of a system that learned to predict outputs without faithfully simulating dynamics.
+
+### 15.3 Counterfactual probes (missing)
+
+The third regime would hold the policy fixed and vary the world model. Concretely: take a fixed coding policy, swap in different trace-pretraining recipes or different forward-prediction heads, and measure the delta on both process and endpoint metrics. No current benchmark supports this protocol. CWM, TRACED, NExT, and SemCoder each report endpoint and process gains, but none isolates the WM contribution from the policy contribution, because the policy and the WM live in the same weights.
+
+The counterfactual regime is what §17.7 names as the structural gap. Closing it requires either explicit forward-prediction modules (§3.1, N1–N3) that can be ablated independently of the policy, or matched-harness re-runs across the trace-pretraining lineage. A concrete proposal: fix the Qwen-2.5-Coder-32B base, vary the trace-pretraining mixture across the recipes used by TRACED, NExT, SemCoder, and CWM, and measure CRUXEval and SWE-bench separately. The resulting two-dimensional table would, for the first time, allow a regression of process fidelity onto endpoint success.
 
 ---
 
@@ -569,7 +611,7 @@ Demystifying Errors in LLM Reasoning Traces (2512.00215) provides the diagnostic
 
 Self-repair literature exhibits the same pathology. Olausson et al. (2306.09896) showed that GPT-4 self-repair on APPS and HumanEval, normalized by compute, often performs worse than i.i.d. resampling. The bottleneck is the model's feedback quality, not its repair capability. Human-written feedback boosts repair success by 1.58×. The model can generate code, can sometimes recognize bugs, but cannot reliably simulate why its code is wrong, which is exactly what a faithful world model would let it do. The empirical bound on LLM self-repair is, in effect, an empirical bound on the fidelity of the implicit world model the LLM is running. Calling that world model internal is fine; calling it good is not.
 
-Until benchmarks measure process fidelity independently of outcome, *is this system actually building a world model?* remains scientifically undecidable.
+Until benchmarks measure process fidelity independently of outcome, *is this system actually building a world model?* remains scientifically undecidable. §15.3 names the missing regime — counterfactual probes that hold policy fixed and vary WM quality — and proposes a concrete protocol: fix the Qwen-2.5-Coder-32B base, vary the trace-pretraining mixture across the TRACED, NExT, SemCoder, and CWM recipes, and measure CRUXEval and SWE-bench separately. The resulting matrix would, for the first time, allow regressing process fidelity onto endpoint success and isolating which trace recipes transfer.
 
 ---
 
