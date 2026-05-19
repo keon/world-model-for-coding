@@ -70,7 +70,7 @@ The two definitions agree on the empirical fact that execution-grounded supervis
 | Includes verifiers (Lean, Dafny, Z3) | Sometimes grouped | No (deterministic oracles, not learned WMs) |
 | Includes Dreamer / V-JEPA (vision precedents) | Yes | Yes |
 
-This survey uses **D throughout the catalog sections (§§6–16)** because that is how the literature talks, and **N in §17** because the critical synthesis depends on it. We mark the switch each time it matters. The split has been called for in prior reviews of the field and the two-definition framework is, in our reading, the cleanest resolution.
+This survey uses **D throughout the catalog sections (§§6–16)** because that is how the literature talks, and **N in §17** because the critical synthesis depends on it. We mark the switch each time it matters. The two-definition framework, in our reading, is the cleanest way to resolve the tension.
 
 ### 3.2 What is modeled
 
@@ -92,7 +92,7 @@ Diamond markers in the figure tag the moments where "world model" enters the *na
 
 **2020–2022 — Can the training include execution?** **Codex** [@arxiv2107_03374] and **MBPP** [@arxiv2108_07732] made code generation a target. **Scratchpads** [@arxiv2112_00114] showed a Transformer could predict program output if allowed to emit intermediate computation first — the Dynamic-NPE move at LLM scale, without architectural surgery.
 
-**2023 — Trace pretraining as a named recipe.** **CodeExecutor** [@arxiv2305_05383] trained a Transformer to emit per-line state traces from source; **TRACED** [@arxiv2306_07487] generalized this to a pretraining auxiliary; **CRUXEval** [@arxiv2401_03065] gave the canonical eval. In parallel, **Reflexion** [@arxiv2303_11366] / **Self-Debug** [@arxiv2304_05128] used execution feedback in-context; **LEVER** [@arxiv2302_08468] used it during decoding; **RAP** [@arxiv2305_14992] ran MCTS over an LLM-as-world-model.
+**2023 — Trace pretraining as a named recipe.** **CodeExecutor** [@arxiv2305_05383] trained a Transformer to emit per-line state traces from source; **TRACED** [@arxiv2306_07487] generalized this to a pretraining auxiliary; **CRUXEval** [@arxiv2401_03065] provided the eval that became standard. In parallel, **Reflexion** [@arxiv2303_11366] / **Self-Debug** [@arxiv2304_05128] used execution feedback in-context; **LEVER** [@arxiv2302_08468] used it during decoding; **RAP** [@arxiv2305_14992] ran MCTS over an LLM-as-world-model.
 
 **2024 — From models that simulate to agents that act.** **SWE-bench** [@arxiv2310_06770] shifted the task to real GitHub repos. **CodeAct** [@arxiv2402_01030], **SWE-agent** [@arxiv2405_15793], **NExT** [@arxiv2404_14662], **RLEF** [@arxiv2410_02089], **WebDreamer** [@arxiv2411_06559], and **Generating Code World Models via MCTS** ([@arxiv2405_15383], source of the name) define the agentic turn. The WM moved from weights to loop.
 
@@ -388,7 +388,7 @@ Protocols mix in SWE-bench reporting and are non-comparable across the obvious a
 
 Citations that quote "CWM 65.8% SWE-bench Verified" without disclosing the best@16/TTS protocol should be read as misreporting, not as direct pass@1 numbers.
 
-**What can and cannot be compared.** Within Table 16.1a the comparable axis is pass@1. SWE-RL's 41.0%, Long-Context-MT-RL's 39.0%, and Nanbeige SWE-World's 55.0% are roughly comparable as "open-weight WM-trained pass@1 on Verified." Table 16.1c sits in a different category — these are scaffold-evolution methods over closed models, and treating them as evidence for "world-model training works" conflates scaffold search with model improvement. Reading them inside Table 16.1a, as some online discussion does, is apples-to-oranges.
+**What can and cannot be compared.** Within Table 16.1a the comparable axis is pass@1. SWE-RL's 41.0%, Long-Context-MT-RL's 39.0%, and Nanbeige SWE-World's 55.0% are roughly comparable as "open-weight WM-trained pass@1 on Verified." Table 16.1c sits in a different category — these are scaffold-evolution methods over closed models, and treating them as evidence for "world-model training works" conflates scaffold search with model improvement. Reading them inside Table 16.1a alongside model-trained pass@1 numbers is apples-to-oranges.
 
 **Two empirical claims, separately defensible.** (i) On *pass@1*, open-weight WM-trained 32B systems (Nanbeige 55.0%, Long-Context-MT-RL 39.0%, SWE-RL 41.0%) outperform frozen open-weight baselines (Qwen-2.5-Coder-32B raw 6.2%) by 30–50 absolute points; this gain is the strongest case for training on agent trajectories with execution feedback. (ii) On *best@k with verifier reranking* (Table 16.1b), the same models reach 65–68%, but the additional 13–15 points are attributable to TTS reranking infrastructure, not to the WM training. Conflating (i) and (ii) by quoting CWM's 65.8% alongside SWE-RL's 41.0% as both "world-model-trained pass@1 SOTA" is exactly the misreporting the protocol split is designed to prevent.
 
@@ -536,7 +536,7 @@ The critical perspectives of §17 reshape the conventional open-problems list. W
 
 **6. World models of the developer, not just the program.** All current WMs model the *machine*. Few model the *developer intent* with comparable fidelity. ATLAS and Re:Form gesture in this direction by treating the spec as the WM. A full developer-intent WM would close the agentic loop.
 
-We do not list "Dreamer-for-SWE-agents" as the field's largest gap, contrary to common framing. §17.3 argues the pressure motivating that direction in vision does not transfer to code. It remains an interesting research question, not the highest-leverage one.
+We do not list "Dreamer-for-SWE-agents" as the field's largest gap. §17.3 argues the pressure motivating that direction in vision does not transfer to code. It remains an interesting research question, not the highest-leverage one.
 
 **Three under-explored representations.** The §5.3 taxonomy table flags three classes of representation, mature in vision-WM, that have no code-WM exemplar:
 
