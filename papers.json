@@ -275,6 +275,11 @@
     "filename": "Dynamic Neural Program Embedding for Program Repair (1711.07163).pdf"
   },
   {
+    "id": "2604.01193",
+    "title": "Embarrassingly Simple Self-Distillation Improves Code Generation",
+    "filename": "Embarrassingly Simple Self-Distillation Improves Code Generation (2604.01193).pdf"
+  },
+  {
     "id": "2604.24212",
     "title": "Empowering Autonomous Debugging Agents with Efficient Dynamic Analysis",
     "filename": "Empowering Autonomous Debugging Agents with Efficient Dynamic Analysis (2604.24212).pdf"
@@ -600,6 +605,11 @@
     "filename": "Python Symbolic Execution with LLM-powered Code Generation (2409.09271).pdf"
   },
   {
+    "id": "2603.00729",
+    "title": "Qwen3-Coder-Next Technical Report",
+    "filename": "Qwen3-Coder-Next Technical Report (2603.00729).pdf"
+  },
+  {
     "id": "2505.21668",
     "title": "R1-Code-Interpreter - LLMs Reason with Code via Supervised and Multi-stage Reinforcement Learning",
     "filename": "R1-Code-Interpreter - LLMs Reason with Code via Supervised and Multi-stage Reinforcement Learning (2505.21668).pdf"
@@ -690,6 +700,11 @@
     "filename": "SWE-TRACE - Optimizing Long-Horizon SWE Agents Through Rubric Process Reward Models and Heuristic Test-Time Scaling (2604.14820).pdf"
   },
   {
+    "id": "2602.02361",
+    "title": "SWE-Universe - Scale Real-World Verifiable Environments to Millions",
+    "filename": "SWE-Universe - Scale Real-World Verifiable Environments to Millions (2602.02361).pdf"
+  },
+  {
     "id": "2405.15793",
     "title": "SWE-agent - Agent-Computer Interfaces Enable Automated Software Engineering",
     "filename": "SWE-agent - Agent-Computer Interfaces Enable Automated Software Engineering (2405.15793).pdf"
@@ -713,6 +728,11 @@
     "id": "2510.14232",
     "title": "Scaling Test-Time Compute to Achieve IOI Gold Medal with Open-Weight Models",
     "filename": "Scaling Test-Time Compute to Achieve IOI Gold Medal with Open-Weight Models (2510.14232).pdf"
+  },
+  {
+    "id": "2603.20633",
+    "title": "Seed1.8 Model Card - Towards Generalized Real-World Agency",
+    "filename": "Seed1.8 Model Card - Towards Generalized Real-World Agency (2603.20633).pdf"
   },
   {
     "id": "2604.03253",
