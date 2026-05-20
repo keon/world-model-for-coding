@@ -40,6 +40,11 @@
     "filename": "Agent That Debugs - Dynamic State-Guided Vulnerability Repair (2504.07634).pdf"
   },
   {
+    "id": "2602.10090",
+    "title": "Agent World Model - Infinity Synthetic Environments for Agentic Reinforcement Learning",
+    "filename": "Agent World Model - Infinity Synthetic Environments for Agentic Reinforcement Learning (2602.10090).pdf"
+  },
+  {
     "id": "2506.11425",
     "title": "Agent-RLVR - Training Software Engineering Agents via Guidance and Environment Rewards",
     "filename": "Agent-RLVR - Training Software Engineering Agents via Guidance and Environment Rewards (2506.11425).pdf"
@@ -103,6 +108,11 @@
     "id": "2505.13938",
     "title": "CLEVER - A Curated Benchmark for Formally Verified Code Generation",
     "filename": "CLEVER - A Curated Benchmark for Formally Verified Code Generation (2505.13938).pdf"
+  },
+  {
+    "id": "2602.10999",
+    "title": "CLI-Gym - Scalable CLI Task Generation via Agentic Environment Inversion",
+    "filename": "CLI-Gym - Scalable CLI Task Generation via Agentic Environment Inversion (2602.10999).pdf"
   },
   {
     "id": "2502.05664",
@@ -575,6 +585,11 @@
     "filename": "Program Synthesis with Large Language Models (2108.07732).pdf"
   },
   {
+    "id": "2605.03546",
+    "title": "ProgramBench - Can Language Models Rebuild Programs From Scratch",
+    "filename": "ProgramBench - Can Language Models Rebuild Programs From Scratch (2605.03546).pdf"
+  },
+  {
     "id": "2407.16732",
     "title": "PyBench - Evaluating LLM Agent on Various Real-World Coding Tasks",
     "filename": "PyBench - Evaluating LLM Agent on Various Real-World Coding Tasks (2407.16732).pdf"
@@ -685,6 +700,11 @@
     "filename": "SWE-bench - Can Language Models Resolve Real-World GitHub Issues (2310.06770).pdf"
   },
   {
+    "id": "2602.04254",
+    "title": "Scaling Agentic Verifier for Competitive Coding",
+    "filename": "Scaling Agentic Verifier for Competitive Coding (2602.04254).pdf"
+  },
+  {
     "id": "2408.03314",
     "title": "Scaling LLM Test-Time Compute Optimally",
     "filename": "Scaling LLM Test-Time Compute Optimally (2408.03314).pdf"
@@ -780,6 +800,11 @@
     "filename": "Towards Effectively Leveraging Execution Traces for Program Repair with Code LLMs (2505.04441).pdf"
   },
   {
+    "id": "2604.17658",
+    "title": "Towards Self-Improving Error Diagnosis in Multi-Agent Systems",
+    "filename": "Towards Self-Improving Error Diagnosis in Multi-Agent Systems (2604.17658).pdf"
+  },
+  {
     "id": "2603.09951",
     "title": "Towards a Neural Debugger for Python",
     "filename": "Towards a Neural Debugger for Python (2603.09951).pdf"
@@ -858,6 +883,11 @@
     "id": "2406.10667",
     "title": "UniZero - Generalized and Efficient Planning with Scalable Latent World Models",
     "filename": "UniZero - Generalized and Efficient Planning with Scalable Latent World Models (2406.10667).pdf"
+  },
+  {
+    "id": "2603.04304",
+    "title": "V1 - Unifying Generation and Self-Verification for Parallel Reasoners",
+    "filename": "V1 - Unifying Generation and Self-Verification for Parallel Reasoners (2603.04304).pdf"
   },
   {
     "id": "2504.15659",

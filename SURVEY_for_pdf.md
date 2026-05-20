@@ -242,6 +242,8 @@ Dyna-Think [@arxiv2506_00320] trains a single Qwen2.5-32B to internalize world-m
 
 SWE-bench [@arxiv2310_06770] and SWE-Gym [@arxiv2412_21139] defined the eval and training environment respectively. CodeAct [@arxiv2402_01030] made the Python interpreter the unified action space. Reflexion [@arxiv2303_11366] provided the earliest entry with episodic verbal RL. Nanbeige SWE-World [@arxiv2602_03419] trains a learned Docker-free execution surrogate. Understanding by Reconstruction [@arxiv2603_11103] reverses the development process to harvest agentic pretraining traces. SWE-TRACE [@arxiv2604_14820] provides process-level reward modeling over trajectories. Self-Play SWE-RL [@arxiv2512_18552] introduces adversarial bug-injection/repair self-play. Bootstrapping Coding Agents — The Specification Is the Program [@arxiv2603_17399] reframes the SWE task itself as a programmatic spec.
 
+The 2026 wave extended the environment side. Agent World Model ([@arxiv2602_10090], Snowflake AI Research) generates synthetic environments with executable transition dynamics, treating environment construction itself as a learned capability. CLI-Gym ([@arxiv2602_10999], Huawei) scales CLI-task generation by inverting environment histories rather than scripting tasks by hand. Self-Improving Error Diagnosis ([@arxiv2604_17658], Amazon Alexa AI) builds verified episodic memory from executable evidence without expert labels. These three target the agent's *training distribution*, not its policy or its WM directly.
+
 The §16 empirical synthesis separates three regimes: execution-grounded open-weight model training (CWM, SWE-RL), execution-grounded agents with learned simulators (Nanbeige SWE-World), and scaffold evolution around closed-model executors (Darwin GM, Huxley GM). Under best-of-k or verifier-reranked protocols, several systems report 60–68% on SWE-bench Verified, but those numbers are not directly comparable to pass@1 model-training results, and the scaffold-evolved systems are not 32B open-weight world-model-trained — they run frontier closed models inside an evolved harness.
 
 ### 8.4 SDLC phase predicts which WM form pays off
@@ -273,7 +275,9 @@ SWE-RL applies GRPO to 273k high-quality PR seeds with a rule-based, continuous 
 
 ### 9.3 Process Reward Models
 
-ExecVerify [@arxiv2603_11226], SWE-PRM [@arxiv2509_02360], DataPRM [@arxiv2604_24198], and ThinkPRM [@arxiv2504_16828] form a cluster where the WM is a learned evaluator of partial trajectories. As §17 develops critically, this is not the same object as a forward world model: PRMs are critics with execution grounding. They cannot roll out, cannot simulate counterfactuals. Survey hygiene argues for keeping the distinction.
+ExecVerify [@arxiv2603_11226], SWE-PRM [@arxiv2509_02360], DataPRM [@arxiv2604_24198], and ThinkPRM [@arxiv2504_16828] form a cluster where a critic over partial trajectories supplies the training signal. PRMs are not forward predictors (§17.4); they complement WMs rather than replace them.
+
+The 2026 wave scaled the verifier idea. Scaling Agentic Verifier ([@arxiv2602_04254], Qwen Team) trained a verifier that reasons about candidate-program behaviors and discovers counterexamples rather than just scoring tokens. V1 ([@arxiv2603_04304], Berkeley + Together AI + Mila) unifies generation and self-verification so the same model produces candidates and pairwise verification judgments. Both move PRMs closer to forward-prediction territory: the verifier now reasons about what the program *would do*, not only about whether a step *looks right*.
 
 ---
 
@@ -380,6 +384,8 @@ Endpoint benchmarks score the system's final output against a held-out test. SWE
 Process probes hold the task fixed but require the system to surface intermediate state — execution traces, variable bindings, branch coverage. CRUXEval [@arxiv2401_03065], REval [@arxiv2403_16437], CRUXEval-X [@arxiv2408_13001], TraceEval [@arxiv2605_11006], and PLSemanticsBench [@arxiv2510_03415] all fit here. EquiBench [@arxiv2502_12466] and CodeARC [@arxiv2503_23145] extend the regime to semantic equivalence. Process probes are the closest existing measurement of WM quality: they ask whether the model can simulate execution rather than just produce a final answer.
 
 Demystifying Errors in LLM Reasoning Traces [@arxiv2512_00215] exposed the limit of this regime. When DeepSeek-R1, o4-mini, Gemini 2.5 Flash, and Claude 4 were prompted to simulate execution and explain their reasoning, the produced traces contained errors clustered into nine categories: computation, indexing, control flow, skipped statements, native-API misvaluation, hallucination, input misreads, and others. Models with 85–98% accuracy on final-output prediction produced traces with systematic intermediate errors. Outcome accuracy decouples from process fidelity, which is the signature of a system that learned to predict outputs without faithfully simulating dynamics.
+
+**ProgramBench [@arxiv2605_03546]** sits between regimes. Meta FAIR and Princeton (the SWE-bench team) released it in May 2026; it asks whether language models can rebuild whole programs from scratch given only natural-language specifications, evaluated by behavioral equivalence. The behavioral-equivalence rubric is closer to a process probe than an endpoint score, because two programs can pass the same unit tests by accident but rebuilding implies semantic reconstruction.
 
 ### 15.3 Counterfactual probes (missing)
 
