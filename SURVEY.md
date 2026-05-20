@@ -4,29 +4,10 @@
 
 ## Abstract
 
-A *world model* is an internal predictor over environment dynamics, used to imagine the consequences of actions. In coding, the environment is the program: its runtime state, execution trace, filesystem, tests, and developer task. Zaremba and Sutskever (1410.4615) trained an LSTM to predict Python execution output in 2014. Meta FAIR released CWM (2510.02387), the first open-weights LLM branded a Code World Model, in October 2025. Internal models of execution can be learned. Whether they are necessary, architecturally separable, or causally responsible for coding-agent gains remains unestablished.
+A *world model* is an internal predictor over environment dynamics. In coding, the environment is the program: its runtime state, execution trace, filesystem, tests, and developer task. The first attempt to learn such a predictor came from Zaremba and Sutskever (1410.4615), who trained an LSTM to predict Python execution output in 2014. Twelve years later, Meta FAIR released CWM (2510.02387), the first open-weights LLM branded a Code World Model.
 
-This survey synthesizes 184 papers spanning four research lineages: neural execution, trace pretraining and the CWM line, agentic software engineering with execution feedback, and verifier-grounded code generation. It traces the twelve-year arc, builds a three-axis taxonomy (functionality, temporal, representation), produces system cards for thirteen representative systems, assembles protocol-stratified tables for SWE-bench, CRUXEval, web agents, and formal verification, develops seven critical theses, and lists open problems. The empirical evidence supports execution-grounded supervision as a reliable lever for code-agent gains on runtime-reasoning benchmarks. Open questions concern which architectural commitments — token-space prediction, latent dynamics, or synthesized simulators — best capture program semantics.
+This survey synthesizes 190 papers spanning four research lineages: neural execution, trace pretraining and the CWM line, agentic software engineering with execution feedback, and verifier-grounded code generation. It traces the twelve-year historical arc, builds a three-axis taxonomy (functionality, temporal modeling, representation), produces system cards for thirteen representative systems, and assembles protocol-stratified tables of empirical results on SWE-bench, CRUXEval, web agents, and formal verification. The survey closes with an enumeration of open problems and underexplored representations.
 
----
-
-## Theses Summary
-
-The seven critical theses developed in §17, each grounded in a specific disconfirmation from the corpus:
-
-1. **The architectural design space for code WMs has three concrete forms.** Forward state prediction admits a clean tripartition (§3.1): neural dynamics models in compressed latent space (N1, no code exemplar yet), latent-action models such as CoLA (N2), and synthesized executable simulators such as GIF-MCTS and ARC executable WMs (N3). Most "Code World Model" systems today (CWM, TRACED, SemCoder, NExT) extend the LLM training distribution without committing to any of these three forms; whether the architectural commitment pays off remains the central open empirical question.
-
-2. **Trace pretraining has a causal-isolation problem.** The ablation study Do Code Semantics Help? (2509.11686) finds no trace representation consistently improves code synthesis across multiple backbones. CWM's 65.8% SWE-bench Verified result confounds trace mid-training, ForagerAgent trajectories, and RL.
-
-3. **The Dreamer-for-code gap may be a non-problem.** Vision required latent rollouts because pixels are expensive. Python state is small and CPython is free, so the architectural pressure does not transfer. CWM in token space reaches 65.8% on SWE-bench Verified at 32B parameters.
-
-4. **PRMs and forward WMs solve complementary problems.** Process reward models score partial trajectories; forward WMs predict next states. The design space for combining them — a PRM critic over rollouts from a forward predictor — is largely unexplored in code, despite being standard in model-based RL.
-
-5. **General Agents Contain World Models (2506.01622) is weaker than its title.** The theorem applies under restrictive assumptions (full observability, stationarity, deep-composite-goal regret bounds) that SWE agents demonstrably violate.
-
-6. **The verifier-grounded lineage leads on a narrow scope.** ATLAS, Re:Form, CLEVER, VeriStruct, and AutoRocq produce machine-checkable correctness. They lead on synthesis-from-spec (e.g., ATLAS DafnySynthesis 65.8% pass@5); they do *not* lead on end-to-end verified codegen from natural language (CLEVER ≤1/161 Lean).
-
-7. **The evaluation gap is structural.** No benchmark holds policy fixed and varies WM quality. Models with 85–98% output-prediction accuracy still produce traces with systematic errors throughout. Outcome accuracy decouples from process fidelity.
 
 ---
 
@@ -40,7 +21,7 @@ Two adjacent surveys cover non-overlapping ground. A Survey on LLMs for Code Gen
 
 ## 2. Methodology
 
-The corpus contains 184 arxiv preprints, assembled in four passes (March–May 2026) seeded from CWM (2510.02387) via citation BFS and targeted topic searches. A paper enters the corpus if it intersects both world-model or state-tracking architectures and code generation, debugging, repair, or agentic coding. Pure vision world models (DreamerV1–V3, V-JEPA, Genie) and pure code-LLM papers without a world-model angle are excluded except as cited precedent. Date cutoff: 2026-05-15. One curator performed the taxonomy coding. Numerical claims in §§6–14 derive from abstracts, §16 from source PDFs. 60% of the corpus dates from 2025 or later.
+The corpus contains 190 arxiv preprints, assembled in four passes (March–May 2026) seeded from CWM (2510.02387) via citation BFS and targeted topic searches, then extended with a Tier-1-lab-only sweep of additional 2026 papers. A paper enters the corpus if it intersects both world-model or state-tracking architectures and code generation, debugging, repair, or agentic coding. Pure vision world models (DreamerV1–V3, V-JEPA, Genie) and pure code-LLM papers without a world-model angle are excluded except as cited precedent. Date cutoff: 2026-05-15. One curator performed the taxonomy coding. Numerical claims in §§6–14 derive from abstracts, §16 from source PDFs. 60% of the corpus dates from 2025 or later.
 
 Cross-tabulation across the two primary taxonomic axes:
 
@@ -53,7 +34,7 @@ Cross-tabulation across the two primary taxonomic axes:
 | N3 (synthesized simulator) | 4 | 2 | 1 | 0 |
 | Verifier / PRM (related) | ~15 | ~10 | ~10 | ~5 |
 
-Two facts dominate the table. First, the descriptive bucket (D) holds the majority of the corpus and concentrates on variable values and traces. Second, the N1 row contains zero code exemplars: no system in the corpus instantiates a Dreamer-style learned dynamics model for code. §18 lists this as an open problem.
+Two facts dominate the table. First, the descriptive bucket (D) holds the majority of the corpus and concentrates on variable values and traces. Second, the N1 row contains zero code exemplars: no system in the corpus instantiates a Dreamer-style learned dynamics model for code. §17 lists this as an open problem.
 
 ---
 
@@ -93,13 +74,13 @@ The two definitions agree on the empirical fact that execution-grounded supervis
 | Includes verifiers (Lean, Dafny, Z3) | Sometimes grouped | No (deterministic oracles, not learned WMs) |
 | Includes Dreamer / V-JEPA (vision precedents) | Yes | Yes |
 
-This survey uses **D throughout the catalog sections (§§6–16)** because that reflects how the literature talks, and **N in §17** because the critical synthesis depends on it. The switch is marked each time it matters. The two-definition framework resolves the tension between field usage and architectural precision.
+Definition D matches field usage; definition N captures architectural commitment. The two-definition framework keeps both readings available.
 
 ### 3.2 What is modeled
 
 Orthogonal to D-vs-N, *what* a system models varies: variable values and stack frames (CWM, CodeExecutor); execution traces (NExT, SemCoder, TRACED); test outcomes (LEVER, RLEF); OS or web environment state (WebDreamer, Dyna-Think); repository state (RepoGraph); spec or developer intent (ATLAS, Re:Form); adversarial behavior (Double Life of CWMs). A system typically commits strongly to one or two of these.
 
-CWM occupies an instructive position: behaviorally explicit (it emits stack frames) but architecturally implicit (a 32B Llama-class decoder with no separate dynamics head). SemCoder, NExT, and TRACED follow the same pattern. The explicit-WM label flattens this distinction; §17.1 develops the consequence.
+CWM occupies an instructive position: behaviorally explicit (it emits stack frames) but architecturally implicit (a 32B Llama-class decoder with no separate dynamics head). SemCoder, NExT, and TRACED follow the same pattern.
 
 ---
 
@@ -133,7 +114,7 @@ The lineage reads as a sequence of inheriting questions. Each era's answer disso
           CoLA (2503.21383) ◆── Dreamer-for-LLMs first concrete       LLM-JEPA (2509.14252)
           General Agents Contain WMs (2506.01622)                     CLEVER (2505.13938)
           CWM (2510.02387) ◆◆── the named open-weights artifact       ATLAS (2512.10173)
-2026      Debugging CWMs (2602.07672) — critique era
+2026      Debugging CWMs (2602.07672) — follow-up era
           Industrial / Parallel CWMs (2604.03144, 2604.20926)
           Demystifying Errors in Traces (2512.00215)
           Executable WMs for ARC-AGI-3 (2605.05138)
@@ -183,9 +164,9 @@ Two cuts at the taxonomy prove useful, and they complement each other. The first
                                   │
                    §16 Empirical Landscape
                                   │
-                  §17 Critical Perspectives
+
                                   │
-                       §18 Open problems
+                       §17 Open problems
 ```
 
 Adjacent WM surveys converge on overlapping splits that the three-axis framework subsumes as projections. Ding et al. (2411.14499) split top-level by *implicit representation* vs *future prediction*. JiahuaDong's awesome-list organizes by *paradigm*: RL-based, observation-generative, latent-space, object-centric. knightnemo's list surfaces *pixel vs mesh vs latent* as cross-cutting tags. The three axes — functionality, temporal modeling, and representation — capture the choices a system makes regardless of which lineage it belongs to.
@@ -215,11 +196,11 @@ The WM literature has converged most strongly on this axis, and the code-WM lite
 
 Verifiers (Lean, Dafny, Z3) and PRMs are intentionally absent from this table. A verifier is not a *representation* of the world; it is a grounding oracle over candidate artifacts. A PRM is a backward-looking critic, not a forward predictor. Both belong in §5.4 below.
 
-**Three white spaces.** The Dreamer-style GLV, the object-centric DOR, and the spatial-grid SLG representations have not been instantiated for code, despite being mature for vision. §18 lists these as open problems, with the caveat that not all three look equally promising. The Dreamer-style gap is contestable (§17.3), while the object-centric and structural-grid gaps look more genuine.
+**Three white spaces.** The Dreamer-style GLV, the object-centric DOR, and the spatial-grid SLG representations have not been instantiated for code, despite being mature for vision. §17 lists these as open problems. The object-centric and structural-grid gaps look more directly tractable than the Dreamer-style gap, because code's compact observable state (§3) reduces the pressure for latent compression that motivated RSSM in vision.
 
 ### 5.4 Grounding mode (orthogonal to representation)
 
-A second classification asks how each system's predictions are validated. This analog of Li et al.'s reality column addresses the decoupling between WM-head accuracy and downstream task success that DyMo (2506.02918) and §17.7 develop.
+A second classification asks how each system's predictions are validated. This analog of Li et al.'s reality column addresses the decoupling between WM-head accuracy and downstream task success that DyMo (2506.02918) exhibits (§8.1).
 
 | Grounding mode | Definition | Code exemplars |
 |---|---|---|
@@ -227,9 +208,9 @@ A second classification asks how each system's predictions are validated. This a
 | Execution-grounded | Predictions checked against real interpreter / runtime | CWM (2510.02387), TRACED (2306.07487), NExT (2404.14662), SemCoder (2406.01006), RLEF (2410.02089) |
 | Verifier-grounded | Outputs checked by Lean / Dafny / Verus / Rocq / Z3 | ATLAS (2512.10173), Re:Form (2507.16331), CLEVER (2505.13938), VeriStruct (2510.25015), AutoRocq (2511.17330) |
 | Synthesized-simulator-checked | Synthesized world model checked against held-out transitions | GIF-MCTS (2405.15383), Executable WMs for ARC-AGI-3 (2605.05138) |
-| Critic-grounded (not a WM) | Backward-looking value/quality score, no rollout | ExecVerify (2603.11226), SWE-PRM (2509.02360), ThinkPRM (2504.16828) — listed for contrast; these are critics, not WMs (§17.4) |
+| Critic-grounded (not a WM) | Backward-looking value/quality score, no rollout | ExecVerify (2603.11226), SWE-PRM (2509.02360), ThinkPRM (2504.16828) — listed for contrast; these are critics, not forward predictors |
 
-Grounding mode is orthogonal to the representation axis: a token-sequence representation can be execution-grounded (CWM) or self-report (RAP); an N3 synthesized-simulator can be checked against transitions (GIF-MCTS) or never validated. The WM-fidelity question of §17.7 structurally asks whether a system's grounding mode is strong enough to falsify a bad WM at training time.
+Grounding mode is orthogonal to the representation axis: a token-sequence representation can be execution-grounded (CWM) or self-report (RAP); an N3 synthesized-simulator can be checked against transitions (GIF-MCTS) or never validated.
 
 ---
 
@@ -267,7 +248,7 @@ SemCoder formalizes monologue reasoning linking four code modalities — natural
 CWM is a 32B dense decoder-only Transformer with grouped-query attention, sliding-window blocks, and RoPE — architecturally Llama-class. What earns it the world-model name is the mid-training datamix: 5T tokens of Python observation-action traces (120M traced functions, 262k CodeContests traces, 70k repo-level traced commits, 75M natural-language rewrites) plus 3M ForagerAgent SWE trajectories from 10.2k Dockerized repositories. Tokens are formatted so next-token prediction *is* next-state prediction at line granularity. CWM reached 65.8% on SWE-bench Verified with test-time scaling (best@16 over 40 verifier-reranked samples) and 94.3% on CRUXEval-Output. Its second technical contribution is Activ, which uses GitHub Actions CI to scale executable repository images. CWM is behaviorally explicit (emits stack frames) but architecturally implicit (no separate dynamics head).
 
 
-Important caveat (developed further in §17): the 65.8% headline is not pure pass@1 but best-of-16 with verifier reranking. Pure pass@1 is approximately 53–55%. The trace-mid-training contribution is not causally isolated from the ForagerAgent-trajectory contribution and from the joint-RL contribution. Without an ablation removing one while holding the others fixed, the world-model component's causal role remains unfalsifiable.
+The 65.8% headline is not pure pass@1 but best-of-16 with verifier reranking. Pure pass@1 sits at approximately 53–55%. The trace-mid-training contribution is not causally isolated from the ForagerAgent-trajectory contribution or from the joint-RL contribution.
 
 
 
@@ -284,7 +265,7 @@ Once an LLM acts as an agent in a non-trivial environment, the world-model quest
 
 ### 8.1 Web agents
 
-Web Agents with World Models (2410.13232) systematizes the thread. DyMo / World Modeling Improves LM Agents (2506.02918) adds a next-state prediction head to function-calling agents and reports gains on BFCL-V2, though with a caveat (§17): the WM head reached 90–94% state-prediction accuracy while the underlying policy reached only 72.8% task success, which illustrates that WM-head accuracy and agent accuracy can decouple.
+Web Agents with World Models (2410.13232) systematizes the thread. DyMo / World Modeling Improves LM Agents (2506.02918) adds a next-state prediction head to function-calling agents and reports gains on BFCL-V2. The DyMo WM head reached 90–94% state-prediction accuracy while the underlying policy reached only 72.8% task success, which illustrates that WM-head accuracy and agent accuracy can decouple.
 
 WebDreamer (2411.06559) treats the web as a POMDP in which the LLM imagines natural-language state-change descriptions for each candidate click, type, or select. A specialist Dreamer-7B (Qwen2-VL-7B fine-tuned on 3.1M synthesized (initial visual state, action, state-change) tuples from random walks over Common Crawl URLs) provides cheap rollouts. At inference, model-predictive control samples actions, scores simulated trajectories with GPT-4o on a 3-scale rubric, and executes the argmax. On VisualWebArena, Online-Mind2Web, and Mind2Web-Live, this beat the reactive baseline by +34/+42/+24% relative (≈+6–11 absolute) while running 4–5× faster than tree search. The bet: when actions are irreversible (forms, purchases), one-step MPC over an LLM-as-WM beats backtracking search.
 
@@ -333,7 +314,7 @@ SWE-RL applies GRPO to 273k high-quality PR seeds with a rule-based, continuous 
 
 ### 9.3 Process Reward Models
 
-ExecVerify (2603.11226), SWE-PRM (2509.02360), DataPRM (2604.24198), and ThinkPRM (2504.16828) form a cluster where a critic over partial trajectories supplies the training signal. PRMs are not forward predictors (§17.4); they complement WMs rather than replace them.
+ExecVerify (2603.11226), SWE-PRM (2509.02360), DataPRM (2604.24198), and ThinkPRM (2504.16828) form a cluster where a critic over partial trajectories supplies the training signal. PRMs are not forward predictors; they complement WMs rather than replace them.
 
 The 2026 wave scaled the verifier idea. Scaling Agentic Verifier (2602.04254, Qwen Team) trained a verifier that reasons about candidate-program behaviors and discovers counterexamples rather than just scoring tokens. V1 (2603.04304, Berkeley + Together AI + Mila) unifies generation and self-verification so the same model produces candidates and pairwise verification judgments. Both move PRMs closer to forward-prediction territory: the verifier now reasons about what the program *would do*, not only about whether a step *looks right*.
 
@@ -360,7 +341,7 @@ LeCun's Joint Embedding Predictive Architecture (I-JEPA, 2301.08243) predicts in
 
 ### 11.1 LLM-JEPA (2509.14252)
 
-LLM-JEPA adds a joint-embedding predictive objective to standard NTP training, using (text, code) as the two JEPA views with the LLM's last-layer last-token hidden state as encoder and a tied-weights `[PRED]` token as predictor. The loss is `L_NTP(text) + λ · d(Pred(Enc(Text)), Enc(Code))` with cosine distance. On Llama-3.2-1B fine-tuned on NL-RX-SYNTH the gain was 57.3 → 71.5 (+14.2 absolute); on Spider, GSM8K, and HellaSwag the wins were smaller. The top-100 singular values of `Enc(Text) − Enc(Code)` collapsed by orders of magnitude, which indicates a low-rank text↔code mapping. Whether this counts as JEPA in the LeCun sense or as a regularizer on top of NTP remains open and is discussed in §17.
+LLM-JEPA adds a joint-embedding predictive objective to standard NTP training, using (text, code) as the two JEPA views with the LLM's last-layer last-token hidden state as encoder and a tied-weights `[PRED]` token as predictor. The loss is `L_NTP(text) + λ · d(Pred(Enc(Text)), Enc(Code))` with cosine distance. On Llama-3.2-1B fine-tuned on NL-RX-SYNTH the gain was 57.3 → 71.5 (+14.2 absolute); on Spider, GSM8K, and HellaSwag the wins were smaller. The top-100 singular values of `Enc(Text) − Enc(Code)` collapsed by orders of magnitude, which indicates a low-rank text↔code mapping.
 
 
 ### 11.2 CoLA (2503.21383)
@@ -372,7 +353,7 @@ CoLA replaces the 128k-token action space of an LLM with a small learned latent-
 
 Despite CWM and dozens of LLM-as-world-model papers, no public Dreamer/RSSM-style latent-imagination world model has been trained for SWE agents. CWM rolls out in token space. CoLA is the closest concrete instance. UniZero (2406.10667) generalizes MuZero with transformers but is rarely instantiated on code. Genie (2402.15391) gives the vision-side template. JEPA for RL (2504.16591) extends the energy-based objective to RL.
 
-Whether the gap matters remains open and is developed critically in §17. The vision-domain pressure that motivated Dreamer's RSSM design (pixel-space rollout cost) does not exist for code, where state is small and the simulator is available. The argument *for* latent imagination rests on inference-time speed and the action-space compression CoLA demonstrates, not on rollout cost per se.
+Whether the gap matters is itself an open question. The vision-domain pressure that motivated Dreamer's RSSM design (pixel-space rollout cost) does not exist for code, where state is small and the simulator is available. The argument *for* latent imagination rests on inference-time speed and the action-space compression CoLA demonstrates, not on rollout cost per se.
 
 ---
 
@@ -449,7 +430,7 @@ Demystifying Errors in LLM Reasoning Traces (2512.00215) exposed the limit of th
 
 The third regime would hold the policy fixed and vary the world model. Concretely: take a fixed coding policy, swap in different trace-pretraining recipes or different forward-prediction heads, and measure the delta on both process and endpoint metrics. No current benchmark supports this protocol. CWM, TRACED, NExT, and SemCoder each report endpoint and process gains, but none isolates the WM contribution from the policy contribution, because the policy and the WM live in the same weights.
 
-The counterfactual regime is what §17.7 names as the structural gap. Closing it requires either explicit forward-prediction modules (§3.1, N1–N3) that can be ablated independently of the policy, or matched-harness re-runs across the trace-pretraining lineage. A concrete proposal: fix the Qwen-2.5-Coder-32B base, vary the trace-pretraining mixture across the recipes used by TRACED, NExT, SemCoder, and CWM, and measure CRUXEval and SWE-bench separately. The resulting two-dimensional table would, for the first time, allow a regression of process fidelity onto endpoint success.
+Closing the counterfactual regime requires either explicit forward-prediction modules (§3.1, N1–N3) that can be ablated independently of the policy, or matched-harness re-runs across the trace-pretraining lineage. A concrete experimental design: fix the Qwen-2.5-Coder-32B base, vary the trace-pretraining mixture across the recipes used by TRACED, NExT, SemCoder, and CWM, and measure CRUXEval and SWE-bench separately. The resulting two-dimensional table would allow a regression of process fidelity onto endpoint success.
 
 ---
 
@@ -553,95 +534,30 @@ Verified codegen shows the steepest training-data sensitivity in the survey: sma
 
 Codeforces ratings rose by 999 points in 14 months on the o-series. The same line shows that frontier reasoning models gain almost everything from RL scaling, not from domain-specialized scaffolds, which complicates the case that trace-style world models do causal work for frontier systems.
 
----
-
-## 17. Critical Perspectives
-
-This section examines where consensus is fragile and where evidence does not yet support common framings. Seven theses follow.
-
-### 17.1 Most current code WMs make data choices, not architectural choices
-
-The empirical center of the field has converged on a particular design: a standard decoder-only LLM trained on an enriched corpus that includes execution traces or agent trajectories. CWM (2510.02387) is the largest instance — a 32B Llama-class Transformer with GQA, sliding-window blocks, RoPE, mid-trained on 5T tokens of Python observation-action traces plus 3M ForagerAgent SWE trajectories. There is no separate dynamics head, no inverse model, no recurrent latent. TRACED, NExT, SemCoder, and LLM-JEPA share the pattern: data-side innovation, architecturally standard.
-
-This is a substantive empirical finding, not a complaint. It says that current code-WM gains are achievable without architectural commitment to forward-prediction machinery. Whether deeper commitments (the N1/N2/N3 forms in §3.1) would yield gains beyond what enriched data already provides is the central open question. CoLA (2503.21383) is the only system in the corpus that goes further architecturally; its gains are positive but modest. The architectural-commitment question is the one §17.3 and §18 develop.
-
-### 17.2 Trace pretraining has a causal-isolation problem the surface numbers obscure
-
-Do Code Semantics Help? (2509.11686) supplies the most damaging paper for the prevailing optimism. It ran a comprehensive ablation across DeepSeek-Coder, LLaMA-3, and Gemma-2 with five representations (Scratchpad, NExT, CodeExecutor, Concise, SemCoder) on program repair, code synthesis, BigCodeBench, LiveCodeBench, and CRUXEval. Its headline: integrating trace-based semantic information into SFT does not significantly enhance code-generation ability. In 7 of 9 synthesis settings the no-trace baseline won or tied. At inference, in 36 of 56 test-scaling configurations, trace prompts hurt.
-
-What I cannot execute, I do not understand (2503.05703) is gentler: Execution Tuning reached ~80% CRUXEval-O. But the same paper's downstream evaluations on HumanEval, MBPP, and GSM8K showed negligible gains from trace data in the SFT mix.
-
-The strongest counterexample to barely-transfers is NExT (2404.14662), which pushed PaLM 2-L on Mbpp-R from 23.2% to 40.8% with traces removed at test time: a +17.6 absolute gain on the no-trace-at-inference setting, exactly the transfer pattern the skeptical reading says should not happen. The narrower version of the thesis is therefore: trace pretraining transfers to program-repair tasks where the model needs to reason about a buggy program's behavior (where NExT and TraceFixer-style work shines), and barely transfers to fresh code synthesis on benchmarks like HumanEval and MBPP that sit closer to the model's prior. The Do Code Semantics Help? disconfirmation is on synthesis; NExT's transfer is on repair. Both can hold.
-
-The interpretation that survives: trace pretraining helps execution prediction (the thing trained on), transfers to runtime-reasoning-heavy downstream tasks like repair, and barely transfers to fresh code synthesis. This matches the pattern expected if dense execution supervision teaches a runtime-tracking skill rather than a generative model of program intent.
-
-CWM's 65.8% on SWE-bench looks like a counterexample, but the Meta team reports it after trace mid-training *and* 3M ForagerAgent SWE trajectories *and* multi-task RL with verifiable rewards — three interventions stacked. The world-model component is not causally isolated from the SWE-trajectory and RL components. Without an ablation that removes trace mid-training while holding ForagerAgent and RL fixed, the headline remains unfalsifiable. The field has agreed to call CWM a world-model success because the name appears on the model card, not because the experimental design demonstrates it.
-
-### 17.3 The Dreamer-for-code gap may be a non-problem
-
-The conventional framing treats the absence of latent-imagination world models for SWE as the field's largest architectural gap. The empirical record argues the opposite. CWM in token space reaches 65.8% SWE-bench. CoLA produces respectable but not field-shifting results, and even there the WM is fine-tuned on top of a standard LLM rather than replacing it.
-
-Vision world models needed latent rollouts because pixel-space rollouts were too expensive: a frame is ~10^6 dimensions, dynamics are partially observed. Program execution is the opposite: a Python frame is small, dynamics are observable, and the simulator (CPython) is available for free at training time. The pressure that drove Dreamer's RSSM design does not exist for code.
-
-Debugging Code World Models (2602.07672) showed that CWM's long-horizon failures are dominated by action hallucination, not state-propagation error. Under teacher forcing CWM tracked state correctly for 128 steps. A latent rollout would compress states but not fix the action policy, which is the actual bottleneck.
-
-The counterargument is fair: latent rollouts permit faster planning at inference, and for multi-agent or population-scale search the speedup is asymptotically meaningful. The survey should retire the *single largest architectural gap* framing and replace it with *an open question whose payoff is not yet demonstrated*.
-
-### 17.4 PRMs and forward WMs solve complementary problems
-
-Process reward models — ExecVerify (2603.11226), SWE-PRM (2509.02360), ThinkPRM (2504.16828), FunPRM (2601.22249), DataPRM (2604.24198) — score partial trajectories. Forward world models predict `(state, action) → next_state`. In classical model-based RL these play different roles: Dreamer has both a world model (RSSM) and a critic (value function), and the two interact during planning.
-
-In code, the same complementarity holds. A PRM trained on execution traces can score whether a candidate next step looks promising; a forward WM can simulate what that step would actually produce. Current code-WM systems mostly do one or the other, and the design space for combining them is largely unexplored. The cleanest path forward would integrate an execution-grounded PRM as the critic, with a forward predictor (token-space, latent, or synthesized) supplying the candidate rollouts the critic scores.
-
-### 17.5 General Agents Contain World Models is much weaker than its title suggests
-
-Richens et al. (2506.01622) prove that any goal-conditioned policy satisfying a regret bound `δ` for sufficiently deep composite goals (depth `n ≫ 1`) must encode an extractable approximation of the transition function with bounded error. The result is genuine and elegant.
-
-But read the assumptions: fully observed environment, finite communicating stationary controlled MDP, goal-conditioned policy satisfying a regret bound for a specific class of LTL composite goals of depth n. Theorem 2 of the same paper explicitly shows that for myopic agents (depth-1 goals), no world model is needed. Real SWE agents are myopic-ish over short turns and approximately competent over longer ones; their environments are partially observed (rarely full filesystem state); they violate stationarity (the repository changes under their actions); and their regret bound for arbitrary composite goals is unknown and almost certainly not satisfied. The authors caveat this in §6 (Limitations) of their paper.
-
-The theorem provides an existence proof for an idealized agent class. It is not an empirical statement that SWE coding agents have learned world models, and it provides no guidance about the fidelity of any world model they may have learned.
-
-### 17.6 The verifier-grounded lineage leads under a narrow scope
-
-ATLAS, Re:Form, CLEVER, VeriStruct, AutoRocq, and the Liquid Haskell self-play paper (2604.17010) share a property no LLM-only system possesses: code whose correctness is machine-checked against a formal specification. Compare to the SWE-bench paradigm, where correctness means hidden unit tests pass — a weaker guarantee, because unit tests cover specific inputs and a system can pass them while being wrong on adjacent inputs.
-
-The abstract-interpreter paper (2503.12686) provides the diagnostic: when frontier reasoning LLMs were asked to reason in the style of formal abstract interpretation over 22 SV-COMP programs, they made systematic errors in widening, fixpoint termination, control-flow propagation, and meet/join operations. They generated unsound invariants on programs as small as `count_by_2.c`. If LLMs cannot reliably perform interval-domain abstract interpretation on toy C programs, claims that they have learned faithful internal world models of program semantics demand a lot of inferential work.
-
-The verifier-grounded line is the only research direction that does not rely on LLM self-report for correctness. Scoped carefully, it leads on synthesis-from-spec (ATLAS reached 65.8% Pass@5 on DafnySynthesis at 7B, surpassing GPT-4) and on near-perfect verified completion of curated targets (VeriStruct 99.2% on 11 Verus modules). It does not lead on end-to-end verified codegen from natural language: CLEVER reported ≤1/161 on Lean problems requiring joint spec and implementation verification. The future of correct code is plausibly hybrid — neural proposal, symbolic verification, with the verifier providing ground truth that learned world models cannot — but the hybrid is not yet a finished pillar. The verifier line is cataloged in §14.1 alongside symbolic execution and abstract-interpretation probing; readers who accept this thesis should weight that subsection more heavily than its sequence position suggests.
-
-### 17.7 The evaluation gap is structural
-
-Across CRUXEval, REval, CRUXEval-X, PLSemanticsBench, TraceEval, and EquiBench, no benchmark holds policy fixed and varies world-model quality. Every measurement of world-modeling capability is mediated through downstream task performance, so the field cannot distinguish *the model has internalized program semantics* from *the model is exploiting trace-token shortcuts in the test distribution*.
-
-Demystifying Errors in LLM Reasoning Traces (2512.00215) provides the diagnostic: even DeepSeek-R1, o4-mini, Gemini 2.5 Flash, and Claude 4, when asked to simulate execution, produced traces with errors in nine systematic categories. Models with 85–98% final-answer accuracy on output prediction produced traces with systematic errors throughout. High outcome accuracy, low process fidelity: the signature of a system that predicts outcomes without faithfully simulating dynamics.
-
-Self-repair literature exhibits the same pathology. Olausson et al. (2306.09896) showed that GPT-4 self-repair on APPS and HumanEval, normalized by compute, often performs worse than i.i.d. resampling. The bottleneck is the model's feedback quality, not its repair capability. Human-written feedback boosts repair success by 1.58×. The model can generate code, can sometimes recognize bugs, but cannot reliably simulate why its code is wrong, which is exactly what a faithful world model would let it do. The empirical bound on LLM self-repair is, in effect, an empirical bound on the fidelity of the implicit world model the LLM is running. Calling that world model internal is fine; calling it good is not.
-
-Until benchmarks measure process fidelity independently of outcome, *is this system actually building a world model?* remains scientifically undecidable. §15.3 names the missing regime — counterfactual probes that hold policy fixed and vary WM quality — and proposes a concrete protocol: fix the Qwen-2.5-Coder-32B base, vary the trace-pretraining mixture across the TRACED, NExT, SemCoder, and CWM recipes, and measure CRUXEval and SWE-bench separately. The resulting matrix would, for the first time, allow regressing process fidelity onto endpoint success and isolating which trace recipes transfer.
 
 ---
 
-## 18. Open Problems
+## 17. Open Problems
 
-The critical perspectives of §17 reshape the conventional open-problems list. Six problems where the literature is thinnest and the upside is largest:
+Six problems where the literature is thinnest and the upside is largest:
 
 **1. Causal isolation of trace-pretraining contributions.** Every claim of the form *this WM-trained model achieves X* should be paired with an ablation removing the WM component while holding training data and RL fixed. CWM in particular needs this. Without it, the headline numbers underdetermine whether the WM did the work.
 
 **2. World-model fidelity as a first-class metric.** §15's eval gap is concrete: build a benchmark where holding policy fixed and varying WM quality causes measurable variation in planning quality, independent of downstream task. This benchmark would clarify the field more than any single new model.
 
-**3. Hybrid neural-symbolic systems.** §17.6 argues the verifier-grounded line leads on its scope. The natural integration is neural proposal, symbolic verification, with the verifier providing gradient-free correctness signal and the neural component providing proposals at scale. Differentiable surrogates of symbolic verifiers (Lean, Dafny, Rocq) that pass verifier-style gradients during training remain open.
+**3. Hybrid neural-symbolic systems.** The verifier-grounded line (§14.1) leads on synthesis-from-spec but does not yet scale to end-to-end verified codegen from natural language. The natural integration is neural proposal, symbolic verification, with the verifier providing gradient-free correctness signal and the neural component providing proposals at scale. Differentiable surrogates of symbolic verifiers (Lean, Dafny, Rocq) that pass verifier-style gradients during training remain open.
 
 **4. Multi-modal WMs for coding.** GUI agents need pixel-level WMs (Neural Computers, 2604.06425, provides a first attempt). Tying pixel WMs to code-state WMs through a shared latent remains essentially unsolved.
 
-**5. Long-horizon credit assignment with execution-grounded rewards.** PRMs (§9.3) are early, and §17.4 argues they should be conceptually separated from world models. The right structure for rewarding an agent across hundreds of execution-grounded steps remains open.
+**5. Long-horizon credit assignment with execution-grounded rewards.** PRMs (§9.3) provide trajectory-level critics but operate independently of forward prediction. The right structure for rewarding an agent across hundreds of execution-grounded steps remains open.
 
 **6. World models of the developer, not just the program.** All current WMs model the machine. Few model the developer intent with comparable fidelity. ATLAS and Re:Form gesture in this direction by treating the spec as the WM. A full developer-intent WM would close the agentic loop.
 
-Dreamer-for-SWE-agents is not listed as the field's largest gap. §17.3 argues the pressure motivating that direction in vision does not transfer to code. It remains an interesting research question, not the highest-leverage one.
+Dreamer-for-SWE-agents is not listed as the field's largest gap. The pressure motivating that direction in vision — pixel-space rollout cost — does not transfer to code, where state is small and the simulator is free.
 
 **Three under-explored representations.** The §5.3 taxonomy table flags three classes of representation, mature in vision-WM, that have no code-WM exemplar:
 
-- *Global Latent Vector (Dreamer-style RSSM)* — discussed and contested above. The Hafner et al. DreamerV1–V3 line proves the design space exists; whether it pays off for code is the question §17.3 leaves open.
+- *Global Latent Vector (Dreamer-style RSSM)* — discussed in §11. The Hafner et al. DreamerV1–V3 line proves the design space exists; whether it pays off for code is unsettled.
 - *Spatial / Structural Grid* — the analog of OccWorld / BEV for code would be a learned predictive grid over AST nodes, call-graph edges, or CFG states. RepoGraph (2410.14684) shows the static version is useful as agent state; the predictive version remains unexplored.
 - *Decomposed Object / Slot (object-centric WMs)* — the analog for code would model variables, scopes, or classes as discrete persistent slots whose state propagates independently. No paper in the corpus instantiates this, despite obvious mappings (each variable is an object, each frame is a scene).
 
@@ -649,7 +565,7 @@ The object-centric and structural-grid gaps look more genuine than the Dreamer o
 
 ---
 
-## 19. Conclusion
+## 18. Conclusion
 
 Across the literature surveyed here, a single trajectory is visible: from neural execution (modeling the machine), through trace pretraining (modeling execution implicitly), to CWM and its descendants (modeling execution explicitly with a named artifact), to agentic SWE and RL (modeling the environment), to JEPA and latent-action models (modeling in compressed space), and on toward formal verification, probing, and safety (modeling reliably). What was a scattered set of insights in 2014 has by 2026 cohered into a recognizable research program with a recognizable artifact: the code world model.
 
