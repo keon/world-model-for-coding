@@ -17,6 +17,11 @@ with open("SURVEY.md") as f:
 def cite_key(arxid):
     return f"arxiv{arxid.replace('.', '_')}"
 
+# Strip manual section numbers ('## 1. Introduction' -> '## Introduction')
+text = re.sub(r"^(## )\d+\.\s+", r"\1", text, flags=re.MULTILINE)
+text = re.sub(r"^(### )\d+\.\d+\s+", r"\1", text, flags=re.MULTILINE)
+text = re.sub(r"^(#### )\d+\.\d+\.\d+\s+", r"\1", text, flags=re.MULTILINE)
+
 # Drop the H1 title (\maketitle handles it) and the existing References appendix
 text = re.sub(r"^# A Comprehensive Survey of World Models for Coding\s*\n+", "", text, count=1)
 text = re.sub(r"## Appendix A · References.*?(?=## Appendix B)", "", text, flags=re.DOTALL)
@@ -52,10 +57,8 @@ PY
 pandoc SURVEY_for_pdf.md \
   -o paper.tex \
   --natbib \
-  --template=neurips_template.tex \
-  -V title="A Comprehensive Survey of World Models for Coding" \
-  -V author="Keon Kim" \
-  -V date="May 2026"
+  --shift-heading-level-by=-1 \
+  --template=neurips_template.tex
 
 # 3. xelatex + bibtex + xelatex x3 (natbib needs the extra passes)
 xelatex -interaction=nonstopmode paper.tex > /dev/null
