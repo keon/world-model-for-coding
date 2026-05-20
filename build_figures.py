@@ -66,6 +66,7 @@ def timeline():
             (2026.2, "Debugging CWMs", "below"),
         ],
         "Code LLMs": [
+            (2020.25, "CodeBERT\nstatic repr.", "below"),
             (2021.0, "Codex /\nScratchpads", "above"),
             (2022.5, "CodeRL", "below"),
             (2023.6, "CodeExecutor /\nTRACED", "above"),

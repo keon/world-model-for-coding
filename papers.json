@@ -35,6 +35,11 @@
     "filename": "Act Like You're Paying for This - Course-Correcting Code Agents with PRMs (2509.02360).pdf"
   },
   {
+    "id": "2405.14205",
+    "title": "Agent Planning with World Knowledge Model",
+    "filename": "Agent Planning with World Knowledge Model (2405.14205).pdf"
+  },
+  {
     "id": "2504.07634",
     "title": "Agent That Debugs - Dynamic State-Guided Vulnerability Repair",
     "filename": "Agent That Debugs - Dynamic State-Guided Vulnerability Repair (2504.07634).pdf"
@@ -95,6 +100,11 @@
     "filename": "B-Coder - Value-Based Deep Reinforcement Learning for Program Synthesis (2310.03173).pdf"
   },
   {
+    "id": "2510.19788",
+    "title": "Benchmarking World-Model Learning",
+    "filename": "Benchmarking World-Model Learning (2510.19788).pdf"
+  },
+  {
     "id": "2509.11252",
     "title": "Beyond Autoregression - An Empirical Study of Diffusion LLMs for Code Generation",
     "filename": "Beyond Autoregression - An Empirical Study of Diffusion LLMs for Code Generation (2509.11252).pdf"
@@ -140,9 +150,19 @@
     "filename": "Can LLMs Recover Program Semantics - A Systematic Evaluation of Semantic Preservation in Decompilation (2511.19130).pdf"
   },
   {
+    "id": "2406.06485",
+    "title": "Can Language Models Serve as Text-Based World Simulators",
+    "filename": "Can Language Models Serve as Text-Based World Simulators (2406.06485).pdf"
+  },
+  {
     "id": "2511.18288",
     "title": "Can Large Language Models Solve Path Constraints in Symbolic Execution",
     "filename": "Can Large Language Models Solve Path Constraints in Symbolic Execution (2511.18288).pdf"
+  },
+  {
+    "id": "2603.03195",
+    "title": "Chain of World - World Model Thinking in Latent Motion",
+    "filename": "Chain of World - World Model Thinking in Latent Motion (2603.03195).pdf"
   },
   {
     "id": "2507.04736",
@@ -163,6 +183,11 @@
     "id": "2305.05383",
     "title": "Code Execution with Pre-trained Language Models",
     "filename": "Code Execution with Pre-trained Language Models (2305.05383).pdf"
+  },
+  {
+    "id": "2510.04542",
+    "title": "Code World Models for General Game Playing",
+    "filename": "Code World Models for General Game Playing (2510.04542).pdf"
   },
   {
     "id": "2602.01576",
@@ -210,6 +235,11 @@
     "filename": "Cross-LLM Generalization of Behavioral Backdoor Detection in AI Agent Supply Chains (2511.19874).pdf"
   },
   {
+    "id": "2601.03905",
+    "title": "Current Agents Fail to Leverage World Model as Tool for Foresight",
+    "filename": "Current Agents Fail to Leverage World Model as Tool for Foresight (2601.03905).pdf"
+  },
+  {
     "id": "2505.22954",
     "title": "Darwin Godel Machine - Open-Ended Evolution of Self-Improving Agents",
     "filename": "Darwin Godel Machine - Open-Ended Evolution of Self-Improving Agents (2505.22954).pdf"
@@ -255,6 +285,11 @@
     "filename": "Demystifying Errors in LLM Reasoning Traces - An Empirical Study of Code Execution Simulation (2512.00215).pdf"
   },
   {
+    "id": "2603.23149",
+    "title": "Describe-Then-Act - Proactive Agent Steering via Distilled Language-Action World Models",
+    "filename": "Describe-Then-Act - Proactive Agent Steering via Distilled Language-Action World Models (2603.23149).pdf"
+  },
+  {
     "id": "2506.20639",
     "title": "DiffuCoder - Understanding and Improving Masked Diffusion Models for Code Generation",
     "filename": "DiffuCoder - Understanding and Improving Masked Diffusion Models for Code Generation (2506.20639).pdf"
@@ -263,6 +298,11 @@
     "id": "2509.11686",
     "title": "Do Code Semantics Help - A Comprehensive Study on Execution Trace-Based Information for Code LLMs",
     "filename": "Do Code Semantics Help - A Comprehensive Study on Execution Trace-Based Information for Code LLMs (2509.11686).pdf"
+  },
+  {
+    "id": "2604.10690",
+    "title": "Do LLMs Build Spatial World Models - Evidence from Grid-World Maze Tasks",
+    "filename": "Do LLMs Build Spatial World Models - Evidence from Grid-World Maze Tasks (2604.10690).pdf"
   },
   {
     "id": "2509.01142",
@@ -275,6 +315,11 @@
     "filename": "Dyna-Think - Synergizing Reasoning, Acting, and World Model Simulation in AI Agents (2506.00320).pdf"
   },
   {
+    "id": "2601.22149",
+    "title": "DynaWeb - Model-Based Reinforcement Learning of Web Agents",
+    "filename": "DynaWeb - Model-Based Reinforcement Learning of Web Agents (2601.22149).pdf"
+  },
+  {
     "id": "1711.07163",
     "title": "Dynamic Neural Program Embedding for Program Repair",
     "filename": "Dynamic Neural Program Embedding for Program Repair (1711.07163).pdf"
@@ -283,6 +328,11 @@
     "id": "2604.01193",
     "title": "Embarrassingly Simple Self-Distillation Improves Code Generation",
     "filename": "Embarrassingly Simple Self-Distillation Improves Code Generation (2604.01193).pdf"
+  },
+  {
+    "id": "2602.07794",
+    "title": "Emergent Structured Representations Support Flexible In-Context Inference in Large Language Models",
+    "filename": "Emergent Structured Representations Support Flexible In-Context Inference in Large Language Models (2602.07794).pdf"
   },
   {
     "id": "2604.24212",
@@ -335,6 +385,11 @@
     "filename": "Execution-based Code Generation using Deep Reinforcement Learning (2301.13816).pdf"
   },
   {
+    "id": "2605.06840",
+    "title": "Extracting Search Trees from LLM Reasoning Traces Reveals Myopic Planning",
+    "filename": "Extracting Search Trees from LLM Reasoning Traces Reveals Myopic Planning (2605.06840).pdf"
+  },
+  {
     "id": "2604.15136",
     "title": "Feedback-Driven Execution for LLM-Based Binary Analysis",
     "filename": "Feedback-Driven Execution for LLM-Based Binary Analysis (2604.15136).pdf"
@@ -343,6 +398,21 @@
     "id": "2410.01215",
     "title": "From Code to Correctness - Closing the Last Mile of Code Generation with Hierarchical Debugging",
     "filename": "From Code to Correctness - Closing the Last Mile of Code Generation with Hierarchical Debugging (2410.01215).pdf"
+  },
+  {
+    "id": "2603.26323",
+    "title": "From Human Cognition to Neural Activations - Probing the Computational Primitives of Spatial Reasoning in LLMs",
+    "filename": "From Human Cognition to Neural Activations - Probing the Computational Primitives of Spatial Reasoning in LLMs (2603.26323).pdf"
+  },
+  {
+    "id": "2306.12672",
+    "title": "From Word Models to World Models - Translating from Natural Language to the Probabilistic Language of Thought",
+    "filename": "From Word Models to World Models - Translating from Natural Language to the Probabilistic Language of Thought (2306.12672).pdf"
+  },
+  {
+    "id": "2512.18832",
+    "title": "From Word to World - Can Large Language Models be Implicit Text-based World Models",
+    "filename": "From Word to World - Can Large Language Models be Implicit Text-based World Models (2512.18832).pdf"
   },
   {
     "id": "2601.22249",
@@ -365,6 +435,11 @@
     "filename": "Generating Code World Models with Large Language Models Guided by Monte Carlo Tree Search (2405.15383).pdf"
   },
   {
+    "id": "2501.00226",
+    "title": "Generative Emergent Communication - Large Language Model is a Collective World Model",
+    "filename": "Generative Emergent Communication - Large Language Model is a Collective World Model (2501.00226).pdf"
+  },
+  {
     "id": "2402.15391",
     "title": "Genie - Generative Interactive Environments",
     "filename": "Genie - Generative Interactive Environments (2402.15391).pdf"
@@ -383,6 +458,11 @@
     "id": "2506.04894",
     "title": "ICPC-Eval - Probing the Frontiers of LLM Reasoning Through Competitive Programming",
     "filename": "ICPC-Eval - Probing the Frontiers of LLM Reasoning Through Competitive Programming (2506.04894).pdf"
+  },
+  {
+    "id": "2506.09171",
+    "title": "Improving LLM Agent Planning with In-Context Learning via Atomic Fact Augmentation and Lookahead Search",
+    "filename": "Improving LLM Agent Planning with In-Context Learning via Atomic Fact Augmentation and Lookahead Search (2506.09171).pdf"
   },
   {
     "id": "2604.17010",
@@ -413,6 +493,11 @@
     "id": "2506.09550",
     "title": "Integrating Symbolic Execution with LLMs for Automated Generation of Program Specifications",
     "filename": "Integrating Symbolic Execution with LLMs for Automated Generation of Program Specifications (2506.09550).pdf"
+  },
+  {
+    "id": "2510.15047",
+    "title": "Internalizing World Models via Self-Play Finetuning for Agentic RL",
+    "filename": "Internalizing World Models via Self-Play Finetuning for Agentic RL (2510.15047).pdf"
   },
   {
     "id": "2306.09896",
@@ -455,6 +540,26 @@
     "filename": "LLM-JEPA - Large Language Models Meet Joint Embedding Predictive Architectures (2509.14252).pdf"
   },
   {
+    "id": "2305.10626",
+    "title": "Language Models Meet World Models - Embodied Experiences Enhance Language Models",
+    "filename": "Language Models Meet World Models - Embodied Experiences Enhance Language Models (2305.10626).pdf"
+  },
+  {
+    "id": "2312.05230",
+    "title": "Language Models, Agent Models, and World Models - The LAW for Machine Reasoning and Planning",
+    "filename": "Language Models, Agent Models, and World Models - The LAW for Machine Reasoning and Planning (2312.05230).pdf"
+  },
+  {
+    "id": "2402.01695",
+    "title": "Language-Guided World Models - A Model-Based Approach to AI Control",
+    "filename": "Language-Guided World Models - A Model-Based Approach to AI Control (2402.01695).pdf"
+  },
+  {
+    "id": "2511.22904",
+    "title": "Language-conditioned World Model Improves Policy Generalization by Reading Environmental Descriptions",
+    "filename": "Language-conditioned World Model Improves Policy Generalization by Reading Environmental Descriptions (2511.22904).pdf"
+  },
+  {
     "id": "2505.13452",
     "title": "Large Language Model Powered Symbolic Execution",
     "filename": "Large Language Model Powered Symbolic Execution (2505.13452).pdf"
@@ -493,6 +598,11 @@
     "id": "2508.00419",
     "title": "Loop Invariant Generation - A Hybrid Framework of Reasoning Optimised LLMs and SMT Solvers",
     "filename": "Loop Invariant Generation - A Hybrid Framework of Reasoning Optimised LLMs and SMT Solvers (2508.00419).pdf"
+  },
+  {
+    "id": "2409.12278",
+    "title": "Making Large Language Models into World Models with Precondition and Effect Knowledge",
+    "filename": "Making Large Language Models into World Models with Precondition and Effect Knowledge (2409.12278).pdf"
   },
   {
     "id": "2412.12119",
@@ -545,6 +655,11 @@
     "filename": "Nexus - Execution-Grounded Multi-Agent Test Oracle Synthesis (2510.26423).pdf"
   },
   {
+    "id": "2604.09580",
+    "title": "OOWM - Structuring Embodied Reasoning and Planning via Object-Oriented Programmatic World Modeling",
+    "filename": "OOWM - Structuring Embodied Reasoning and Planning via Object-Oriented Programmatic World Modeling (2604.09580).pdf"
+  },
+  {
     "id": "2512.07404",
     "title": "On LLMs' Internal Representation of Code Correctness",
     "filename": "On LLMs' Internal Representation of Code Correctness (2512.07404).pdf"
@@ -565,6 +680,11 @@
     "filename": "Outcome-Refining Process Supervision for Code Generation (2412.15118).pdf"
   },
   {
+    "id": "2511.09057",
+    "title": "PAN - A World Model for General, Interactable, and Long-Horizon World Simulation",
+    "filename": "PAN - A World Model for General, Interactable, and Long-Horizon World Simulation (2511.09057).pdf"
+  },
+  {
     "id": "2510.03415",
     "title": "PLSemanticsBench - LLMs as Programming Language Interpreters",
     "filename": "PLSemanticsBench - LLMs as Programming Language Interpreters (2510.03415).pdf"
@@ -578,6 +698,11 @@
     "id": "2502.06975",
     "title": "Position - Episodic Memory is the Missing Piece for Long-Term LLM Agents",
     "filename": "Position - Episodic Memory is the Missing Piece for Long-Term LLM Agents (2502.06975).pdf"
+  },
+  {
+    "id": "2605.12289",
+    "title": "PriorZero - Bridging Language Priors and World Models for Decision Making",
+    "filename": "PriorZero - Bridging Language Priors and World Models for Decision Making (2605.12289).pdf"
   },
   {
     "id": "2504.16828",
@@ -670,6 +795,11 @@
     "filename": "Revisit Self-Debugging with Self-Generated Tests for Code Generation (2501.12793).pdf"
   },
   {
+    "id": "2503.04421",
+    "title": "Revisiting the Othello World Model Hypothesis",
+    "filename": "Revisiting the Othello World Model Hypothesis (2503.04421).pdf"
+  },
+  {
     "id": "2604.02647",
     "title": "Runtime Execution Traces Guided Automated Program Repair with Multi-Agent Debate",
     "filename": "Runtime Execution Traces Guided Automated Program Repair with Multi-Agent Debate (2604.02647).pdf"
@@ -728,6 +858,11 @@
     "id": "2408.03314",
     "title": "Scaling LLM Test-Time Compute Optimally",
     "filename": "Scaling LLM Test-Time Compute Optimally (2408.03314).pdf"
+  },
+  {
+    "id": "2505.14892",
+    "title": "Scaling Laws for State Dynamics in Large Language Models",
+    "filename": "Scaling Laws for State Dynamics in Large Language Models (2505.14892).pdf"
   },
   {
     "id": "2510.14232",
@@ -800,14 +935,34 @@
     "filename": "Teaching Large Language Models to Self-Debug (2304.05128).pdf"
   },
   {
+    "id": "2601.22647",
+    "title": "Test-Time Mixture of World Models for Embodied Agents in Dynamic Environments",
+    "filename": "Test-Time Mixture of World Models for Embodied Agents in Dynamic Environments (2601.22647).pdf"
+  },
+  {
+    "id": "2602.04557",
+    "title": "Textual Planning with Explicit Latent Transitions",
+    "filename": "Textual Planning with Explicit Latent Transitions (2602.04557).pdf"
+  },
+  {
     "id": "2503.07215",
     "title": "The CodeInverter Suite - Control-Flow and Data-Mapping Augmented Binary Decompilation with LLMs",
     "filename": "The CodeInverter Suite - Control-Flow and Data-Mapping Augmented Binary Decompilation with LLMs (2503.07215).pdf"
   },
   {
+    "id": "2604.06427",
+    "title": "The Depth Ceiling - On the Limits of Large Language Models in Discovering Latent Planning",
+    "filename": "The Depth Ceiling - On the Limits of Large Language Models in Discovering Latent Planning (2604.06427).pdf"
+  },
+  {
     "id": "2512.13821",
     "title": "The Double Life of Code World Models - Provably Unmasking Malicious Behavior Through Execution Traces",
     "filename": "The Double Life of Code World Models - Provably Unmasking Malicious Behavior Through Execution Traces (2512.13821).pdf"
+  },
+  {
+    "id": "2601.17094",
+    "title": "The Mouth is Not the Brain - Bridging Energy-Based World Models and Language Generation",
+    "filename": "The Mouth is Not the Brain - Bridging Energy-Based World Models and Language Generation (2601.17094).pdf"
   },
   {
     "id": "2512.18552",
@@ -818,6 +973,11 @@
     "id": "2505.24480",
     "title": "Towards Effective Code-Integrated Reasoning",
     "filename": "Towards Effective Code-Integrated Reasoning (2505.24480).pdf"
+  },
+  {
+    "id": "2605.09294",
+    "title": "Towards Effective Theory of LLMs - A Representation Learning Approach",
+    "filename": "Towards Effective Theory of LLMs - A Representation Learning Approach (2605.09294).pdf"
   },
   {
     "id": "2505.04441",
@@ -930,6 +1090,16 @@
     "filename": "VeriStruct - AI-assisted Automated Verification of Data-Structure Modules in Verus (2510.25015).pdf"
   },
   {
+    "id": "2410.07484",
+    "title": "WALL-E - World Alignment by Rule Learning Improves World Model-based LLM Agents",
+    "filename": "WALL-E - World Alignment by Rule Learning Improves World Model-based LLM Agents (2410.07484).pdf"
+  },
+  {
+    "id": "2504.15785",
+    "title": "WALL-E 2.0 - World Alignment by NeuroSymbolic Learning Improves World Model-based LLM Agents",
+    "filename": "WALL-E 2.0 - World Alignment by NeuroSymbolic Learning Improves World Model-based LLM Agents (2504.15785).pdf"
+  },
+  {
     "id": "2410.13232",
     "title": "Web Agents with World Models - Learning and Leveraging Environment Dynamics in Web Navigation",
     "filename": "Web Agents with World Models - Learning and Leveraging Environment Dynamics in Web Navigation (2410.13232).pdf"
@@ -945,6 +1115,11 @@
     "filename": "WebVoyager - Building an End-to-End Web Agent with Large Multimodal Models (2401.13919).pdf"
   },
   {
+    "id": "2602.14721",
+    "title": "WebWorld - A Large-Scale World Model for Web Agent Training",
+    "filename": "WebWorld - A Large-Scale World Model for Web Agent Training (2602.14721).pdf"
+  },
+  {
     "id": "2503.05703",
     "title": "What I cannot execute, I do not understand - Training and Evaluating LLMs on Program Execution Traces",
     "filename": "What I cannot execute, I do not understand - Training and Evaluating LLMs on Program Execution Traces (2503.05703).pdf"
@@ -953,6 +1128,11 @@
     "id": "2410.08105",
     "title": "What Makes Large Language Models Reason in Multi-Turn Code Generation",
     "filename": "What Makes Large Language Models Reason in Multi-Turn Code Generation (2410.08105).pdf"
+  },
+  {
+    "id": "2507.14520",
+    "title": "What if Othello-Playing Language Models Could See",
+    "filename": "What if Othello-Playing Language Models Could See (2507.14520).pdf"
   },
   {
     "id": "2506.02918",
@@ -968,6 +1148,26 @@
     "id": "2602.00785",
     "title": "World Models as an Intermediary between Agents and the Real World",
     "filename": "World Models as an Intermediary between Agents and the Real World (2602.00785).pdf"
+  },
+  {
+    "id": "2603.25887",
+    "title": "World Reasoning Arena",
+    "filename": "World Reasoning Arena (2603.25887).pdf"
+  },
+  {
+    "id": "2604.14732",
+    "title": "World-Value-Action Model - Implicit Planning for Vision-Language-Action Systems",
+    "filename": "World-Value-Action Model - Implicit Planning for Vision-Language-Action Systems (2604.14732).pdf"
+  },
+  {
+    "id": "2402.12275",
+    "title": "WorldCoder - A Model-Based LLM Agent Building World Models by Writing Code and Interacting with the Environment",
+    "filename": "WorldCoder - A Model-Based LLM Agent Building World Models by Writing Code and Interacting with the Environment (2402.12275).pdf"
+  },
+  {
+    "id": "2506.06725",
+    "title": "WorldLLM - Improving LLMs World Modeling using Curiosity-Driven Theory-Making",
+    "filename": "WorldLLM - Improving LLMs World Modeling using Curiosity-Driven Theory-Making (2506.06725).pdf"
   },
   {
     "id": "2602.09856",

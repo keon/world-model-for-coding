@@ -6,7 +6,7 @@
 
 A *world model* is an internal predictor over environment dynamics. In coding, the environment is the program: its runtime state, execution trace, filesystem, tests, and developer task. The first attempt to learn such a predictor came from Zaremba and Sutskever (1410.4615), who trained an LSTM to predict Python execution output in 2014. Twelve years later, Meta FAIR released CWM (2510.02387), the first open-weights LLM branded a Code World Model.
 
-This survey synthesizes 190 papers spanning four research lineages: neural execution, trace pretraining and the CWM line, agentic software engineering with execution feedback, and verifier-grounded code generation. It traces the twelve-year historical arc, builds a three-axis taxonomy (functionality, temporal modeling, representation), produces system cards for thirteen representative systems, and assembles protocol-stratified tables of empirical results on SWE-bench, CRUXEval, web agents, and formal verification. The survey closes with an enumeration of open problems and underexplored representations.
+This survey synthesizes nearly 200 papers spanning four research lineages: neural execution, trace pretraining and the CWM line, agentic software engineering with execution feedback, and verifier-grounded code generation. It traces a progression from static code representation (CodeBERT), to execution prediction, to agentic simulation, and argues that the next step is not merely more traces but latent, decision-relevant models of semantic consequences. The survey builds a taxonomy by functionality, temporal modeling, representation, grounding mode, and agentic capability level; assembles protocol-stratified empirical tables; and closes with open problems around causal isolation, world-model fidelity, Code-JEPA-style latent prediction, and self-revising agentic WMs.
 
 
 ---
@@ -17,11 +17,15 @@ Autoregressive code LLMs generate tokens conditioned on syntactic context. Corre
 
 Two adjacent surveys cover non-overlapping ground. A Survey on LLMs for Code Generation (2406.00515) maps the code-LLM space without the world-model lens. Understanding World or Predicting Future (2411.14499) maps world models in general without the code lens. A Comprehensive Survey on World Models for Embodied AI (2510.16732) maps embodied world models but excludes the coding domain. The intersection, the subject of this document, has cohered only recently into a recognizable program.
 
+Two additional precedents clarify what is new. CodeBERT (2002.08155) learned joint natural-language/programming-language representations before the field had a world-model vocabulary; it belongs to the *static representation* prehistory of code WMs. V-JEPA's lesson is complementary: useful world models need not reconstruct observations, but can predict abstract latent targets that omit irrelevant detail [@meta_vjepa_blog_2024]. Agentic World Modeling (2604.22748) generalizes the agent view into three capability levels — local predictors, multi-step simulators, and self-revising evolvers — which this survey adapts to code. Together these sources sharpen the thesis: code world modeling is moving from representing code, to predicting execution, to simulating and revising the semantic consequences of actions.
+
+The broader question of whether language itself constitutes a world model has its own theoretical literature. From Word Models to World Models (2306.12672, MIT) argues that natural language can serve as a probabilistic language of thought from which world models are induced. LAW (2312.05230, UCSD) offers a position-paper unification of language models, agent models, and world models. Generative EmCom (2501.00226) takes the stronger view that LLMs decode society's collective world model. This survey treats these contributions as ambient theoretical context: code is a particularly clean test case for the language-as-world-model hypothesis, since code's execution provides ground truth that natural-language reasoning lacks.
+
 ---
 
 ## 2. Scope and Corpus
 
-The survey covers 196 arxiv preprints at the intersection of world-model or state-tracking architectures and code generation, debugging, repair, or agentic coding. Pure vision world models (DreamerV1–V3, V-JEPA, Genie) appear only as cited precedent; pure code-LLM papers without a world-model angle are excluded. Date range: 2014 (Learning to Execute) through May 2026. The majority of the corpus dates from 2025 or later, reflecting the field's recent crystallization around the Code World Model framing.
+The survey covers 196 arxiv preprints at the intersection of world-model or state-tracking architectures and code generation, debugging, repair, or agentic coding. Pure vision world models (DreamerV1–V3, V-JEPA, Genie) appear only as cited precedent; pure code-LLM papers without a world-model angle are excluded except when they anchor the representation prehistory (CodeBERT). Date range: 2014 (Learning to Execute) through May 2026. The majority of the corpus dates from 2025 or later, reflecting the field's recent crystallization around the Code World Model framing.
 
 Cross-tabulation across the two primary taxonomic axes:
 
@@ -82,6 +86,18 @@ Orthogonal to D-vs-N, *what* a system models varies: variable values and stack f
 
 CWM occupies an instructive position: behaviorally explicit (it emits stack frames) but architecturally implicit (a 32B Llama-class decoder with no separate dynamics head). SemCoder, NExT, and TRACED follow the same pattern.
 
+### 3.3 Capability levels for code WMs
+
+Agentic World Modeling (2604.22748) separates world models by capability level: **L1 Predictor**, **L2 Simulator**, and **L3 Evolver**. This hierarchy is useful because the D/N split asks *what architecture counts*, while the level split asks *what the model can do for an agent*.
+
+| Level | General meaning | Code-WM specialization | Representative systems |
+|---|---|---|---|
+| **L1 Predictor** | Learns local one-step transitions | Predict next variable state, branch, line trace, test result, or screen diff | CodeExecutor, TRACED, CWM trace prediction, DyMo |
+| **L2 Simulator** | Composes transitions into multi-step action-conditioned rollouts | Roll out candidate edits, commands, clicks, or synthesized simulators before acting | RAP, WebDreamer, GIF-MCTS, Dyna-Think |
+| **L3 Evolver** | Revises its own model after prediction failure | Updates the scaffold, environment theory, memory, or learned simulator after execution falsifies it | Self-Execution Simulation, self-play SWE-RL, Darwin/Huxley-style agents |
+
+This level taxonomy sharpens the empirical landscape. Most code WMs are **L1**: they predict traces or outcomes locally. A smaller set reaches **L2** by using predictions for planning. True **L3** systems are rare and usually revise the agent scaffold or training distribution rather than a cleanly separable world model. The frontier problem is therefore not simply "train a larger CWM"; it is to make execution failures update the model's future predictions.
+
 ---
 
 ## 4. Twelve Years of Code World Models
@@ -126,7 +142,7 @@ Diamond markers in the figure tag the moments where *world model* enters the nam
 
 **Pre-2020: can a network execute code?** Learning to Execute (1410.4615) trained an LSTM to predict Python output on bounded-loop programs. Neural Programmer-Interpreters (1511.06279) and Differentiable Forth built differentiable program counters. Dynamic Neural Program Embedding (1711.07163) embedded real interpreter traces. Neural Code Fusion (1906.07181) and IPA-GNN (2010.12621) used GNN attention as a program counter. By 2020 the answer was yes, but only with the interpreter encoded into architecture, which did not scale to real languages. Ha & Schmidhuber (1803.10122) had named the pattern for vision-RL; the coding community had not yet borrowed it.
 
-**2020–2022: can the training include execution?** Codex (2107.03374) and MBPP (2108.07732) made code generation a target. Scratchpads (2112.00114) showed a Transformer could predict program output when allowed to emit intermediate computation first, the Dynamic-NPE move at LLM scale, without architectural surgery.
+**2020–2022: from static representation to execution supervision.** CodeBERT (2002.08155) marks the static-representation precursor: a bimodal NL–PL encoder trained to align source code and natural language, but not to predict runtime transitions. Codex (2107.03374) and MBPP (2108.07732) then made code generation a target. Scratchpads (2112.00114) showed a Transformer could predict program output when allowed to emit intermediate computation first, the Dynamic-NPE move at LLM scale, without architectural surgery. The transition from CodeBERT to Scratchpads is the transition from *representing* code to *mentally executing* it.
 
 **2023: trace pretraining as a named recipe.** CodeExecutor (2305.05383) trained a Transformer to emit per-line state traces from source. TRACED (2306.07487) generalized this to a pretraining auxiliary. CRUXEval (2401.03065) provided the eval that became standard. In parallel, Reflexion (2303.11366) and Self-Debug (2304.05128) used execution feedback in-context, LEVER (2302.08468) used it during decoding, and RAP (2305.14992) ran MCTS over an LLM-as-world-model.
 
@@ -141,7 +157,7 @@ Diamond markers in the figure tag the moments where *world model* enters the nam
 
 ## 5. Taxonomy: Three Axes of Code World Models
 
-Two cuts at the taxonomy prove useful, and they complement each other. The first, a *lineage* cut, asks which research thread produced the system, and structures §§6–13. The second, more durable cut adapts the three-axis framework of Li et al. (2510.16732) to the code domain. The lineage map follows; the three axes appear in §§5.1–5.3.
+Three cuts at the taxonomy prove useful, and they complement each other. The first, a *lineage* cut, asks which research thread produced the system, and structures §§6–13. The second, more durable cut adapts the three-axis framework of Li et al. (2510.16732) to the code domain. The third imports the L1/L2/L3 capability hierarchy from Agentic World Modeling (2604.22748) and asks whether a system merely predicts, actually simulates, or revises itself after failed predictions. The lineage map follows; the three representation/temporal/functionality axes appear in §§5.1–5.3, and the capability levels appear in §3.3.
 
 ```
                         World Models for Coding
@@ -169,7 +185,7 @@ Two cuts at the taxonomy prove useful, and they complement each other. The first
                        §17 Open problems
 ```
 
-Adjacent WM surveys converge on overlapping splits that the three-axis framework subsumes as projections. Ding et al. (2411.14499) split top-level by *implicit representation* vs *future prediction*. JiahuaDong's awesome-list organizes by *paradigm*: RL-based, observation-generative, latent-space, object-centric. knightnemo's list surfaces *pixel vs mesh vs latent* as cross-cutting tags. The three axes — functionality, temporal modeling, and representation — capture the choices a system makes regardless of which lineage it belongs to.
+Adjacent WM surveys converge on overlapping splits that the three-axis framework subsumes as projections. Ding et al. (2411.14499) split top-level by *implicit representation* vs *future prediction*. Agentic World Modeling (2604.22748) adds the orthogonal levels × laws view: L1/L2/L3 capabilities crossed with physical, digital, social, and scientific law regimes. JiahuaDong's awesome-list organizes by *paradigm*: RL-based, observation-generative, latent-space, object-centric. knightnemo's list surfaces *pixel vs mesh vs latent* as cross-cutting tags. The three axes — functionality, temporal modeling, and representation — capture the choices a system makes regardless of lineage; the L1/L2/L3 overlay captures how much of the agent loop the model can support.
 
 ### 5.1 Axis 1 — Functionality
 
@@ -179,7 +195,7 @@ Adjacent WM surveys converge on overlapping splits that the three-axis framework
 ### 5.2 Axis 2 — Temporal Modeling
 
 - **Sequential simulation/inference.** Step-by-step autoregressive rollout. CWM, NExT, SemCoder, all the trace-pretraining systems, and most LLM-as-WM planners (RAP, WebDreamer in its MPC loop) live here. The state updates one timestep at a time. The vision analog is RSSM (Hafner et al., DreamerV1–V3).
-- **Global difference prediction.** Predict the entire future state at once, in parallel. The vision analog is video-diffusion or masked-JEPA. In code, this fits diffusion code models (DiffuCoder, 2506.20639; Dream-Coder 7B, 2509.01142), where the next state is sampled jointly rather than autoregressively, and the specification-is-the-program framing (2603.17399), where the entire trace is the spec.
+- **Global difference prediction.** Predict the entire future state at once, in parallel. The vision analog is video-diffusion or masked-JEPA. V-JEPA's important lesson is negative: the target need not be a pixel-perfect reconstruction; it can be a latent representation of what matters for future action [@meta_vjepa_blog_2024]. In code, this fits diffusion code models (DiffuCoder, 2506.20639; Dream-Coder 7B, 2509.01142), where the next state is sampled jointly rather than autoregressively, the specification-is-the-program framing (2603.17399), where the entire trace is the spec, and a still-missing Code-JEPA objective that masks traces, tests, or repository states and predicts latent semantic consequences rather than exact token strings.
 - **Static, no-trace.** Some systems (SemCoder's static mode, the trace-free baselines in Do Code Semantics Help?) explicitly drop temporal modeling at inference, reducing to single-shot prediction.
 
 ### 5.3 Axis 3 — Representation
@@ -215,6 +231,8 @@ Grounding mode is orthogonal to the representation axis: a token-sequence repres
 ---
 
 ## 6. Foundations: Neural Execution as Implicit World Modeling
+
+CodeBERT (2002.08155) is the useful contrast case. It learned joint representations of natural language and programming language with masked-language modeling and replaced-token detection, and it made code search and code documentation tasks central. But it did not model execution dynamics: the program was a semantic artifact to embed, not an environment to roll forward. In hindsight, CodeBERT is the static representation prehistory of code world models.
 
 Learning to Execute (Zaremba & Sutskever, 1410.4615) established both feasibility and brittleness. Show Your Work — Scratchpads (2112.00114) provided the pivotal contribution: by training a Transformer to emit intermediate computation states, the authors recovered much of the LSTM-era execution-prediction performance at scale, presaging the trace-pretraining lineage of §6. CRUXEval (2401.03065) and REval (2403.16437) provide the canonical execution-reasoning benchmarks. The lesson the field absorbed: *replacing* the interpreter with a neural network is harder than *augmenting* a transformer with interpreter-style supervision. Modern systems all take the latter path.
 
@@ -261,7 +279,7 @@ GIF-MCTS treats the world model itself as a Python program: an `Environment.step
 
 ## 8. World Models for Code Agents
 
-Once an LLM acts as an agent in a non-trivial environment, the world-model question becomes whether the agent simulates the environment's response. Three sub-environments dominate.
+Once an LLM acts as an agent in a non-trivial environment, the world-model question becomes whether the agent simulates the environment's response. Agentic World Modeling (2604.22748) calls software a **digital-law** regime: transitions are rule-governed, inspectable, and often exactly replayable, but the state space spans filesystems, GUIs, APIs, tests, and other agents. Three sub-environments dominate.
 
 ### 8.1 Web agents
 
@@ -329,27 +347,36 @@ RAP frames reasoning as MCTS in a self-consistent MDP where the same frozen LLM 
 
 Tree of Thoughts (2305.10601), AlphaZero-like Tree Search for LLM Decoding (2309.17179), Tree Search for LM Agents (2407.01476), and Mastering Board Games by External/Internal Planning with LMs (2412.12119) develop the search frame. The last gives the most direct contemporary recipe for learned tree-search with LLM-as-WM, straightforwardly transferable to code.
 
+The LLM-as-WM-for-planning line broadens further in 2024–2026. WALL-E (2410.07484) and its successor WALL-E 2.0 (2504.15785) align an LLM-based world model with environment dynamics through neurosymbolic rule learning and scene-graph augmentation, enabling MPC over text-described transitions. Agent Planning with World Knowledge Model (2405.14205) introduces a parametric world-knowledge model for global and local planning. Making LLMs into World Models (2409.12278) fine-tunes the LLM as a precondition and effect predictor over PDDL-style action schemas. Code World Models for General Game Playing (2510.04542, DeepMind) translates natural-language game rules into executable Python world models for MCTS, generalizing GIF-MCTS beyond fixed RL benchmarks. PriorZero (2605.12289) bridges LLM semantic priors and learned world models on Jericho and BabyAI. World Reasoning Arena (2603.25887) benchmarks action simulation, long-horizon forecasting, and simulative planning across LLM-as-WM systems.
+
 ### 10.2 Execution-conditioned generation
 
 Execution Guided Line-by-Line Code Generation (2506.10948) uses classifier-free guidance to condition next-token prediction on candidate-runtime outcomes. Jupiter (2509.09245) formulates notebook state as MCTS nodes. REPL-Plan (2411.13826) reuses a REPL state pool across tasks. The substrate is well-developed for short-horizon code-gen, less so for long-horizon multi-file SWE.
 
 ---
 
-## 11. JEPA, Dreamer, and the Latent-Action Gap
+## 11. JEPA, V-JEPA, Dreamer, and the Latent-Action Gap
 
-LeCun's Joint Embedding Predictive Architecture (I-JEPA, 2301.08243) predicts in embedding space rather than pixel space. The Dreamer family — Hafner et al.'s DreamerV1 (1912.01603), DreamerV2 (2010.02193), and DreamerV3 (2301.04104), built around the Recurrent State-Space Model — has near-zero direct application to code. Two papers occupy the gap.
+LeCun's Joint Embedding Predictive Architecture (I-JEPA, 2301.08243) predicts in embedding space rather than pixel space. V-JEPA extends the same principle to video: predict abstract future representations, not every observation detail [@meta_vjepa_blog_2024]. The Dreamer family — Hafner et al.'s DreamerV1 (1912.01603), DreamerV2 (2010.02193), and DreamerV3 (2301.04104), built around the Recurrent State-Space Model — learns latent dynamics for control. Direct code analogues remain rare. Three ideas occupy the gap: LLM-JEPA, a proposed Code-JEPA objective, and CoLA's latent action search.
 
 ### 11.1 LLM-JEPA (2509.14252)
 
 LLM-JEPA adds a joint-embedding predictive objective to standard NTP training, using (text, code) as the two JEPA views with the LLM's last-layer last-token hidden state as encoder and a tied-weights `[PRED]` token as predictor. The loss is `L_NTP(text) + λ · d(Pred(Enc(Text)), Enc(Code))` with cosine distance. On Llama-3.2-1B fine-tuned on NL-RX-SYNTH the gain was 57.3 → 71.5 (+14.2 absolute); on Spider, GSM8K, and HellaSwag the wins were smaller. The top-100 singular values of `Enc(Text) − Enc(Code)` collapsed by orders of magnitude, which indicates a low-rank text↔code mapping.
 
 
-### 11.2 CoLA (2503.21383)
+### 11.2 Code-JEPA as the missing bridge
+
+The V-JEPA lesson transfers cleanly to code if "observation" is interpreted broadly. Exact trace reconstruction asks the model to predict every local variable value, call-stack detail, and string literal. A Code-JEPA objective would instead predict latent semantic targets: whether a branch condition flips, which invariant changes, which tests become newly reachable, which file-level dependency is affected, or which failure mode a patch introduces. The training recipe is straightforward: mask a slice of an execution trace, patch trajectory, repository graph, or test log; encode the visible program state and action; predict the hidden semantic embedding; and train the predictor against interpreter-, test-, or verifier-grounded targets. The evaluation should not ask "did the model reconstruct the trace verbatim?" but "does the latent prediction improve repair, localization, or planning under a fixed policy?"
+
+This reframes the main CWM ablation question. If CWM-style trace training helps only because it teaches the model to copy detailed traces, the benefit should disappear under latent targets. If it helps because it teaches semantic consequence prediction, Code-JEPA should preserve or improve downstream gains while reducing irrelevant reconstruction burden.
+
+
+### 11.3 CoLA (2503.21383)
 
 CoLA replaces the 128k-token action space of an LLM with a small learned latent-action codebook. Three modules: a VQ-VAE-style inverse-dynamics model that infers latent action `aₜ` from `(x₁:t, xₜ₊₁)`; a language world model that inserts the chosen latent action into the LLM embedding stream and decodes the next token; and a policy `π(aₜ | x₁:t)` behavior-cloned from inverse-dynamics labels then RL-tuned. Action-level MCTS over the learned codebook (with a Double-DQN Q-function) reached Math-500 68.2 vs 63.0 baseline MCTS-Q. CoLA is the corpus's most direct Dreamer-for-LLMs instance: the action space is genuinely compressed, and rollout and search operate in that compressed space.
 
 
-### 11.3 The gap
+### 11.4 The gap
 
 Despite CWM and dozens of LLM-as-world-model papers, no public Dreamer/RSSM-style latent-imagination world model has been trained for SWE agents. CWM rolls out in token space. CoLA is the closest concrete instance. UniZero (2406.10667) generalizes MuZero with transformers but is rarely instantiated on code. Genie (2402.15391) gives the vision-side template. JEPA for RL (2504.16591) extends the energy-based objective to RL.
 
@@ -398,7 +425,11 @@ AutoBug (2505.13452), SESpec (2506.09550), LLM-Sym (2409.09271), and Loop Invari
 
 ### 14.3 Probing and mechanistic interpretability
 
-Mechanistic Interpretability of Code Correctness via SAEs (2510.02917) and On LLMs' Internal Representation of Code Correctness (2512.07404) ask what code LLMs actually represent. Findings: partial, brittle internal execution representations, which supports explicit trace pretraining.
+Two questions drive this subsection: what do code LLMs internally represent about program state, and how do those representations relate to the older question of whether LLMs implicitly contain world models at all.
+
+For code specifically, Mechanistic Interpretability of Code Correctness via SAEs (2510.02917) and On LLMs' Internal Representation of Code Correctness (2512.07404) find partial, brittle internal execution representations. The general-language probing literature reaches a similar conclusion across non-code domains. Revisiting the Othello World Model Hypothesis (2503.04421) re-evaluates emergent board representations across seven LMs and finds the effect smaller and more fragile than originally reported. Scaling Laws for State Dynamics in LLMs (2505.14892) measures how state-tracking accuracy degrades with state-space size. Do LLMs Build Spatial World Models? (2604.10690, IBM) probes Gemini, GPT-5, Claude, and DeepSeek on grid-maze navigation and finds spatial representations weaker than the models' surface fluency suggests. The Depth Ceiling (2604.06427, UCL) identifies a similar ceiling on latent planning depth in GPT-4o, Qwen3-32B, and GPT-5.4. Extracting Search Trees from LLM Reasoning Traces Reveals Myopic Planning (2605.06840, NYU) shows that LLM Connect-4 reasoning trees stay shallow even when prompted to plan deeply. Emergent Structured Representations (2602.07794, Fudan) localizes a conceptual subspace in middle layers that functions as an implicit world model.
+
+Across these studies the pattern is consistent: LLMs hold useful but bounded internal representations of state and dynamics, and those representations break down at modest depth or state-space size.
 
 ### 14.4 Repair and debugging as world-model probing
 
@@ -539,7 +570,7 @@ Codeforces ratings rose by 999 points in 14 months on the o-series. The same lin
 
 ## 17. Open Problems
 
-Six problems where the literature is thinnest and the upside is largest:
+Seven problems where the literature is thinnest and the upside is largest:
 
 **1. Causal isolation of trace-pretraining contributions.** Every claim of the form *this WM-trained model achieves X* should be paired with an ablation removing the WM component while holding training data and RL fixed. CWM in particular needs this. Without it, the headline numbers underdetermine whether the WM did the work.
 
@@ -547,11 +578,13 @@ Six problems where the literature is thinnest and the upside is largest:
 
 **3. Hybrid neural-symbolic systems.** The verifier-grounded line (§14.1) leads on synthesis-from-spec but does not yet scale to end-to-end verified codegen from natural language. The natural integration is neural proposal, symbolic verification, with the verifier providing gradient-free correctness signal and the neural component providing proposals at scale. Differentiable surrogates of symbolic verifiers (Lean, Dafny, Rocq) that pass verifier-style gradients during training remain open.
 
-**4. Multi-modal WMs for coding.** GUI agents need pixel-level WMs (Neural Computers, 2604.06425, provides a first attempt). Tying pixel WMs to code-state WMs through a shared latent remains essentially unsolved.
+**4. Code-JEPA: latent semantic prediction instead of trace reconstruction.** Current trace pretraining often asks the model to reproduce detailed observations. The V-JEPA analogy suggests a different target: predict the latent semantic consequence of an edit, command, or input while ignoring irrelevant trace detail. A concrete benchmark would mask test logs, execution slices, or repo-state deltas, train latent predictors, and measure whether they improve repair or planning under a fixed policy.
 
-**5. Long-horizon credit assignment with execution-grounded rewards.** PRMs (§9.3) provide trajectory-level critics but operate independently of forward prediction. The right structure for rewarding an agent across hundreds of execution-grounded steps remains open.
+**5. Multi-modal WMs for coding.** GUI agents need pixel-level WMs (Neural Computers, 2604.06425, provides a first attempt). Tying pixel WMs to code-state WMs through a shared latent remains essentially unsolved.
 
-**6. World models of the developer, not just the program.** All current WMs model the machine. Few model the developer intent with comparable fidelity. ATLAS and Re:Form gesture in this direction by treating the spec as the WM. A full developer-intent WM would close the agentic loop.
+**6. Long-horizon credit assignment with execution-grounded rewards.** PRMs (§9.3) provide trajectory-level critics but operate independently of forward prediction. The right structure for rewarding an agent across hundreds of execution-grounded steps remains open.
+
+**7. World models of the developer, not just the program.** All current WMs model the machine. Few model the developer intent with comparable fidelity. ATLAS and Re:Form gesture in this direction by treating the spec as the WM. A full developer-intent WM would close the agentic loop.
 
 Dreamer-for-SWE-agents is not listed as the field's largest gap. The pressure motivating that direction in vision — pixel-space rollout cost — does not transfer to code, where state is small and the simulator is free.
 
@@ -561,15 +594,17 @@ Dreamer-for-SWE-agents is not listed as the field's largest gap. The pressure mo
 - *Spatial / Structural Grid* — the analog of OccWorld / BEV for code would be a learned predictive grid over AST nodes, call-graph edges, or CFG states. RepoGraph (2410.14684) shows the static version is useful as agent state; the predictive version remains unexplored.
 - *Decomposed Object / Slot (object-centric WMs)* — the analog for code would model variables, scopes, or classes as discrete persistent slots whose state propagates independently. No paper in the corpus instantiates this, despite obvious mappings (each variable is an object, each frame is a scene).
 
+**From L1 to L3.** The Agentic World Modeling levels make the maturity gap explicit. CodeExecutor/TRACED/CWM-style models are mostly L1 predictors; WebDreamer, RAP, Dyna-Think, and GIF-MCTS are closer to L2 simulators; L3 evolvers remain mostly scaffold- or data-distribution self-improvers rather than self-revising world models. A decisive L3 code-WM benchmark would require persistent model revision after execution falsifies a prediction, followed by improved predictions on related future tasks.
+
 The object-centric and structural-grid gaps look more genuine than the Dreamer one, because they exploit structure that code already has (objects = variables, grids = AST/CFG) rather than borrowing pressure from a domain (vision) where the structural assumptions differ.
 
 ---
 
 ## 18. Conclusion
 
-Across the literature surveyed here, a single trajectory is visible: from neural execution (modeling the machine), through trace pretraining (modeling execution implicitly), to CWM and its descendants (modeling execution explicitly with a named artifact), to agentic SWE and RL (modeling the environment), to JEPA and latent-action models (modeling in compressed space), and on toward formal verification, probing, and safety (modeling reliably). What was a scattered set of insights in 2014 has by 2026 cohered into a recognizable research program with a recognizable artifact: the code world model.
+Across the literature surveyed here, a single trajectory is visible: from static representation (CodeBERT), through neural execution (modeling the machine), through trace pretraining (modeling execution implicitly), to CWM and its descendants (modeling execution explicitly with a named artifact), to agentic SWE and RL (modeling the environment), to JEPA and latent-action models (modeling in compressed space), and on toward formal verification, probing, and safety (modeling reliably). What was a scattered set of insights in 2014 has by 2026 cohered into a recognizable research program with a recognizable artifact: the code world model.
 
-The remaining work splits into two halves. The first is empirical: close the eval gap, isolate the causal contribution of WM-training, build hybrid neural-symbolic systems whose correctness is verifier-checkable rather than test-checkable. The second is rhetorical: hold the term *world model* to a strict definition so the literature can distinguish architectural commitments from training-data choices, and resist the temptation to oversell extractability theorems and latent-imagination analogies whose premises do not transfer to code.
+The remaining work splits into three parts. The first is empirical: close the eval gap, isolate the causal contribution of WM-training, build hybrid neural-symbolic systems whose correctness is verifier-checkable rather than test-checkable. The second is architectural: move beyond observation reconstruction toward Code-JEPA-style latent semantic prediction and beyond L1 predictors toward L2/L3 simulators that update after execution falsifies them. The third is rhetorical: hold the term *world model* to a strict definition so the literature can distinguish architectural commitments from training-data choices, and resist the temptation to oversell extractability theorems and latent-imagination analogies whose premises do not transfer to code.
 
 The opportunity is large precisely because the framework is now clear enough to identify what is missing. The work to do is the work this survey has tried to make visible.
 
