@@ -165,6 +165,11 @@
     "filename": "Code Execution with Pre-trained Language Models (2305.05383).pdf"
   },
   {
+    "id": "2602.01576",
+    "title": "Code2World - A GUI World Model via Renderable Code Generation",
+    "filename": "Code2World - A GUI World Model via Renderable Code Generation (2602.01576).pdf"
+  },
+  {
     "id": "2503.23145",
     "title": "CodeARC - Benchmarking Reasoning Capabilities of LLM Agents for Inductive Program Synthesis",
     "filename": "CodeARC - Benchmarking Reasoning Capabilities of LLM Agents for Inductive Program Synthesis (2503.23145).pdf"
@@ -963,6 +968,11 @@
     "id": "2602.00785",
     "title": "World Models as an Intermediary between Agents and the Real World",
     "filename": "World Models as an Intermediary between Agents and the Real World (2602.00785).pdf"
+  },
+  {
+    "id": "2602.09856",
+    "title": "gWorld - Generative Visual Code Mobile World Models",
+    "filename": "gWorld - Generative Visual Code Mobile World Models (2602.09856).pdf"
   },
   {
     "id": "2412.00154",

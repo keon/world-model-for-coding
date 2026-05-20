@@ -17,9 +17,9 @@ Two adjacent surveys cover non-overlapping ground. A Survey on LLMs for Code Gen
 
 ---
 
-## Methodology
+## Scope and Corpus
 
-The corpus contains 190 arxiv preprints, assembled in four passes (March–May 2026) seeded from CWM [@arxiv2510_02387] via citation BFS and targeted topic searches, then extended with a Tier-1-lab-only sweep of additional 2026 papers. A paper enters the corpus if it intersects both world-model or state-tracking architectures and code generation, debugging, repair, or agentic coding. Pure vision world models (DreamerV1–V3, V-JEPA, Genie) and pure code-LLM papers without a world-model angle are excluded except as cited precedent. Date cutoff: 2026-05-15. One curator performed the taxonomy coding. Numerical claims in §§6–14 derive from abstracts, §16 from source PDFs. 60% of the corpus dates from 2025 or later.
+The survey covers 196 arxiv preprints at the intersection of world-model or state-tracking architectures and code generation, debugging, repair, or agentic coding. Pure vision world models (DreamerV1–V3, V-JEPA, Genie) appear only as cited precedent; pure code-LLM papers without a world-model angle are excluded. Date range: 2014 (Learning to Execute) through May 2026. The majority of the corpus dates from 2025 or later, reflecting the field's recent crystallization around the Code World Model framing.
 
 Cross-tabulation across the two primary taxonomic axes:
 
@@ -32,7 +32,7 @@ Cross-tabulation across the two primary taxonomic axes:
 | N3 (synthesized simulator) | 4 | 2 | 1 | 0 |
 | Verifier / PRM (related) | ~15 | ~10 | ~10 | ~5 |
 
-Two facts dominate the table. First, the descriptive bucket (D) holds the majority of the corpus and concentrates on variable values and traces. Second, the N1 row contains zero code exemplars: no system in the corpus instantiates a Dreamer-style learned dynamics model for code. §17 lists this as an open problem.
+Two facts dominate the table. First, the descriptive bucket (D) holds the majority of the corpus and concentrates on variable values and traces. Second, the N1 row contains zero code exemplars: no system in the corpus instantiates a Dreamer-style learned dynamics model for code. Reinforcement World Model Learning for LLM-based Agents [@arxiv2602_05842] trains the N1 *objective* — action-conditioned next-state prediction with a semantic-alignment RL reward — but does so without an N1 *architecture* (no separate dynamics head, no latent recurrent state); we classify it as D-with-RL. §17 lists the architectural gap as an open problem.
 
 ---
 
@@ -56,7 +56,7 @@ The literature uses *world model* in two distinct senses, which this survey sepa
 
 - **N1 — Neural dynamics model.** A learned `W : (state, action) → next_state` instantiated as a distinct architectural component with latent recurrent state, separate dynamics head, or inverse model. Dreamer-class. No code exemplar in the corpus.
 - **N2 — Latent-action model.** A learned action abstraction over a base LLM, with the LLM serving as transition model in compressed action space, supporting rollout or tree search over latent actions. CoLA [@arxiv2503_21383] provides the canonical example.
-- **N3 — Synthesized executable simulator.** The world model is an executable program (Python, DSL) synthesized by an LLM and run against ground-truth transitions during planning. GIF-MCTS [@arxiv2405_15383], WorldCoder, Executable WMs for ARC-AGI-3 [@arxiv2605_05138].
+- **N3 — Synthesized executable simulator.** The world model is an executable program (Python, DSL, HTML) synthesized by an LLM and run against ground-truth transitions during planning. GIF-MCTS [@arxiv2405_15383], WorldCoder, Executable WMs for ARC-AGI-3 [@arxiv2605_05138]. The GUI variant predicts the next mobile or desktop screen by emitting renderable web code rather than pixels — Code2World [@arxiv2602_01576] and gWorld [@arxiv2602_09856] instantiate this for Android and web interfaces respectively.
 
 Each N-subtype carries a distinct architectural commitment. N1 commits to learned latent dynamics; N2 commits to a discrete latent-action space; N3 commits to program synthesis as the dynamics. Conflating them, as the loose Dreamer-for-LLMs framing did, obscures which architectural bet a system makes. Under any N-subtype, CWM, TRACED, SemCoder, and most of the corpus do *not* qualify.
 
@@ -499,7 +499,7 @@ Dreamer-for-SWE-agents is not listed as the field's largest gap. The pressure mo
 
 **Three under-explored representations.** The §5.3 taxonomy table flags three classes of representation, mature in vision-WM, that have no code-WM exemplar:
 
-- *Global Latent Vector (Dreamer-style RSSM)* — discussed in §11. The Hafner et al. DreamerV1–V3 line proves the design space exists; whether it pays off for code is unsettled.
+- *Global Latent Vector (Dreamer-style RSSM)* — discussed in §11. The Hafner et al. DreamerV1–V3 line proves the design space exists; whether it pays off for code is unsettled. Two existing systems supply the recipe components: LLM-JEPA [@arxiv2509_14252] demonstrates a predictor head on top of an LLM trunk, and Reinforcement World Model Learning [@arxiv2602_05842] demonstrates the action-conditioned next-state-prediction objective trained via semantic-alignment RL. Combining them — a JEPA predictor over execution-state embeddings, trained with RWML-style rewards against CPython ground truth — is the most concrete proposal for a code-N1.
 - *Spatial / Structural Grid* — the analog of OccWorld / BEV for code would be a learned predictive grid over AST nodes, call-graph edges, or CFG states. RepoGraph [@arxiv2410_14684] shows the static version is useful as agent state; the predictive version remains unexplored.
 - *Decomposed Object / Slot (object-centric WMs)* — the analog for code would model variables, scopes, or classes as discrete persistent slots whose state propagates independently. No paper in the corpus instantiates this, despite obvious mappings (each variable is an object, each frame is a scene).
 
